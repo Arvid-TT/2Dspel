@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Game1
 {
@@ -11,11 +12,16 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        List<Rectangle> l = new List<Rectangle>();
+        Texture2D grass;
+        Fonster f;
+        Bool b = new Bool(true);
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            f = new Fonster(Window.ClientBounds.Width, Window.ClientBounds.Height);
         }
 
         /// <summary>
@@ -39,6 +45,7 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            grass = Content.Load<Texture2D>("Grass");
 
             // TODO: use this.Content to load your game content here
         }
@@ -61,7 +68,55 @@ namespace Game1
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            KeyboardState kstate = Keyboard.GetState();
+            MouseState mstate = Mouse.GetState();
+            if (b.Boll == true)
+            {
+                for (int y = f.Höjd / 2 - 5000; y < f.Höjd/2+5000; y += 100)
+                {
+                    for (int x = f.Bredd / 2 - 5000; x < f.Bredd/2 + 5000; x += 100)
+                    {
+                        l.Add(new Rectangle(x, y, 100, 100));
+                    }
+                }
+                b.Boll = false;
+            }
+            if (kstate.IsKeyDown(Keys.Up))
+            {
+                List<Rectangle> tillflista = new List<Rectangle>();
+                foreach (Rectangle r in l)
+                {
+                    tillflista.Add(new Rectangle(r.X, r.Y + 5, 100, 100));
+                }
+                l = tillflista;
+            }
+            if (kstate.IsKeyDown(Keys.Down))
+            {
+                List<Rectangle> tillflista = new List<Rectangle>();
+                foreach (Rectangle r in l)
+                {
+                    tillflista.Add(new Rectangle(r.X, r.Y - 5, 100, 100));
+                }
+                l = tillflista;
+            }
+            if (kstate.IsKeyDown(Keys.Left))
+            {
+                List<Rectangle> tillflista = new List<Rectangle>();
+                foreach (Rectangle r in l)
+                {
+                    tillflista.Add(new Rectangle(r.X + 5, r.Y, 100, 100));
+                }
+                l = tillflista;
+            }
+            if (kstate.IsKeyDown(Keys.Right))
+            {
+                List<Rectangle> tillflista = new List<Rectangle>();
+                foreach (Rectangle r in l)
+                {
+                    tillflista.Add(new Rectangle(r.X - 5, r.Y, 100, 100));
+                }
+                l = tillflista;
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -73,9 +128,16 @@ namespace Game1
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            foreach (Rectangle gras in l)
+            {
+                spriteBatch.Draw(grass, gras, Color.White);
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
