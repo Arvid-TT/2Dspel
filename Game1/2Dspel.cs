@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Game1
@@ -12,10 +13,13 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        List<Rectangle> l = new List<Rectangle>();
+        List<Grass> l = new List<Grass>();
         Texture2D grass;
+        Texture2D stone;
+        Texture2D water;
         Fonster f;
         Bool b = new Bool(true);
+        Random rand = new Random();
 
         public Game1()
         {
@@ -46,7 +50,8 @@ namespace Game1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             grass = Content.Load<Texture2D>("Grass");
-
+            stone = Content.Load<Texture2D>("Stone");
+            water = Content.Load<Texture2D>("Water");
             // TODO: use this.Content to load your game content here
         }
 
@@ -76,44 +81,58 @@ namespace Game1
                 {
                     for (int x = f.Bredd / 2 - 5000; x < f.Bredd/2 + 5000; x += 100)
                     {
-                        l.Add(new Rectangle(x, y, 100, 100));
+                        int t = rand.Next(10);
+                        if(t == 9)
+                        {
+                            Grass g = new Grass(new Rectangle(x, y, 100, 100), "Gray");
+                            l.Add(g);
+                        }
+                        else
+                        {
+                            Grass g = new Grass(new Rectangle(x, y, 100, 100), "White");
+                            l.Add(g);
+                        }
                     }
                 }
                 b.Boll = false;
             }
             if (kstate.IsKeyDown(Keys.Up))
             {
-                List<Rectangle> tillflista = new List<Rectangle>();
-                foreach (Rectangle r in l)
+                List<Grass> tillflista = new List<Grass>();
+                foreach (Grass r in l)
                 {
-                    tillflista.Add(new Rectangle(r.X, r.Y + 5, 100, 100));
+                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y + 5, 100, 100), r.Färg);
+                    tillflista.Add(tillfg);
                 }
                 l = tillflista;
             }
             if (kstate.IsKeyDown(Keys.Down))
             {
-                List<Rectangle> tillflista = new List<Rectangle>();
-                foreach (Rectangle r in l)
+                List<Grass> tillflista = new List<Grass>();
+                foreach (Grass r in l)
                 {
-                    tillflista.Add(new Rectangle(r.X, r.Y - 5, 100, 100));
+                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y - 5, 100, 100), r.Färg);
+                    tillflista.Add(tillfg);
                 }
                 l = tillflista;
             }
             if (kstate.IsKeyDown(Keys.Left))
             {
-                List<Rectangle> tillflista = new List<Rectangle>();
-                foreach (Rectangle r in l)
+                List<Grass> tillflista = new List<Grass>();
+                foreach (Grass r in l)
                 {
-                    tillflista.Add(new Rectangle(r.X + 5, r.Y, 100, 100));
+                    Grass tillfg = new Grass(new Rectangle(r.Rek.X + 5, r.Rek.Y, 100, 100), r.Färg);
+                    tillflista.Add(tillfg);
                 }
                 l = tillflista;
             }
             if (kstate.IsKeyDown(Keys.Right))
             {
-                List<Rectangle> tillflista = new List<Rectangle>();
-                foreach (Rectangle r in l)
+                List<Grass> tillflista = new List<Grass>();
+                foreach (Grass r in l)
                 {
-                    tillflista.Add(new Rectangle(r.X - 5, r.Y, 100, 100));
+                    Grass tillfg = new Grass(new Rectangle(r.Rek.X - 5, r.Rek.Y, 100, 100), r.Färg);
+                    tillflista.Add(tillfg);
                 }
                 l = tillflista;
             }
@@ -132,9 +151,16 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            foreach (Rectangle gras in l)
+            foreach (Grass gras in l)
             {
-                spriteBatch.Draw(grass, gras, Color.White);
+                if (gras.Färg == "White")
+                {
+                    spriteBatch.Draw(grass, gras.Rek, Color.White);
+                }
+                else if (gras.Färg == "Gray")
+                {
+                    spriteBatch.Draw(stone, gras.Rek, Color.White);
+                }
             }
 
             spriteBatch.End();
