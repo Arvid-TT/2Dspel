@@ -16,8 +16,20 @@ namespace Game1
         List<Grass> l = new List<Grass>();
         Texture2D grass;
         Texture2D stone;
+        Texture2D deepwater;
         Texture2D water;
+        Texture2D player;
+        Texture2D sand;
+        Texture2D deepdeepwater;
+        Texture2D mgrass;
+        Texture2D mstone;
+        Texture2D mdeepwater;
+        Texture2D mwater;
+        Texture2D msand;
+        Texture2D mdeepdeepwater;
+        Player play;
         Fonster f;
+        WorldGen wg = new WorldGen();
         Bool b = new Bool(true);
         Random rand = new Random();
 
@@ -51,7 +63,17 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             grass = Content.Load<Texture2D>("Grass");
             stone = Content.Load<Texture2D>("Stone");
-            water = Content.Load<Texture2D>("Water");
+            deepwater = Content.Load<Texture2D>("Water");
+            player = Content.Load<Texture2D>("Player");
+            sand = Content.Load<Texture2D>("Sand");
+            water = Content.Load<Texture2D>("Sky");
+            deepdeepwater = Content.Load<Texture2D>("Deepf-ingwater");
+            mgrass = Content.Load<Texture2D>("mGrass");
+            mstone = Content.Load<Texture2D>("mStone");
+            mdeepwater = Content.Load<Texture2D>("mWater");
+            msand = Content.Load<Texture2D>("mSand");
+            mwater = Content.Load<Texture2D>("mSky");
+            mdeepdeepwater = Content.Load<Texture2D>("mDeepf-ingwater");
             // TODO: use this.Content to load your game content here
         }
 
@@ -73,69 +95,16 @@ namespace Game1
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
             KeyboardState kstate = Keyboard.GetState();
             MouseState mstate = Mouse.GetState();
+            play = new Player(f.Bredd, f.Höjd);
             if (b.Boll == true)
             {
-                for (int y = f.Höjd / 2 - 5000; y < f.Höjd/2+5000; y += 100)
-                {
-                    for (int x = f.Bredd / 2 - 5000; x < f.Bredd/2 + 5000; x += 100)
-                    {
-                        int t = rand.Next(10);
-                        if(t == 9)
-                        {
-                            Grass g = new Grass(new Rectangle(x, y, 100, 100), "Gray");
-                            l.Add(g);
-                        }
-                        else
-                        {
-                            Grass g = new Grass(new Rectangle(x, y, 100, 100), "White");
-                            l.Add(g);
-                        }
-                    }
-                }
+                l = wg.Generate(f.Höjd, f.Bredd, rand);
                 b.Boll = false;
             }
-            if (kstate.IsKeyDown(Keys.Up))
-            {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
-                {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y + 5, 100, 100), r.Färg);
-                    tillflista.Add(tillfg);
-                }
-                l = tillflista;
-            }
-            if (kstate.IsKeyDown(Keys.Down))
-            {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
-                {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y - 5, 100, 100), r.Färg);
-                    tillflista.Add(tillfg);
-                }
-                l = tillflista;
-            }
-            if (kstate.IsKeyDown(Keys.Left))
-            {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
-                {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X + 5, r.Rek.Y, 100, 100), r.Färg);
-                    tillflista.Add(tillfg);
-                }
-                l = tillflista;
-            }
-            if (kstate.IsKeyDown(Keys.Right))
-            {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
-                {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X - 5, r.Rek.Y, 100, 100), r.Färg);
-                    tillflista.Add(tillfg);
-                }
-                l = tillflista;
-            }
+            play.Update(ref l, kstate, mstate);
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -161,8 +130,51 @@ namespace Game1
                 {
                     spriteBatch.Draw(stone, gras.Rek, Color.White);
                 }
+                else if (gras.Färg == "Blue")
+                {
+                    spriteBatch.Draw(water, gras.Rek, Color.White);
+                }
+                else if (gras.Färg == "Yellow")
+                {
+                    spriteBatch.Draw(sand, gras.Rek, Color.White);
+                }
+                else if (gras.Färg == "Deepblue")
+                {
+                    spriteBatch.Draw(deepwater, gras.Rek, Color.White);
+                }
+                else if (gras.Färg == "Deepdeepblue")
+                {
+                    spriteBatch.Draw(deepdeepwater, gras.Rek, Color.White);
+                }
             }
-
+            foreach(Grass gras in l)
+            {
+                if (gras.Färg == "White")
+                {
+                    spriteBatch.Draw(mgrass, gras.Map, Color.White);
+                }
+                else if (gras.Färg == "Gray")
+                {
+                    spriteBatch.Draw(mstone, gras.Map, Color.White);
+                }
+                else if (gras.Färg == "Blue")
+                {
+                    spriteBatch.Draw(mwater, gras.Map, Color.White);
+                }
+                else if (gras.Färg == "Yellow")
+                {
+                    spriteBatch.Draw(msand, gras.Map, Color.White);
+                }
+                else if (gras.Färg == "Deepblue")
+                {
+                    spriteBatch.Draw(mdeepwater, gras.Map, Color.White);
+                }
+                else if (gras.Färg == "Deepdeepblue")
+                {
+                    spriteBatch.Draw(mdeepdeepwater, gras.Map, Color.White);
+                }
+            }
+            spriteBatch.Draw(player, play.Pos, Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
