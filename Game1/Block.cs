@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace Game1
 {
-    class Grass
+    class Block
     {
         Rectangle rek;
         Rectangle map;
         string färg;
         int plats;
 
-        public Grass(Rectangle r, string f, int p)
+        public Block(Rectangle r, string f, int p)
         {
             rek = r;
             färg = f;
             plats = p;
         }
-        public Grass(Rectangle r, string f, int p, Rectangle m)
+        public Block(Rectangle r, string f, int p, Rectangle m)
         {
             rek = r;
             färg = f;

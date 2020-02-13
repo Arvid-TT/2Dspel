@@ -27,61 +27,208 @@ namespace Game1
             set { speed = value; }
             get { return speed; }
         }
-        public void Update(ref List<Grass> l, KeyboardState kstate, MouseState mstate)
+        public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, Siffra xauto, Siffra yauto, Siffra xautoscd, Siffra yautoscd, Siffra xautohcd, Siffra yautoncd, Siffra xautovcd, Siffra yautoucd)
         {
-            if (kstate.IsKeyDown(Keys.Up) && Kollisionskoll(l, pos.X, pos.Y - speed))
+            bool icy = true;
+            if (kstate.IsKeyDown(Keys.W))
             {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
+                for (int i = 0; i < speed; i++)
                 {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y + speed, 100, 100), r.Färg, r.Plats, r.Map);
+                    if (Kollisionskoll(l, pos.X, pos.Y - speed + i, ref icy))
+                    {
+                        List<Block> tillflista = new List<Block>();
+                        foreach (Block r in l)
+                        {
+                            Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y + speed - i, 100, 100), r.Färg, r.Plats, r.Map);
+                            tillflista.Add(tillfg);
+                        }
+                        l = tillflista;
+                        break;
+                    }
+
+                }
+
+                if (icy && yautoucd.Tal == 0)
+                {
+                    if (yauto.Tal < 6)
+                    {
+                        yauto.Tal++;
+                    }
+                    yautoscd.Tal = 30;
+                    yautoucd.Tal = 10;
+                }
+            }
+            if (kstate.IsKeyDown(Keys.S))
+            {
+                for(int i = 0; i <speed; i++)
+                {
+                    if (Kollisionskoll(l, pos.X, pos.Y + speed - i, ref icy))
+                    {
+                        List<Block> tillflista = new List<Block>();
+                        foreach (Block r in l)
+                        {
+                            Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y - speed + i, 100, 100), r.Färg, r.Plats, r.Map);
+                            tillflista.Add(tillfg);
+                        }
+                        l = tillflista;
+                        break;
+                    }
+                }
+
+                if (icy && yautoncd.Tal == 0)
+                {
+                    if (yauto.Tal > -6)
+                    {
+                        yauto.Tal--;
+                    }
+                    yautoscd.Tal = 30;
+                    yautoncd.Tal = 10;
+                }
+            }
+            if (kstate.IsKeyDown(Keys.A))
+            {
+                for(int i = 0; i < speed; i++)
+                {
+                    if(Kollisionskoll(l, pos.X - speed + i, pos.Y, ref icy))
+                    {
+                        List<Block> tillflista = new List<Block>();
+                        foreach (Block r in l)
+                        {
+                            Block tillfg = new Block(new Rectangle(r.Rek.X + speed - i, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
+                            tillflista.Add(tillfg);
+                        }
+                        l = tillflista;
+                        break;
+                    }
+                }
+
+                if (icy && xautovcd.Tal == 0)
+                {
+                    if (xauto.Tal < 6)
+                    {
+                        xauto.Tal++;
+                    }
+                    xautoscd.Tal = 30;
+                    xautovcd.Tal = 10;
+                }
+            }
+            if (kstate.IsKeyDown(Keys.D))
+            {
+                for(int i = 0; i < speed; i++)
+                {
+                    if(Kollisionskoll(l, pos.X + speed - i, pos.Y, ref icy))
+                    {
+                        List<Block> tillflista = new List<Block>();
+                        foreach (Block r in l)
+                        {
+                            Block tillfg = new Block(new Rectangle(r.Rek.X - speed + i, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
+                            tillflista.Add(tillfg);
+                        }
+                        l = tillflista;
+                        break;
+                    }
+                }
+
+                if (icy && xautohcd.Tal == 0)
+                {
+                    if (xauto.Tal > -6)
+                    {
+                        xauto.Tal--;
+                    }
+                    xautoscd.Tal = 30;
+                    xautohcd.Tal = 10;
+                }
+            }
+            if (Kollisionskoll(l, pos.X - xauto.Tal + speed, pos.Y, ref icy) == true)
+            {
+                List<Block> tillflista = new List<Block>();
+                foreach (Block r in l)
+                {
+                    Block tillfg = new Block(new Rectangle(r.Rek.X + xauto.Tal, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
+                    tillflista.Add(tillfg);
+                }
+                l = tillflista;
+
+            }
+            else
+            {
+                xauto.Tal = 0;
+            }
+            if (Kollisionskoll(l, pos.X, pos.Y - yauto.Tal, ref icy) == true)
+            {
+                List<Block> tillflista = new List<Block>();
+                foreach (Block r in l)
+                {
+                    Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y + yauto.Tal, 100, 100), r.Färg, r.Plats, r.Map);
                     tillflista.Add(tillfg);
                 }
                 l = tillflista;
             }
-            if (kstate.IsKeyDown(Keys.Down) && Kollisionskoll(l, pos.X, pos.Y + speed))
+            else
             {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
-                {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X, r.Rek.Y - speed, 100, 100), r.Färg, r.Plats, r.Map);
-                    tillflista.Add(tillfg);
-                }
-                l = tillflista;
+                yauto.Tal = 0;
             }
-            if (kstate.IsKeyDown(Keys.Left) && Kollisionskoll(l, pos.X - speed, pos.Y))
+            if (xautoscd.Tal == 0)
             {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
+
+                if (xauto.Tal < 0)
                 {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X + speed, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
-                    tillflista.Add(tillfg);
+                    xauto.Tal++;
                 }
-                l = tillflista;
+                else if (xauto.Tal > 0)
+                {
+                    xauto.Tal--;
+                }
+                if (icy)
+                {
+                    xautoscd.Tal = 30;
+                }
+                else
+                {
+                    xautoscd.Tal = 5;
+                }
             }
-            if (kstate.IsKeyDown(Keys.Right) && Kollisionskoll(l, pos.X + speed, pos.Y))
+            if(yautoscd.Tal == 0)
             {
-                List<Grass> tillflista = new List<Grass>();
-                foreach (Grass r in l)
+                if (yauto.Tal < 0)
                 {
-                    Grass tillfg = new Grass(new Rectangle(r.Rek.X - speed, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
-                    tillflista.Add(tillfg);
+                    yauto.Tal++;
                 }
-                l = tillflista;
+                else if (yauto.Tal > 0)
+                {
+                    yauto.Tal--;
+                }
+                if (icy)
+                {
+                    yautoscd.Tal = 30;
+                }
+                else
+                {
+                    yautoscd.Tal = 5;
+                }
             }
+
+            yautoucd.Tal = Cooldown(yautoucd.Tal);
+            xautovcd.Tal = Cooldown(xautovcd.Tal);
+            yautoncd.Tal = Cooldown(yautoncd.Tal);
+            xautohcd.Tal = Cooldown(xautohcd.Tal);
+            yautoscd.Tal = Cooldown(yautoscd.Tal);
+            xautoscd.Tal = Cooldown(xautoscd.Tal);
+
+
         }
-        private bool Kollisionskoll(List<Grass> l, int x, int y)
+        private bool Kollisionskoll(List<Block> l, int x, int y, ref bool ice)
         {
             bool b = false;
             bool v = false;
             bool vv = false;
-            foreach (Grass g in l)
+            foreach (Block g in l)
             {
 
                 Rectangle r = new Rectangle(x, y, 80, 40);
                 if (g.Rek.Intersects(r))
                 {
-                    if (g.Färg == "Gray" || g.Färg == "Deepdeepblue")
+                    if (g.Färg == "Gray" || g.Färg == "Deepdeepblue" || g.Färg == "Lightgray" || g.Färg == "Lightcyan" || g.Färg == "Darkcyan")
                     {
                         return false;
                     }
@@ -89,7 +236,7 @@ namespace Game1
                     {
                         vv = true;
                     }
-                    else if (g.Färg == "Blue")
+                    else if (g.Färg == "Blue" || g.Färg == "Lightblue" || g.Färg == "Cyan")
                     {
                         v = true;
                     }
@@ -97,7 +244,10 @@ namespace Game1
                     {
                         b = true;
                     }
-
+                    if(g.Färg != "Lightblue")
+                    {
+                        ice = false;
+                    }
                 }
             }
             if (vv)
@@ -113,6 +263,14 @@ namespace Game1
                 speed = 5;
             }
             return b;
+        }
+        private int Cooldown(int cd)
+        {
+            if (cd > 0)
+            {
+                cd--;
+            }
+            return cd;
         }
     }
 }

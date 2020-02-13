@@ -43,11 +43,16 @@
   <ItemGroup>
     <Compile Include="2Dspel.cs" />
     <Compile Include="Bool.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Fonster.cs" />
-    <Compile Include="Grass.cs" />
+    <Compile Include="Block.cs" />
+    <Compile Include="Mus.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Siffra.cs" />
+    <Compile Include="Text.cs" />
+    <Compile Include="Worldedit.cs" />
     <Compile Include="WorldGen.cs" />
   </ItemGroup>
   <ItemGroup>
