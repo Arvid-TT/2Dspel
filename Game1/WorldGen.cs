@@ -42,7 +42,7 @@ namespace Game1
             int sx;
             int sy;
             int e;
-            for(int i = 0; i < 30; i++)
+            for(int i = 0; i < 2; i++)
             {
                 sx = slump.Next(100);
                 sy = slump.Next(100);
@@ -529,6 +529,13 @@ namespace Game1
 
                 }
             }
+            foreach(Block b in l)
+            {
+                if(b.Färg=="Lightgray" && slump.Next(2) == 0)
+                {
+                    b.Färg = "Lightcyan";
+                }
+            }
             while (true)
             {
                 sx = slump.Next(100);
@@ -622,7 +629,20 @@ namespace Game1
                 }
 
             }
-            
+            foreach (Block b in l)
+            {
+                if (b.Färg == "Green" && slump.Next(10) == 0)
+                {
+                    b.Addontype = "Tree";
+                    b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
+
+                }
+                if (b.Färg == "Darkgreen" && slump.Next(2) == 0)
+                {
+                    b.Addontype = "Tree";
+                    b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
+                }
+            }
             return l;
         }
     }

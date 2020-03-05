@@ -14,6 +14,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         List<Block> l = new List<Block>();
+        List<Block> lorg = new List<Block>();
         Texture2D grass;
         Texture2D stone;
         Texture2D deepwater;
@@ -39,9 +40,19 @@ namespace Game1
         Texture2D fwater;
         Texture2D mustex;
         Texture2D pixel;
+        Texture2D onoff;
+        Texture2D heart;
+        Texture2D tree;
         List<Worldedit> worldedit = new List<Worldedit>();
+        List<Ghost> ghosts = new List<Ghost>();
         Mus mus;
+        Rectangle hpbar;
+        Rectangle hpbarbak;
+        Rectangle hpbarbor;
+        Rectangle healthheart;
+        Siffra health;
         KeyboardState oldstate;
+        MouseState oldmus;
         Siffra xauto = new Siffra(0);
         Siffra yauto = new Siffra(0);
         Siffra xautovcd = new Siffra(0);
@@ -52,6 +63,7 @@ namespace Game1
         Siffra xautoscd = new Siffra(0);
         Siffra xautocd = new Siffra(0);
         Siffra yautocd = new Siffra(0);
+        Rectangle wetoggle;
         Player play;
         Rectangle weh;
         Text wef = new Text("Green");
@@ -113,7 +125,9 @@ namespace Game1
             msand = Content.Load<Texture2D>("mSand");
             mwater = Content.Load<Texture2D>("mSky");
             mdeepdeepwater = Content.Load<Texture2D>("mDeepf-ingwater");
-
+            onoff = Content.Load<Texture2D>("OnOff");
+            heart = Content.Load<Texture2D>("Hjärta");
+            tree = Content.Load<Texture2D>("Tree");
             // TODO: use this.Content to load your game content here
         }
 
@@ -138,33 +152,83 @@ namespace Game1
 
             KeyboardState kstate = Keyboard.GetState();
             MouseState mstate = Mouse.GetState();
-            Rectangle p = new Rectangle(mstate.X, mstate.Y, 21, 21);
-            Rectangle h = new Rectangle(mstate.X +10, mstate.Y +10, 1, 1);
+            Rectangle p = new Rectangle(mstate.X - 10, mstate.Y - 10, 21, 21);
+            Rectangle h = new Rectangle(mstate.X, mstate.Y, 1, 1);
             mus = new Mus(p, h);
-
-            foreach(Block b in l)
-            {
-                if(mus.Hitb.Intersects(b.Rek) && mstate.LeftButton == ButtonState.Pressed)
-                {
-                    b.Färg = "Green";
-                }
-            }
 
             play = new Player(f.Bredd, f.Höjd);
             if (b.Boll == true)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, rand);
+                if (l.Count==0)
+                {
+                    l = wg.Generate(f.Höjd, f.Bredd, rand);
+                }
+                else
+                {
+                    List<Block> tillf = new List<Block>();
+                    tillf = wg.Generate(f.Höjd, f.Bredd, rand);
+                    foreach(Block b in l)
+                    {
+
+                        b.Färg = tillf[b.Plats].Färg;
+                        if (b.Rek.Intersects(play.Pos))
+                        {
+                            if (b.Färg == "Gray")
+                            {
+                                b.Färg = "Green";
+                            }
+                            else if (b.Färg == "Deepdeepblue")
+                            {
+                                b.Färg = "Yellow";
+                            }
+                            else if (b.Färg == "Darkcyan")
+                            {
+                                b.Färg = "Darkgreen";
+                            }
+                            else if (b.Färg == "Lightcyan" || b.Färg == "Lightgray")
+                            {
+                                b.Färg = "White";
+                            }
+                        }
+                    }
+                }
                 b.Boll = false;
-                int i = 0;
+                int i;
                 for (i = 0; i < 12; i++)
                 {
-                    worldedit.Add(new Worldedit(i, f.Bredd - 21, 100 + i * 21));
+                    worldedit.Add(new Worldedit(i, f.Bredd - 21, 121 + i * 21));
                 }
-                weh = new Rectangle(100, f.Bredd - 21, 21, 100 + i * 21);
+                weh = new Rectangle(f.Bredd - 21, 121, 21, i * 21);
+                wetoggle = new Rectangle(f.Bredd - 21, 100, 21, 21);
+                wef.Txt = "Green";
+                we.Boll = false;
+                lorg = l;
+                health = new Siffra(100);
+                hpbarbor = new Rectangle(f.Bredd - 320, 10, 210, 30);
+                hpbarbak = new Rectangle(f.Bredd - 315, 15, 200, 20);
+                hpbar = new Rectangle(f.Bredd - 315, 15, health.Tal * 2, 20);
+                healthheart = new Rectangle(f.Bredd - 330, 7, 30, 30);
+                ghosts.Clear();
             }
+
             if (mstate.LeftButton == ButtonState.Pressed)
             {
-                if (we.Boll && mus.Hitb.Intersects(weh))
+                if (mus.Hitb.Intersects(wetoggle))
+                {
+                    if (oldmus.LeftButton == ButtonState.Released)
+                    {
+                        if (we.Boll == true)
+                        {
+                            we.Boll = false;
+                        }
+                        else if (we.Boll == false)
+                        {
+                            we.Boll = true;
+                        }
+                    }
+
+                }
+                else if (we.Boll && mus.Hitb.Intersects(weh))
                 {
                     foreach(Worldedit w in worldedit)
                     {
@@ -176,7 +240,7 @@ namespace Game1
                         }
                     }
                 }
-                else if (mus.Hitb.X < f.Bredd - 100 && mus.Hitb.Y > 100)
+                else if ((mus.Hitb.X < f.Bredd - 100 || mus.Hitb.Y > 100) && we.Boll)
                 {
                     foreach(Block b in l)
                     {
@@ -186,14 +250,60 @@ namespace Game1
                         }
                     }
                 }
+                else if (we.Boll)
+                {
+                    foreach(Block b in l)
+                    {
+                        if (b.Map.Intersects(mus.Pos))
+                        {
+                            b.Färg = wef.Txt;
+                        }
+                    }
+                }
             }
-            play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd);
+            play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
             if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
             {
                 b.Boll = true;
             }
-            we.Boll = true;
+            if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyDown(Keys.OemPlus) == false)
+            {
+                foreach(Block b in l)
+                {
+                    b.Färg = lorg[b.Plats].Färg;
+                }
+            }
+            if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
+            {
+                health.Tal--;
+            }
+            if (kstate.IsKeyDown(Keys.P) && health.Tal < 100)
+            {
+                health.Tal++;
+            }
+            if(kstate.IsKeyDown(Keys.L))
+            {
+                ghosts.Add(new Ghost(rand, l));
+            }
+            List<Ghost> tilfghosts = new List<Ghost>();
+            foreach(Ghost g in ghosts)
+            {
+                tilfghosts.Add(g);
+
+            }
+            ghosts = tilfghosts;
+            for(int i = 0; i < ghosts.Count; i++)
+            {
+                bool bo = ghosts[i].Update(play);
+                if (bo)
+                {
+                    ghosts.Remove(ghosts[i]);
+                    health.Tal -= 5;
+                }
+            }
+            hpbar.Width = health.Tal * 2;
             oldstate = kstate;
+            oldmus = mstate;
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -270,7 +380,18 @@ namespace Game1
                         spriteBatch.Draw(fwater, gras.Rek, Color.White);
                     }
                 }
-                
+
+            }
+            spriteBatch.Draw(player, play.Pos, Color.White);
+            foreach (Block b in l)
+            {
+                if (b.Addontype != "none")
+                {
+                    if (b.Addontype == "Tree")
+                    {
+                        spriteBatch.Draw(tree, b.Rek, Color.White);
+                    }
+                }
             }
             foreach(Block gras in l)
             {
@@ -331,8 +452,17 @@ namespace Game1
                     spriteBatch.Draw(fwater, gras.Map, Color.White);
                 }
             }
-            if (we.Boll)
+            foreach(Ghost g in ghosts)
             {
+                spriteBatch.Draw(pixel, g.Pos, Color.Red);
+            }
+            if (we.Boll == false)
+            {
+                spriteBatch.Draw(pixel, wetoggle, Color.Red);
+            }
+            else if (we.Boll)
+            {
+                spriteBatch.Draw(pixel, wetoggle, Color.Green);
                 foreach (Worldedit w in worldedit)
                 {
                     if (w.Active)
@@ -402,9 +532,23 @@ namespace Game1
 
                 }
             }
+            Rectangle tillf = new Rectangle(f.Bredd - 18, 103, 15, 15);
+            spriteBatch.Draw(pixel, tillf, Color.White);
+            tillf = new Rectangle(tillf.X + 1, tillf.Y + 1, 13, 13);
+            if (we.Boll)
+            {
+                spriteBatch.Draw(onoff, tillf, Color.Green);
+            }
+            else
+            {
+                spriteBatch.Draw(onoff, tillf, Color.Red);
+            }
+            spriteBatch.Draw(pixel, hpbarbor, Color.White);
+            spriteBatch.Draw(pixel, hpbarbak, Color.Black);
+            spriteBatch.Draw(pixel, hpbar, Color.Red);
+            spriteBatch.Draw(heart, healthheart, Color.White);
 
 
-            spriteBatch.Draw(player, play.Pos, Color.White);
             spriteBatch.Draw(mustex, mus.Pos, Color.White);
             spriteBatch.End();
 

@@ -27,7 +27,7 @@ namespace Game1
             set { speed = value; }
             get { return speed; }
         }
-        public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, Siffra xauto, Siffra yauto, Siffra xautoscd, Siffra yautoscd, Siffra xautohcd, Siffra yautoncd, Siffra xautovcd, Siffra yautoucd)
+        public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, Siffra xauto, Siffra yauto, Siffra xautoscd, Siffra yautoscd, Siffra xautohcd, Siffra yautoncd, Siffra xautovcd, Siffra yautoucd, List<Ghost> ghosts)
         {
             bool icy = true;
             if (kstate.IsKeyDown(Keys.W))
@@ -36,13 +36,15 @@ namespace Game1
                 {
                     if (Kollisionskoll(l, pos.X, pos.Y - speed + i, ref icy))
                     {
-                        List<Block> tillflista = new List<Block>();
-                        foreach (Block r in l)
+                        foreach (Block b in l)
                         {
-                            Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y + speed - i, 100, 100), r.Färg, r.Plats, r.Map);
-                            tillflista.Add(tillfg);
+                            b.Poschangey(speed - i);
                         }
-                        l = tillflista;
+
+                        foreach(Ghost g in ghosts)
+                        {
+                            g.Poschange(g.Pos.X, g.Pos.Y + speed - i);
+                        }
                         break;
                     }
 
@@ -64,13 +66,14 @@ namespace Game1
                 {
                     if (Kollisionskoll(l, pos.X, pos.Y + speed - i, ref icy))
                     {
-                        List<Block> tillflista = new List<Block>();
-                        foreach (Block r in l)
+                        foreach (Block b in l)
                         {
-                            Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y - speed + i, 100, 100), r.Färg, r.Plats, r.Map);
-                            tillflista.Add(tillfg);
+                            b.Poschangey(- speed + i);
                         }
-                        l = tillflista;
+                        foreach (Ghost g in ghosts)
+                        {
+                            g.Poschange(g.Pos.X, g.Pos.Y - speed + i);
+                        }
                         break;
                     }
                 }
@@ -87,17 +90,18 @@ namespace Game1
             }
             if (kstate.IsKeyDown(Keys.A))
             {
-                for(int i = 0; i < speed; i++)
+                for (int i = 0; i < speed; i++)
                 {
-                    if(Kollisionskoll(l, pos.X - speed + i, pos.Y, ref icy))
+                    if (Kollisionskoll(l, pos.X - speed + i, pos.Y, ref icy))
                     {
-                        List<Block> tillflista = new List<Block>();
-                        foreach (Block r in l)
+                        foreach (Block b in l)
                         {
-                            Block tillfg = new Block(new Rectangle(r.Rek.X + speed - i, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
-                            tillflista.Add(tillfg);
+                            b.Poschangex(speed - i);
                         }
-                        l = tillflista;
+                        foreach (Ghost g in ghosts)
+                        {
+                            g.Poschange(g.Pos.X + speed - i, g.Pos.Y);
+                        }
                         break;
                     }
                 }
@@ -118,13 +122,14 @@ namespace Game1
                 {
                     if(Kollisionskoll(l, pos.X + speed - i, pos.Y, ref icy))
                     {
-                        List<Block> tillflista = new List<Block>();
-                        foreach (Block r in l)
+                        foreach (Block b in l)
                         {
-                            Block tillfg = new Block(new Rectangle(r.Rek.X - speed + i, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
-                            tillflista.Add(tillfg);
+                            b.Poschangex(- speed + i);
                         }
-                        l = tillflista;
+                        foreach (Ghost g in ghosts)
+                        {
+                            g.Poschange(g.Pos.X - speed + i, g.Pos.Y);
+                        }
                         break;
                     }
                 }
@@ -139,15 +144,16 @@ namespace Game1
                     xautohcd.Tal = 10;
                 }
             }
-            if (Kollisionskoll(l, pos.X - xauto.Tal + speed, pos.Y, ref icy) == true)
+            if (Kollisionskoll(l, pos.X - xauto.Tal, pos.Y, ref icy) == true)
             {
-                List<Block> tillflista = new List<Block>();
-                foreach (Block r in l)
+                foreach (Block b in l)
                 {
-                    Block tillfg = new Block(new Rectangle(r.Rek.X + xauto.Tal, r.Rek.Y, 100, 100), r.Färg, r.Plats, r.Map);
-                    tillflista.Add(tillfg);
+                    b.Poschangex(xauto.Tal);
                 }
-                l = tillflista;
+                foreach (Ghost g in ghosts)
+                {
+                    g.Poschange(g.Pos.X + xauto.Tal, g.Pos.Y);
+                }
 
             }
             else
@@ -156,13 +162,14 @@ namespace Game1
             }
             if (Kollisionskoll(l, pos.X, pos.Y - yauto.Tal, ref icy) == true)
             {
-                List<Block> tillflista = new List<Block>();
-                foreach (Block r in l)
+                foreach (Block b in l)
                 {
-                    Block tillfg = new Block(new Rectangle(r.Rek.X, r.Rek.Y + yauto.Tal, 100, 100), r.Färg, r.Plats, r.Map);
-                    tillflista.Add(tillfg);
+                    b.Poschangey(yauto.Tal);
                 }
-                l = tillflista;
+                foreach (Ghost g in ghosts)
+                {
+                    g.Poschange(g.Pos.X, g.Pos.Y + yauto.Tal);
+                }
             }
             else
             {
@@ -228,6 +235,13 @@ namespace Game1
                 Rectangle r = new Rectangle(x, y, 80, 40);
                 if (g.Rek.Intersects(r))
                 {
+                    if (g.Addontype != "None")
+                    {
+                        if (g.Addon.Intersects(r))
+                        {
+                            return false;
+                        }
+                    }
                     if (g.Färg == "Gray" || g.Färg == "Deepdeepblue" || g.Färg == "Lightgray" || g.Färg == "Lightcyan" || g.Färg == "Darkcyan")
                     {
                         return false;
