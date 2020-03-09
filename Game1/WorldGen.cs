@@ -19,18 +19,31 @@ namespace Game1
             {
                 for (int x = bredd / 2 - 5000; x < bredd / 2 + 5000; x += 100)
                 {
-                    int t = slump.Next(10);
-                    if (t == 9)
-                    {
-                        Block g = new Block(new Rectangle(x, y, 100, 100), "Gray", p);
-                        l.Add(g);
-                    }
-                    else
-                    {
-                        Block g = new Block(new Rectangle(x, y, 100, 100), "Green", p);
-                        l.Add(g);
-                    }
+                    Block g = new Block(new Rectangle(x, y, 100, 100), "Green", p);
+                    l.Add(g);
+
                     p++;
+                }
+            }
+            foreach(Block b in l)
+            {
+                if (slump.Next(100) == 0)
+                {
+                    b.Färg = "Temp";
+                    List<string> l1 = new List<string>();
+                    List<string> l2 = new List<string>();
+                    l1.Add("Green");
+                    l2.Add("Temp");
+                    List<int> ind = new List<int>();
+                    ind.Add(0);
+                    l = Biomegen(l, l1, l2, ind, 0, slump, 4, true, 3, 4);
+                    foreach(Block bb in l)
+                    {
+                        if (bb.Färg == "Temp")
+                        {
+                            bb.Färg = "Gray";
+                        }
+                    }
                 }
             }
             foreach(Block g in l)
@@ -44,63 +57,22 @@ namespace Game1
             int e;
             for(int i = 0; i < 2; i++)
             {
-                sx = slump.Next(100);
-                sy = slump.Next(100);
-                int sjö = 1;
-                List<int> helasjön = new List<int>();
-                l[sy * 100 + sx].Färg = "Blue";
-                while (sjö <= 200)
-                {
-                    foreach (Block g in l)
-                    {
-                        if (g.Färg == "Blue")
-                        {
-                            helasjön.Add(g.Plats);
-                        }
-                    }
-                    foreach (int ee in helasjön)
-                    {
-                        if (ee >= 0)
-                        {
-                            int tx = ee % 100;
-                            int ty = (ee - tx) / 100;
-                            for (int o = 0; o < 4; o++)
-                            {
-                                int dir = slump.Next(4);
-                                if (dir != 0)
-                                {
-                                    if (o == 0 && tx < 99)
-                                    {
-                                        tx++;
-                                    }
-                                    else if (o == 1 && tx > 0)
-                                    {
-                                        tx--;
-                                    }
-                                    else if (o == 2 && ty < 99)
-                                    {
-                                        ty++;
-                                    }
-                                    else if (o == 3 && ty > 0)
-                                    {
-                                        ty--;
-                                    }
-                                    if (l[ty * 100 + tx].Färg != "Blue")
-                                    {
-                                        l[ty * 100 + tx].Färg = "Blue";
-                                        sjö++;
-                                    }
-
-                                }
-
-                            }
-                        }
-
-                    }
-
-
-                }
-                l[sy * 100 + sx].Färg = "River";
+                int temp = slump.Next(10000);
+                sy = temp / 100;
+                sx = temp % 100;
+                l[temp].Färg = "Blue";
+                List<string> l1 = new List<string>();
+                List<string> l2 = new List<string>();
+                List<int> ind = new List<int>();
+                l1.Add("Green");
+                l1.Add("Gray");
+                l1.Add("Temp");
+                l2.Add("Blue");
+                ind.Add(0);
+                ind.Add(0);
+                ind.Add(0);
+                l = Biomegen(l, l1, l2, ind, 200, slump, 4, false, 3, 0);
+                l[temp].Färg = "River";
                 int d;
                 if (sy < 50 && sx < 50)
                 {
@@ -159,7 +131,7 @@ namespace Game1
                     }
                     l[sy * 100 + sx].Färg = "River";
                 }
-                int[] helafloden = new int[10000];
+                int[] helafloden = new int[1000];
                 int ugggh = 0;
                 foreach (int ee in helafloden)
                 {
@@ -207,7 +179,6 @@ namespace Game1
                                     if (l[ty * 100 + tx].Färg == "Gray" || l[ty * 100 + tx].Färg == "Green")
                                     {
                                         l[ty * 100 + tx].Färg = "River";
-                                        sjö++;
                                     }
 
                                 }
@@ -645,5 +616,84 @@ namespace Game1
             }
             return l;
         }
+        private List<Block> Biomegen(List<Block> l, List<string> omvandlasfrån, List<string> omvandlastill, List<int> index, int storlek, Random slump, int spridchans, bool sep, int minspridchans, int antal)
+        {
+            int g = 0;
+            List<int> wholebiome = new List<int>();
+            int old;
+            while ((wholebiome.Count < storlek && sep == false) || (sep && g < antal))
+            {
+                g++;
+                wholebiome.Clear();
+                foreach (Block b in l)
+                {
+                    foreach (string s in omvandlastill)
+                    {
+                        if (b.Färg == s)
+                        {
+                            wholebiome.Add(b.Plats);
+                            break;
+                        }
+                    }
+                }
+                old = wholebiome.Count;
+                foreach (int e in wholebiome)
+                {
+                    int tx = e % 100;
+                    int ty = (e - tx) / 100;
+                    if (tx < 99 && slump.Next(spridchans) >= minspridchans)
+                    {
+                        for (int i = 0; i < omvandlasfrån.Count; i++)
+                        {
+                            if (l[e + 1].Färg == omvandlasfrån[i])
+                            {
+                                l[e + 1].Färg = omvandlastill[index[i]];
+                                break;
+                            }
+                        }
+                    }
+                    if (tx > 0 && slump.Next(spridchans) >= minspridchans)
+                    {
+                        for (int i = 0; i < omvandlasfrån.Count; i++)
+                        {
+                            if (l[e - 1].Färg == omvandlasfrån[i])
+                            {
+                                l[e - 1].Färg = omvandlastill[index[i]];
+                                break;
+                            }
+                        }
+                    }
+                    if (ty < 99 && slump.Next(spridchans) >= minspridchans)
+                    {
+                        for (int i = 0; i < omvandlasfrån.Count; i++)
+                        {
+                            if (l[e + 100].Färg == omvandlasfrån[i])
+                            {
+                                l[e + 100].Färg = omvandlastill[index[i]];
+                                break;
+                            }
+                        }
+                    }
+                    if (ty > 0 && slump.Next(spridchans) >= minspridchans)
+                    {
+                        for (int i = 0; i < omvandlasfrån.Count; i++)
+                        {
+                            if (l[e - 100].Färg == omvandlasfrån[i])
+                            {
+                                l[e - 100].Färg = omvandlastill[index[i]];
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (old + 5 > wholebiome.Count && g > 1000)
+                {
+                    break;
+                }
+            }
+            return l;
+            
+        }
+
     }
 }

@@ -171,6 +171,12 @@ namespace Game1
                     {
 
                         b.Färg = tillf[b.Plats].Färg;
+                        b.Addontype = tillf[b.Plats].Addontype;
+                        int x;
+                        int y;
+                        x = tillf[b.Plats].Rek.X - tillf[b.Plats].Addon.X;
+                        y = tillf[b.Plats].Rek.Y - tillf[b.Plats].Addon.Y;
+                        b.Addon = new Rectangle(b.Rek.X - x, b.Rek.Y - y, tillf[b.Plats].Addon.Width, tillf[b.Plats].Addon.Height);
                         if (b.Rek.Intersects(play.Pos))
                         {
                             if (b.Färg == "Gray")
