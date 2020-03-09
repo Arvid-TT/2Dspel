@@ -9,19 +9,19 @@ namespace Game1
 {
     class WorldGen
     {
-        Rectangle block;
 
         public List<Block> Generate(int höjd, int bredd, Random slump)
         {
             List<Block> l = new List<Block>();
+            List<string> l1 = new List<string>();
+            List<string> l2 = new List<string>();
+            List<int> ind = new List<int>();
             int p = 0;
             for (int y = höjd / 2 - 5000; y < höjd / 2 + 5000; y += 100)
             {
                 for (int x = bredd / 2 - 5000; x < bredd / 2 + 5000; x += 100)
                 {
-                    Block g = new Block(new Rectangle(x, y, 100, 100), "Green", p);
-                    l.Add(g);
-
+                    l.Add(new Block(new Rectangle(x, y, 100, 100), "Green", p));
                     p++;
                 }
             }
@@ -30,11 +30,11 @@ namespace Game1
                 if (slump.Next(100) == 0)
                 {
                     b.Färg = "Temp";
-                    List<string> l1 = new List<string>();
-                    List<string> l2 = new List<string>();
+                    l1.Clear();
+                    l2.Clear();
                     l1.Add("Green");
                     l2.Add("Temp");
-                    List<int> ind = new List<int>();
+                    ind.Clear();
                     ind.Add(0);
                     l = Biomegen(l, l1, l2, ind, 0, slump, 4, true, 3, 4);
                     foreach(Block bb in l)
@@ -46,24 +46,23 @@ namespace Game1
                     }
                 }
             }
-            foreach(Block g in l)
+            foreach(Block b in l)
             {
-                int tx = g.Plats % 100;
-                int ty = (g.Plats - tx) / 100;
-                g.Map = new Rectangle(bredd + tx - 100, ty, 1, 1);
+                int tx = b.Plats % 100;
+                int ty = (b.Plats - tx) / 100;
+                b.Map = new Rectangle(bredd + tx - 100, ty, 1, 1);
             }
             int sx;
             int sy;
-            int e;
             for(int i = 0; i < 2; i++)
             {
                 int temp = slump.Next(10000);
                 sy = temp / 100;
                 sx = temp % 100;
                 l[temp].Färg = "Blue";
-                List<string> l1 = new List<string>();
-                List<string> l2 = new List<string>();
-                List<int> ind = new List<int>();
+                l1.Clear();
+                l2.Clear();
+                ind.Clear();
                 l1.Add("Green");
                 l1.Add("Gray");
                 l1.Add("Temp");
@@ -131,30 +130,22 @@ namespace Game1
                     }
                     l[sy * 100 + sx].Färg = "River";
                 }
-                int[] helafloden = new int[1000];
-                int ugggh = 0;
-                foreach (int ee in helafloden)
-                {
-                    helafloden[ugggh] = -1;
-                    ugggh++;
-                }
+                List<int> helafloden = new List<int>();
                 for (int ii = 0; ii < 3; ii++)
                 {
-                    int k = 0;
-                    foreach (Block g in l)
+                    foreach (Block b in l)
                     {
-                        if (g.Färg == "River")
+                        if (b.Färg == "River")
                         {
-                            helafloden[k] = g.Plats;
-                            k++;
+                            helafloden.Add(b.Plats);
                         }
                     }
-                    foreach (int ee in helafloden)
+                    foreach (int e in helafloden)
                     {
-                        if (ee >= 0)
+                        if (e >= 0)
                         {
-                            int tx = ee % 100;
-                            int ty = (ee - tx) / 100;
+                            int tx = e % 100;
+                            int ty = (e - tx) / 100;
                             for (int o = 0; o < 4; o++)
                             {
                                 int dir = slump.Next(4);
@@ -368,138 +359,36 @@ namespace Game1
                 }
 
             }
-            int[] helastranden = new int[10000];
-            int oooo = 0;
-            foreach (int ee in helastranden)
-            {
-                helastranden[oooo] = -1;
-                oooo++;
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                oooo = 0;
-                foreach (Block g in l)
-                {
-                    if (g.Färg == "Yellow")
-                    {
-                        helastranden[oooo] = g.Plats;
-                        oooo++;
-                    }
-                }
-                foreach (int ee in helastranden)
-                {
-                    if (ee >= 0)
-                    {
-                        if (ee % 100 > 0)
-                        {
-                            int r = slump.Next(10);
-                            if (l[ee - 1].Färg == "Green" && r == 0)
-                            {
-                                l[ee - 1].Färg = "Yellow";
-                            }
-
-                        }
-                        if (ee % 100 < 99)
-                        {
-                            int r = slump.Next(10);
-                            if (l[ee + 1].Färg == "Green" && r == 0)
-                            {
-                                l[ee + 1].Färg = "Yellow";
-                            }
-                        }
-                        if ((ee - (ee % 100)) / 100 < 99)
-                        {
-                            int r = slump.Next(10);
-                            if (l[ee + 100].Färg == "Green" && r == 0)
-                            {
-                                l[ee + 100].Färg = "Yellow";
-                            }
-                        }
-                        if ((ee - (ee % 100)) / 100 > 0)
-                        {
-                            int r = slump.Next(10);
-                            if (l[ee - 100].Färg == "Green" && r == 0)
-                            {
-                                l[ee - 100].Färg = "Yellow";
-                            }
-                        }
-
-                    }
-
-                }
-            }
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add("Green");
+            l2.Add("Yellow");
+            ind.Add(0);
+            l = Biomegen(l, l1, l2, ind, 0, slump, 7, true, 5, 3);
+            //Snöbiomegenerering//
             sx = slump.Next(100);
             sy = slump.Next(100);
-            int snö = 1;
-            int[] helasnön = new int[1000];
-            e = 0;
-            foreach (int i in helasnön)
-            {
-                helasnön[e] = -1;
-                e++;
-            }
             l[sy * 100 + sx].Färg = "White";
-            while (snö <= 1000)
-            {
-                int k = 0;
-                foreach (Block g in l)
-                {
-                    if (g.Färg == "White" || g.Färg == "Lightblue")
-                    {
-                        helasnön[k] = g.Plats;
-                        k++;
-                    }
-                }
-                foreach (int i in helasnön)
-                {
-                    if (i >= 0)
-                    {
-                        int tx = i % 100;
-                        int ty = (i - tx) / 100;
-                        for (int o = 0; o < 4; o++)
-                        {
-                            int dir = slump.Next(4);
-                            if (dir != 0)
-                            {
-                                if (o == 0 && tx < 99)
-                                {
-                                    tx++;
-                                }
-                                else if (o == 1 && tx > 0)
-                                {
-                                    tx--;
-                                }
-                                else if (o == 2 && ty < 99)
-                                {
-                                    ty++;
-                                }
-                                else if (o == 3 && ty > 0)
-                                {
-                                    ty--;
-                                }
-                                if (l[ty * 100 + tx].Färg == "Yellow" || l[ty * 100 + tx].Färg == "Green")
-                                {
-                                    l[ty * 100 + tx].Färg = "White";
-                                    snö++;
-                                }
-                                else if (l[ty * 100 + tx].Färg == "Blue" || l[ty * 100 + tx].Färg == "Deepblue" || l[ty * 100 + tx].Färg == "Deepdeepblue")
-                                {
-                                    l[ty * 100 + tx].Färg = "Lightblue";
-                                    snö++;
-                                }
-                                else if (l[ty * 100 + tx].Färg == "Gray")
-                                {
-                                    l[ty * 100 + tx].Färg = "Lightgray";
-                                    snö++;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-            }
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add("Green");
+            l1.Add("Yellow");
+            l1.Add("Gray");
+            l1.Add("Blue");
+            l1.Add("Deepblue");
+            l1.Add("Deepdeepblue");
+            l2.Add("White");
+            l2.Add("Lightgray");
+            l2.Add("Lightblue");
+            ind.Add(0);
+            ind.Add(0);
+            ind.Add(1);
+            ind.Add(2);
+            ind.Add(2);
+            ind.Add(2);
+            l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
             foreach(Block b in l)
             {
                 if(b.Färg=="Lightgray" && slump.Next(2) == 0)
@@ -507,99 +396,32 @@ namespace Game1
                     b.Färg = "Lightcyan";
                 }
             }
+            //Skogsgenerering//
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add("Green");
+            l1.Add("Yellow");
+            l1.Add("Gray");
+            l1.Add("Blue");
+            l2.Add("Darkgreen");
+            l2.Add("Brown");
+            l2.Add("Darkcyan");
+            l2.Add("Cyan");
+            for(int i = 0; i < 4; i++)
+            {
+                ind.Add(i);
+            }
             while (true)
             {
-                sx = slump.Next(100);
-                sy = slump.Next(100);
-                if (l[sy * 100 + sx].Färg == "Green")
+                int k = slump.Next(10000);
+                if (l[k].Färg == "Green")
                 {
+                    l[k].Färg = "Darkgreen";
                     break;
                 }
             }
-
-            int skog = 1;
-            List<int> helaskogen = new List<int>();
-            int oldskog;
-            l[sy * 100 + sx].Färg = "Darkgreen";
-            while (skog <= 1000)
-            {
-                int kk = 0;
-                foreach (Block g in l)
-                {
-                    if (g.Färg == "Darkgreen" || g.Färg == "Brown" || g.Färg == "Cyan" || g.Färg == "Darkcyan")
-                    {
-                        helaskogen.Add(g.Plats);
-                    }
-                }
-                oldskog = skog;
-                foreach (int i in helaskogen)
-                {
-                    if (i >= 0)
-                    {
-                        int tx = i % 100;
-                        int ty = (i - tx) / 100;
-                        for (int o = 0; o < 4; o++)
-                        {
-                            int dir = slump.Next(4);
-                            if (dir != 0)
-                            {
-                                if (o == 0 && tx < 99)
-                                {
-                                    tx++;
-                                }
-                                else if (o == 1 && tx > 0)
-                                {
-                                    tx--;
-                                }
-                                else if (o == 2 && ty < 99)
-                                {
-                                    ty++;
-                                }
-                                else if (o == 3 && ty > 0)
-                                {
-                                    ty--;
-                                }
-                                if (l[ty * 100 + tx].Färg == "Green")
-                                {
-                                    l[ty * 100 + tx].Färg = "Darkgreen";
-                                    skog++;
-                                }
-                                else if (l[ty * 100 + tx].Färg == "Yellow")
-                                {
-                                    l[ty * 100 + tx].Färg = "Brown";
-                                    skog++;
-                                }
-                                else if (l[ty * 100 + tx].Färg == "Blue")
-                                {
-                                    l[ty * 100 + tx].Färg = "Cyan";
-                                    skog++;
-                                }
-                                else if (l[ty * 100 + tx].Färg == "Gray")
-                                {
-                                    l[ty * 100 + tx].Färg = "Darkcyan";
-                                    skog++;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-                if (oldskog == skog && skog > 5)
-                {
-                    while (true)
-                    {
-                        sx = slump.Next(100);
-                        sy = slump.Next(100);
-                        if (l[sy * 100 + sx].Färg == "Green")
-                        {
-                            l[sy * 100 + sx].Färg = "Darkgreen";
-                            break;
-                        }
-                    }
-                }
-
-            }
+            l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
             foreach (Block b in l)
             {
                 if (b.Färg == "Green" && slump.Next(10) == 0)
