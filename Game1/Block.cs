@@ -15,7 +15,9 @@ namespace Game1
         string färg;
         int plats;
         Rectangle addon;
-        List<Rectangle> addonext;
+        Rectangle[] addonext;
+        Texture2D[] addontex;
+        List<int> addonplaces;
         string addontype;
 
         public Block(Rectangle r, string f, int p)
@@ -24,7 +26,20 @@ namespace Game1
             färg = f;
             plats = p;
             addontype = "none";
-            addonext = new List<Rectangle>();
+            addonext = new Rectangle[4];
+            addontex = new Texture2D[4];
+            addonplaces = new List<int>();
+        }
+        public Block(Block b)
+        {
+            rek = b.Rek;
+            map = b.Map;
+            färg = b.färg;
+            plats = b.Plats;
+            addon = b.Addon;
+            addonext = b.Addonext;
+            addontype = b.Addontype;
+            addonplaces = new List<int>();
         }
         
         public string Färg
@@ -47,7 +62,7 @@ namespace Game1
             set { map = value; }
             get { return map; }
         }
-        public List<Rectangle> Addonext
+        public Rectangle[] Addonext
         {
             set { addonext = value; }
             get { return addonext; }
@@ -61,6 +76,16 @@ namespace Game1
         {
             set { addontype = value; }
             get { return addontype; }
+        }
+        public Texture2D[] Addontex
+        {
+            set { addontex = value; }
+            get { return addontex; }
+        }
+        public List<int> Addonplaces
+        {
+            set { addonplaces = value; }
+            get { return addonplaces; }
         }
         public void Draw(SpriteBatch spritebatch)
         {

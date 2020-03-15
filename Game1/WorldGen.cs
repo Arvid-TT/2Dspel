@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Game1
     class WorldGen
     {
 
-        public List<Block> Generate(int höjd, int bredd, Random slump)
+        public List<Block> Generate(int höjd, int bredd, Random slump, Texture2D[] treeparts)
         {
             List<Block> l = new List<Block>();
             List<string> l1 = new List<string>();
@@ -130,55 +131,14 @@ namespace Game1
                     }
                     l[sy * 100 + sx].Färg = "River";
                 }
-                List<int> helafloden = new List<int>();
-                for (int ii = 0; ii < 3; ii++)
-                {
-                    foreach (Block b in l)
-                    {
-                        if (b.Färg == "River")
-                        {
-                            helafloden.Add(b.Plats);
-                        }
-                    }
-                    foreach (int e in helafloden)
-                    {
-                        if (e >= 0)
-                        {
-                            int tx = e % 100;
-                            int ty = (e - tx) / 100;
-                            for (int o = 0; o < 4; o++)
-                            {
-                                int dir = slump.Next(4);
-                                if (dir <= 1)
-                                {
-                                    if (o == 0 && tx < 99)
-                                    {
-                                        tx++;
-                                    }
-                                    else if (o == 1 && tx > 0)
-                                    {
-                                        tx--;
-                                    }
-                                    else if (o == 2 && ty < 99)
-                                    {
-                                        ty++;
-                                    }
-                                    else if (o == 3 && ty > 0)
-                                    {
-                                        ty--;
-                                    }
-                                    if (l[ty * 100 + tx].Färg == "Gray" || l[ty * 100 + tx].Färg == "Green")
-                                    {
-                                        l[ty * 100 + tx].Färg = "River";
-                                    }
-
-                                }
-
-                            }
-                        }
-
-                    }
-                }
+                l1.Clear();
+                l2.Clear();
+                ind.Clear();
+                l1.Add("Green");
+                l2.Add("River");
+                ind.Add(0);
+                Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, 3);
+               
                 foreach (Block g in l)
                 {
                     if (g.Färg == "River")
@@ -209,7 +169,7 @@ namespace Game1
                     bool dpw = true;
                     if (g.Plats % 100 > 0)
                     {
-                        if (l[g.Plats - 1].Färg != "Blue" && l[g.Plats - 1].Färg != "Deepblue")
+                        if (l[g.Plats - 1].Färg == "Green")
                         {
                             dpw = false;
                         }
@@ -217,21 +177,21 @@ namespace Game1
                     }
                     if (g.Plats % 100 < 99)
                     {
-                        if (l[g.Plats + 1].Färg != "Blue" && l[g.Plats + 1].Färg != "Deepblue")
+                        if (l[g.Plats + 1].Färg == "Green")
                         {
                             dpw = false;
                         }
                     }
                     if ((g.Plats - (g.Plats % 100)) / 100 < 99)
                     {
-                        if (l[g.Plats + 100].Färg != "Blue" && l[g.Plats + 100].Färg != "Deepblue")
+                        if (l[g.Plats + 100].Färg == "Green")
                         {
                             dpw = false;
                         }
                     }
                     if ((g.Plats - (g.Plats % 100)) / 100 > 0)
                     {
-                        if (l[g.Plats - 100].Färg != "Blue" && l[g.Plats - 100].Färg != "Deepblue")
+                        if (l[g.Plats - 100].Färg == "Green")
                         {
                             dpw = false;
                         }
@@ -250,7 +210,7 @@ namespace Game1
                     bool dpw = true;
                     if (g.Plats % 100 > 0)
                     {
-                        if (l[g.Plats - 1].Färg != "Deepblue" && l[g.Plats - 1].Färg != "Deepdeepblue")
+                        if (l[g.Plats - 1].Färg == "Green" || l[g.Plats - 1].Färg == "Blue")
                         {
                             dpw = false;
                         }
@@ -258,21 +218,21 @@ namespace Game1
                     }
                     if (g.Plats % 100 < 99)
                     {
-                        if (l[g.Plats + 1].Färg != "Deepblue" && l[g.Plats + 1].Färg != "Deepdeepblue")
+                        if (l[g.Plats + 1].Färg == "Green" || l[g.Plats + 1].Färg == "Blue")
                         {
                             dpw = false;
                         }
                     }
                     if ((g.Plats - (g.Plats % 100)) / 100 < 99)
                     {
-                        if (l[g.Plats + 100].Färg != "Deepblue" && l[g.Plats + 100].Färg != "Deepdeepblue")
+                        if (l[g.Plats + 100].Färg == "Green" || l[g.Plats + 100].Färg == "Blue")
                         {
                             dpw = false;
                         }
                     }
                     if ((g.Plats - (g.Plats % 100)) / 100 > 0)
                     {
-                        if (l[g.Plats - 100].Färg != "Deepblue" && l[g.Plats - 100].Färg != "Deepdeepblue")
+                        if (l[g.Plats - 100].Färg == "Green" || l[g.Plats - 100].Färg == "Blue")
                         {
                             dpw = false;
                         }
@@ -434,6 +394,34 @@ namespace Game1
                 {
                     b.Addontype = "Tree";
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
+                }
+            }
+            foreach(Block b in l)
+            {
+                if (b.Addontype == "Tree")
+                {
+                    int x = b.Plats % 100;
+                    int y = b.Plats / 100;
+                    if (y > 0 && l[x + 100 * y - 100].Addontype == "Tree")
+                    {
+                        b.Addonplaces.Add(0);
+                        b.Addontex[0] = treeparts[0];
+                    }
+                    if (x < 99 && l[x + 100 * y + 1].Addontype == "Tree")
+                    {
+                        b.Addonplaces.Add(1);
+                        b.Addontex[1] = treeparts[1];
+                    }
+                    if (y < 99 && l[x + 100 * y + 100].Addontype == "Tree")
+                    {
+                        b.Addonplaces.Add(2);
+                        b.Addontex[2] = treeparts[2];
+                    }
+                    if (x > 0 && l[x + 100 * y - 1].Addontype == "Tree")
+                    {
+                        b.Addonplaces.Add(3);
+                        b.Addontex[3] = treeparts[3];
+                    }
                 }
             }
             return l;

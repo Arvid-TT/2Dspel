@@ -36,6 +36,7 @@ namespace Game1
         Texture2D dirt;
         Texture2D msnow;
         Texture2D mice;
+        Texture2D[] treeparts = new Texture2D[4];
         Texture2D fstone;
         Texture2D fwater;
         Texture2D mustex;
@@ -63,6 +64,7 @@ namespace Game1
         Siffra xautoscd = new Siffra(0);
         Siffra xautocd = new Siffra(0);
         Siffra yautocd = new Siffra(0);
+        Slot[] inventory = new Slot[20];
         Rectangle wetoggle;
         Player play;
         Rectangle weh;
@@ -128,6 +130,10 @@ namespace Game1
             onoff = Content.Load<Texture2D>("OnOff");
             heart = Content.Load<Texture2D>("Hjärta");
             tree = Content.Load<Texture2D>("Tree");
+            treeparts[0] = Content.Load<Texture2D>("Tree1");
+            treeparts[1] = Content.Load<Texture2D>("Tree2");
+            treeparts[2] = Content.Load<Texture2D>("Tree3");
+            treeparts[3] = Content.Load<Texture2D>("Tree4");
             // TODO: use this.Content to load your game content here
         }
 
@@ -161,17 +167,19 @@ namespace Game1
             {
                 if (l.Count==0)
                 {
-                    l = wg.Generate(f.Höjd, f.Bredd, rand);
+                    l = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
                 }
                 else
                 {
                     List<Block> tillf = new List<Block>();
-                    tillf = wg.Generate(f.Höjd, f.Bredd, rand);
+                    tillf = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
                     foreach(Block b in l)
                     {
 
                         b.Färg = tillf[b.Plats].Färg;
                         b.Addontype = tillf[b.Plats].Addontype;
+                        b.Addontex = tillf[b.Plats].Addontex;
+                        b.Addonplaces = tillf[b.Plats].Addonplaces;
                         int x;
                         int y;
                         x = tillf[b.Plats].Rek.X - tillf[b.Plats].Addon.X;
@@ -208,13 +216,18 @@ namespace Game1
                 wetoggle = new Rectangle(f.Bredd - 21, 100, 21, 21);
                 wef.Txt = "Green";
                 we.Boll = false;
-                lorg = l;
+                foreach(Block b in l)
+                {
+                    lorg.Add(new Block(b));
+                }
                 health = new Siffra(100);
                 hpbarbor = new Rectangle(f.Bredd - 320, 10, 210, 30);
                 hpbarbak = new Rectangle(f.Bredd - 315, 15, 200, 20);
                 hpbar = new Rectangle(f.Bredd - 315, 15, health.Tal * 2, 20);
                 healthheart = new Rectangle(f.Bredd - 330, 7, 30, 30);
                 ghosts.Clear();
+                inventory[0] = new Slot();
+                inventory[0].Inventory(inventory);
             }
 
             if (mstate.LeftButton == ButtonState.Pressed)
@@ -397,6 +410,11 @@ namespace Game1
                     {
                         spriteBatch.Draw(tree, b.Rek, Color.White);
                     }
+                    foreach(int e in b.Addonplaces)
+                    {
+                        Texture2D temp = b.Addontex[e];
+                        spriteBatch.Draw(temp, b.Rek, Color.White);
+                    }
                 }
             }
             foreach(Block gras in l)
@@ -548,6 +566,10 @@ namespace Game1
             else
             {
                 spriteBatch.Draw(onoff, tillf, Color.Red);
+            }
+            foreach(Slot s in inventory)
+            {
+                spriteBatch.Draw(pixel, s.Hitb, Color.Blue);
             }
             spriteBatch.Draw(pixel, hpbarbor, Color.White);
             spriteBatch.Draw(pixel, hpbarbak, Color.Black);
