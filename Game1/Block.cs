@@ -17,7 +17,7 @@ namespace Game1
         Rectangle addon;
         Rectangle[] addonext;
         Texture2D[] addontex;
-        List<int> addonplaces;
+        bool[] addontrue;
         string addontype;
 
         public Block(Rectangle r, string f, int p)
@@ -28,7 +28,7 @@ namespace Game1
             addontype = "none";
             addonext = new Rectangle[4];
             addontex = new Texture2D[4];
-            addonplaces = new List<int>();
+            addontrue = new bool[4];
         }
         public Block(Block b)
         {
@@ -39,7 +39,7 @@ namespace Game1
             addon = b.Addon;
             addonext = b.Addonext;
             addontype = b.Addontype;
-            addonplaces = new List<int>();
+            addontrue = new bool[4];
         }
         
         public string Färg
@@ -82,10 +82,10 @@ namespace Game1
             set { addontex = value; }
             get { return addontex; }
         }
-        public List<int> Addonplaces
+        public bool[] Addontrue
         {
-            set { addonplaces = value; }
-            get { return addonplaces; }
+            set { addontrue = value; }
+            get { return addontrue; }
         }
         public void Draw(SpriteBatch spritebatch)
         {

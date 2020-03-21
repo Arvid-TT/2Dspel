@@ -44,9 +44,13 @@ namespace Game1
         Texture2D onoff;
         Texture2D heart;
         Texture2D tree;
+        List<Item> itemlist = new List<Item>();
+        List<Texture2D> itemtextures = new List<Texture2D>();
         List<Worldedit> worldedit = new List<Worldedit>();
         List<Ghost> ghosts = new List<Ghost>();
         Mus mus;
+        Siffra activeslot = new Siffra(0);
+        Misc misc = new Misc();
         Rectangle hpbar;
         Rectangle hpbarbak;
         Rectangle hpbarbor;
@@ -74,6 +78,7 @@ namespace Game1
         WorldGen wg = new WorldGen();
         Bool b = new Bool(true);
         Bool we = new Bool(false);
+        Bool inv = new Bool(false);
         Random rand = new Random();
 
         public Game1()
@@ -134,6 +139,7 @@ namespace Game1
             treeparts[1] = Content.Load<Texture2D>("Tree2");
             treeparts[2] = Content.Load<Texture2D>("Tree3");
             treeparts[3] = Content.Load<Texture2D>("Tree4");
+            itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 2));
             // TODO: use this.Content to load your game content here
         }
 
@@ -179,7 +185,7 @@ namespace Game1
                         b.Färg = tillf[b.Plats].Färg;
                         b.Addontype = tillf[b.Plats].Addontype;
                         b.Addontex = tillf[b.Plats].Addontex;
-                        b.Addonplaces = tillf[b.Plats].Addonplaces;
+                        b.Addontrue = tillf[b.Plats].Addontrue;
                         int x;
                         int y;
                         x = tillf[b.Plats].Rek.X - tillf[b.Plats].Addon.X;
@@ -229,7 +235,7 @@ namespace Game1
                 inventory[0] = new Slot();
                 inventory[0].Inventory(inventory);
             }
-
+            activeslot = misc.Inventoryselect(activeslot, kstate);
             if (mstate.LeftButton == ButtonState.Pressed)
             {
                 if (mus.Hitb.Intersects(wetoggle))
@@ -249,7 +255,7 @@ namespace Game1
                 }
                 else if (we.Boll && mus.Hitb.Intersects(weh))
                 {
-                    foreach(Worldedit w in worldedit)
+                    foreach (Worldedit w in worldedit)
                     {
                         w.Active = false;
                         if (w.Bak.Intersects(mus.Hitb))
@@ -259,9 +265,33 @@ namespace Game1
                         }
                     }
                 }
-                else if ((mus.Hitb.X < f.Bredd - 100 || mus.Hitb.Y > 100) && we.Boll)
+                else if (mus.Hitb.X < 450 && ((inv.Boll && mus.Hitb.Y < 105) || (inv.Boll == false && mus.Hitb.Y < 50)))
+                {
+
+                }
+                else if (we.Boll == false)
                 {
                     foreach(Block b in l)
+                    {
+                        if(mus.Hitb.Intersects(b.Rek) && b.Addontype == "Tree")
+                        {
+                            b.Addontype = "none";
+                            wg.Addonextension(l, b.Plats);
+                            if (b.Plats % 100 < 99)
+                            {
+                                wg.Addonextension(l, b.Plats + 1);
+                            }
+                            if (b.Plats / 100 < 99)
+                            {
+                                wg.Addonextension(l, b.Plats + 100);
+                            }
+                            inventory[0].Inventoryadd(inventory, itemlist[0]);
+                        }
+                    }
+                }
+                else if ((mus.Hitb.X < f.Bredd - 100 || mus.Hitb.Y > 100) && we.Boll)
+                {
+                    foreach (Block b in l)
                     {
                         if (b.Rek.Intersects(mus.Hitb))
                         {
@@ -271,7 +301,7 @@ namespace Game1
                 }
                 else if (we.Boll)
                 {
-                    foreach(Block b in l)
+                    foreach (Block b in l)
                     {
                         if (b.Map.Intersects(mus.Pos))
                         {
@@ -285,11 +315,22 @@ namespace Game1
             {
                 b.Boll = true;
             }
-            if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyDown(Keys.OemPlus) == false)
+            if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
             {
                 foreach(Block b in l)
                 {
                     b.Färg = lorg[b.Plats].Färg;
+                }
+            }
+            if(kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
+            {
+                if (inv.Boll)
+                {
+                    inv.Boll = false;
+                }
+                else
+                {
+                    inv.Boll = true;
                 }
             }
             if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
@@ -410,10 +451,12 @@ namespace Game1
                     {
                         spriteBatch.Draw(tree, b.Rek, Color.White);
                     }
-                    foreach(int e in b.Addonplaces)
+                    for(int i = 0; i < 4; i++)
                     {
-                        Texture2D temp = b.Addontex[e];
-                        spriteBatch.Draw(temp, b.Rek, Color.White);
+                        if (b.Addontrue[i])
+                        {
+                            spriteBatch.Draw(b.Addontex[i], b.Rek, Color.White);
+                        }
                     }
                 }
             }
@@ -567,9 +610,33 @@ namespace Game1
             {
                 spriteBatch.Draw(onoff, tillf, Color.Red);
             }
-            foreach(Slot s in inventory)
+            for(int i = 0; i < 10; i++)
             {
-                spriteBatch.Draw(pixel, s.Hitb, Color.Blue);
+                if (i == activeslot.Tal)
+                {
+                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Yellow);
+                }
+                else
+                {
+                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
+                }
+                spriteBatch.Draw(pixel, inventory[i].Förg, Color.DarkBlue);
+                if (inventory[i].It.Id != -1)
+                {
+                    spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
+                }
+            }
+            if (inv.Boll)
+            {
+                for(int i = 10; i < 20; i++)
+                {
+                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
+                    spriteBatch.Draw(pixel, inventory[i].Förg, Color.DarkBlue);
+                    if (inventory[i].It.Id != -1)
+                    {
+                        spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
+                    }
+                }
             }
             spriteBatch.Draw(pixel, hpbarbor, Color.White);
             spriteBatch.Draw(pixel, hpbarbak, Color.Black);

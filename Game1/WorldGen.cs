@@ -388,41 +388,18 @@ namespace Game1
                 {
                     b.Addontype = "Tree";
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
-
+                    b.Addontex = treeparts;
                 }
                 if (b.Färg == "Darkgreen" && slump.Next(2) == 0)
                 {
                     b.Addontype = "Tree";
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
+                    b.Addontex = treeparts;
                 }
             }
             foreach(Block b in l)
             {
-                if (b.Addontype == "Tree")
-                {
-                    int x = b.Plats % 100;
-                    int y = b.Plats / 100;
-                    if (y > 0 && l[x + 100 * y - 100].Addontype == "Tree")
-                    {
-                        b.Addonplaces.Add(0);
-                        b.Addontex[0] = treeparts[0];
-                    }
-                    if (x < 99 && l[x + 100 * y + 1].Addontype == "Tree")
-                    {
-                        b.Addonplaces.Add(1);
-                        b.Addontex[1] = treeparts[1];
-                    }
-                    if (y < 99 && l[x + 100 * y + 100].Addontype == "Tree")
-                    {
-                        b.Addonplaces.Add(2);
-                        b.Addontex[2] = treeparts[2];
-                    }
-                    if (x > 0 && l[x + 100 * y - 1].Addontype == "Tree")
-                    {
-                        b.Addonplaces.Add(3);
-                        b.Addontex[3] = treeparts[3];
-                    }
-                }
+                l = Addonextension(l, b.Plats);
             }
             return l;
         }
@@ -503,6 +480,38 @@ namespace Game1
             }
             return l;
             
+        }
+        public List<Block> Addonextension(List<Block> l, int p)
+        {
+            if (p % 100 > 0)
+            {
+                if (l[p].Addontype == l[p - 1].Addontype)
+                {
+                    l[p - 1].Addontrue[1] = true;
+                    l[p].Addontrue[3] = true;
+                }
+                else
+                {
+                    l[p - 1].Addontrue[1] = false;
+                    l[p].Addontrue[3] = false;
+                }
+
+            }
+            if (p / 100 > 0)
+            {
+                if (l[p].Addontype == l[p - 100].Addontype)
+                {
+                    l[p - 100].Addontrue[2] = true;
+                    l[p].Addontrue[0] = true;
+                }
+                else
+                {
+                    l[p - 100].Addontrue[2] = false;
+                    l[p].Addontrue[0] = false;
+                }
+
+            }
+            return l;
         }
 
     }

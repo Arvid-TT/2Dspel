@@ -49,6 +49,7 @@
     <Compile Include="Ghost.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="Misc.cs" />
     <Compile Include="Mus.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

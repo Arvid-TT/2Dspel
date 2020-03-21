@@ -235,7 +235,7 @@ namespace Game1
                 Rectangle r = new Rectangle(x, y, 80, 40);
                 if (g.Rek.Intersects(r))
                 {
-                    if (g.Addontype != "None")
+                    if (g.Addontype != "none")
                     {
                         if (g.Addon.Intersects(r))
                         {
