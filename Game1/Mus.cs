@@ -11,6 +11,7 @@ namespace Game1
     {
         Rectangle pos;
         Rectangle hitb;
+        Slot slot;
         public Mus(Rectangle p, Rectangle h)
         {
             pos = p;
