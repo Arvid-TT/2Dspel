@@ -26,6 +26,14 @@ namespace Game1
             förg = new Rectangle(x + 3, y + 3, 34, 34);
             it = new Item();
         }
+        public Slot(bool c, int n, int x, int y, Item i)
+        {
+            contain = c;
+            numb = n;
+            hitb = new Rectangle(x, y, 40, 40);
+            förg = new Rectangle(x + 3, y + 3, 34, 34);
+            it = new Item(i.Id, i.Tex, i.Max);
+        }
         public bool Contain
         {
             set { contain = value; }
@@ -51,6 +59,14 @@ namespace Game1
             set { förg = value; }
             get { return förg; }
         }
+        public void Slotposchange(int x, int y)
+        {
+            hitb.X = x;
+            hitb.Y = y;
+            förg.X = x + 3;
+            förg.Y = y + 3;
+        }
+
         public void Inventory(Slot[] s)
         {
             for(int y = 0; y < 2; y++)
@@ -60,6 +76,33 @@ namespace Game1
                     s[y * 10 + x] = new Slot(false, 0, 5 + 45 * x, 10 + 50 * y);
                 }
             }
+        }
+        public void Contentexchange(ref Slot s1, ref Slot s2)
+        {
+            Slot s3 = new Slot(s1.Contain, s1.Numb, s1.Hitb.X, s1.Hitb.Y);
+            s3.It = s1.It;
+            s1 = new Slot(s2.Contain, s2.Numb, s1.Hitb.X, s1.Hitb.Y);
+            s1.It = s2.It;
+            s2 = new Slot(s3.Contain, s3.Numb, s2.Hitb.X, s2.Hitb.Y);
+            s2.It = s3.It;
+        }
+        public int Inventoryslotfind(Slot[] inv, Item item, int orgpos)
+        {
+            for(int i = 0; i < inv.Length; i++)
+            {
+                if(inv[i].It==item && i != orgpos && inv[i].Numb<item.Max)
+                {
+                    return i;
+                }
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                if (inv[i].It.Id == -1 && i < orgpos)
+                {
+                    return i;
+                }
+            }
+            return orgpos;
         }
         public void Inventoryadd(Slot[] inv, Item item)
         {

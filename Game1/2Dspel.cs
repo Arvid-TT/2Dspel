@@ -69,6 +69,7 @@ namespace Game1
         Siffra xautocd = new Siffra(0);
         Siffra yautocd = new Siffra(0);
         Slot[] inventory = new Slot[20];
+        Rectangle inventoryhitb;
         Rectangle wetoggle;
         Player play;
         Rectangle weh;
@@ -164,9 +165,7 @@ namespace Game1
 
             KeyboardState kstate = Keyboard.GetState();
             MouseState mstate = Mouse.GetState();
-            Rectangle p = new Rectangle(mstate.X - 10, mstate.Y - 10, 21, 21);
-            Rectangle h = new Rectangle(mstate.X, mstate.Y, 1, 1);
-            mus = new Mus(p, h);
+
 
             play = new Player(f.Bredd, f.Höjd);
             if (b.Boll == true)
@@ -234,8 +233,19 @@ namespace Game1
                 ghosts.Clear();
                 inventory[0] = new Slot();
                 inventory[0].Inventory(inventory);
+                mus = new Mus(mstate);
+                inventoryhitb = new Rectangle(0, 0, 450, 50);
             }
-            activeslot = misc.Inventoryselect(activeslot, kstate);
+            if (inv.Boll)
+            {
+                inventoryhitb.Height = 105;
+            }
+            else
+            {
+                inventoryhitb.Height = 50;
+            }
+            activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
+            mus.Musposchange(mstate.X, mstate.Y);
             if (mstate.LeftButton == ButtonState.Pressed)
             {
                 if (mus.Hitb.Intersects(wetoggle))
@@ -265,8 +275,66 @@ namespace Game1
                         }
                     }
                 }
-                else if (mus.Hitb.X < 450 && ((inv.Boll && mus.Hitb.Y < 105) || (inv.Boll == false && mus.Hitb.Y < 50)))
+                else if (mus.Hitb.Intersects(inventoryhitb))
                 {
+                    if (oldmus.LeftButton == ButtonState.Released)
+                    {
+                        for (int i = 0; i < inventory.Length; i++)
+                        {
+                            if (mus.Hitb.Intersects(inventory[i].Hitb))
+                            {
+                                if (kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.RightShift))
+                                {
+                                    while (true)
+                                    {
+                                        int a = inventory[i].Inventoryslotfind(inventory, inventory[i].It, i);
+                                        if (a == i)
+                                        {
+                                            break;
+                                        }
+                                        else if (inventory[a].It.Id == -1)
+                                        {
+                                            inventory[a].It = inventory[i].It;
+                                            inventory[a].Numb = inventory[i].Numb;
+                                            inventory[i].It = new Item();
+                                            inventory[i].Numb = 0;
+                                            break;
+                                        }
+                                        else if (inventory[a].Numb + inventory[i].Numb <= inventory[i].It.Max)
+                                        {
+                                            inventory[a].Numb = inventory[a].Numb + inventory[i].Numb;
+                                            inventory[i].It = new Item();
+                                            inventory[i].Numb = 0;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            int b = inventory[a].It.Max - inventory[a].Numb;
+                                            inventory[a].Numb = inventory[a].It.Max;
+                                            inventory[i].Numb -= b;
+                                        }
+                                    }
+
+                                }
+                                else if (mus.Sloot.It.Id != inventory[i].It.Id || inventory[i].It.Max == inventory[i].Numb || mus.Sloot.It.Max == mus.Sloot.Numb)
+                                {
+                                    mus.Sloot = mus.Mousecontentexchange(ref inventory[i], mus.Sloot);
+                                }
+                                else if (mus.Sloot.Numb + inventory[i].Numb <= mus.Sloot.It.Max)
+                                {
+                                    inventory[i].Numb += mus.Sloot.Numb;
+                                    mus.Sloot.It = new Item();
+                                    mus.Sloot.Numb = 0;
+                                }
+                                else
+                                {
+                                    int a = inventory[i].It.Max - inventory[i].Numb;
+                                    inventory[i].Numb = inventory[i].It.Max;
+                                    mus.Sloot.Numb -= a;
+                                }
+                            }
+                        }
+                    }
 
                 }
                 else if (we.Boll == false)
@@ -643,8 +711,14 @@ namespace Game1
             spriteBatch.Draw(pixel, hpbar, Color.Red);
             spriteBatch.Draw(heart, healthheart, Color.White);
 
-
-            spriteBatch.Draw(mustex, mus.Pos, Color.White);
+            if (mus.Sloot.It.Id == -1)
+            {
+                spriteBatch.Draw(mustex, mus.Pos, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(mus.Sloot.It.Tex, mus.Sloot.Hitb, Color.White);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
