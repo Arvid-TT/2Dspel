@@ -14,15 +14,15 @@ namespace Game1
         public List<Block> Generate(int höjd, int bredd, Random slump, Texture2D[] treeparts)
         {
             List<Block> l = new List<Block>();
-            List<string> l1 = new List<string>();
-            List<string> l2 = new List<string>();
+            List<int> l1 = new List<int>();
+            List<int> l2 = new List<int>();
             List<int> ind = new List<int>();
             int p = 0;
             for (int y = höjd / 2 - 5000; y < höjd / 2 + 5000; y += 100)
             {
                 for (int x = bredd / 2 - 5000; x < bredd / 2 + 5000; x += 100)
                 {
-                    l.Add(new Block(new Rectangle(x, y, 100, 100), "Green", p));
+                    l.Add(new Block(new Rectangle(x, y, 100, 100), 0, p));
                     p++;
                 }
             }
@@ -30,24 +30,18 @@ namespace Game1
             {
                 if (slump.Next(100) == 0)
                 {
-                    b.Färg = "Temp";
-                    l1.Clear();
-                    l2.Clear();
-                    l1.Add("Green");
-                    l2.Add("Temp");
-                    ind.Clear();
-                    ind.Add(0);
-                    l = Biomegen(l, l1, l2, ind, 0, slump, 4, true, 3, 4);
-                    foreach(Block bb in l)
-                    {
-                        if (bb.Färg == "Temp")
-                        {
-                            bb.Färg = "Gray";
-                        }
-                    }
+                    b.Id = 1;
                 }
+
             }
-            foreach(Block b in l)
+            l1.Clear();
+            l2.Clear();
+            l1.Add(0);
+            l2.Add(1);
+            ind.Clear();
+            ind.Add(0);
+            l = Biomegen(l, l1, l2, ind, 0, slump, 4, true, 3, 4);
+            foreach (Block b in l)
             {
                 int tx = b.Plats % 100;
                 int ty = (b.Plats - tx) / 100;
@@ -60,19 +54,19 @@ namespace Game1
                 int temp = slump.Next(10000);
                 sy = temp / 100;
                 sx = temp % 100;
-                l[temp].Färg = "Blue";
+                l[temp].Id = 3;
                 l1.Clear();
                 l2.Clear();
                 ind.Clear();
-                l1.Add("Green");
-                l1.Add("Gray");
-                l1.Add("Temp");
-                l2.Add("Blue");
+                l1.Add(0);
+                l1.Add(1);
+                l1.Add(-1);
+                l2.Add(3);
                 ind.Add(0);
                 ind.Add(0);
                 ind.Add(0);
                 l = Biomegen(l, l1, l2, ind, 200, slump, 4, false, 3, 0);
-                l[temp].Färg = "River";
+                l[temp].Id = -2;
                 int d;
                 if (sy < 50 && sx < 50)
                 {
@@ -129,191 +123,180 @@ namespace Game1
                             f = true;
                         }
                     }
-                    l[sy * 100 + sx].Färg = "River";
+                    l[sy * 100 + sx].Id = -2;
                 }
                 l1.Clear();
                 l2.Clear();
                 ind.Clear();
-                l1.Add("Green");
-                l2.Add("River");
+                l1.Add(0);
+                l2.Add(-2);
                 ind.Add(0);
                 Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, 3);
                
-                foreach (Block g in l)
+                foreach (Block b in l)
                 {
-                    if (g.Färg == "River")
+                    if (b.Id == -2 || b.Id == 3)
                     {
-                        g.Färg = "Blue";
-                    }
-                }
-                foreach(Block b in l)
-                {
-                    if (b.Färg == "Blue")
-                    {
-                        b.Färg = "Temp";
+                        b.Id = -1;
                     }
                 }
             }
             foreach(Block b in l)
             {
-                if (b.Färg == "Temp")
+                if (b.Id == -1)
                 {
-                    b.Färg = "Blue";
+                    b.Id = 3;
                 }
             }
-            foreach(Block g in l)
+            foreach(Block b in l)
             {
 
-                if (g.Färg == "Blue")
+                if (b.Id == 3)
                 {
                     bool dpw = true;
-                    if (g.Plats % 100 > 0)
+                    if (b.Plats % 100 > 0)
                     {
-                        if (l[g.Plats - 1].Färg == "Green")
+                        if (l[b.Plats - 1].Id == 0)
                         {
                             dpw = false;
                         }
 
                     }
-                    if (g.Plats % 100 < 99)
+                    if (b.Plats % 100 < 99)
                     {
-                        if (l[g.Plats + 1].Färg == "Green")
+                        if (l[b.Plats + 1].Id == 0)
                         {
                             dpw = false;
                         }
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 < 99)
+                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
                     {
-                        if (l[g.Plats + 100].Färg == "Green")
+                        if (l[b.Plats + 100].Id == 0)
                         {
                             dpw = false;
                         }
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 > 0)
+                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
                     {
-                        if (l[g.Plats - 100].Färg == "Green")
+                        if (l[b.Plats - 100].Id == 0)
                         {
                             dpw = false;
                         }
                     }
                     if (dpw)
                     {
-                        g.Färg = "Deepblue";
+                        b.Id = 4;
                     }
                 }
             }
-            foreach (Block g in l)
+            foreach (Block b in l)
             {
 
-                if (g.Färg == "Deepblue")
+                if (b.Id == 4)
                 {
                     bool dpw = true;
-                    if (g.Plats % 100 > 0)
+                    if (b.Plats % 100 > 0)
                     {
-                        if (l[g.Plats - 1].Färg == "Green" || l[g.Plats - 1].Färg == "Blue")
+                        if (l[b.Plats - 1].Id == 0 || l[b.Plats - 1].Id == 3)
                         {
                             dpw = false;
                         }
 
                     }
-                    if (g.Plats % 100 < 99)
+                    if (b.Plats % 100 < 99)
                     {
-                        if (l[g.Plats + 1].Färg == "Green" || l[g.Plats + 1].Färg == "Blue")
+                        if (l[b.Plats + 1].Id == 0 || l[b.Plats + 1].Id == 3)
                         {
                             dpw = false;
                         }
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 < 99)
+                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
                     {
-                        if (l[g.Plats + 100].Färg == "Green" || l[g.Plats + 100].Färg == "Blue")
+                        if (l[b.Plats + 100].Id == 0 || l[b.Plats + 100].Id == 3)
                         {
                             dpw = false;
                         }
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 > 0)
+                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
                     {
-                        if (l[g.Plats - 100].Färg == "Green" || l[g.Plats - 100].Färg == "Blue")
+                        if (l[b.Plats - 100].Id == 0 || l[b.Plats - 100].Id == 3)
                         {
                             dpw = false;
                         }
                     }
                     if (dpw)
                     {
-                        g.Färg = "Deepdeepblue";
+                        b.Id = 5;
                     }
                 }
             }
-            l[4949].Färg = "Green";
-            l[4950].Färg = "Green";
-            l[5049].Färg = "Green";
-            l[5050].Färg = "Green";
-            foreach(Block g in l)
+            foreach(Block b in l)
             {
-                if (g.Färg == "Green")
+                if (b.Id == 0)
                 {
                     bool aa = false;
                     bool ab = false;
                     bool ac = false;
                     bool ad = false;
-                    if (g.Plats % 100 > 0)
+                    if (b.Plats % 100 > 0)
                     {
-                        if (l[g.Plats - 1].Färg == "Blue")
+                        if (l[b.Plats - 1].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                         aa = true;
 
                     }
-                    if (g.Plats % 100 < 99)
+                    if (b.Plats % 100 < 99)
                     {
-                        if (l[g.Plats + 1].Färg == "Blue")
+                        if (l[b.Plats + 1].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                         ab = true;
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 < 99)
+                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
                     {
-                        if (l[g.Plats + 100].Färg == "Blue")
+                        if (l[b.Plats + 100].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                         ac = true;
                     }
-                    if ((g.Plats - (g.Plats % 100)) / 100 > 0)
+                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
                     {
-                        if (l[g.Plats - 100].Färg == "Blue")
+                        if (l[b.Plats - 100].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                         ad = true;
                     }
                     if (aa && ac)
                     {
-                        if (l[g.Plats + 99].Färg == "Blue")
+                        if (l[b.Plats + 99].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                     }
                     if (aa && ad)
                     {
-                        if (l[g.Plats - 101].Färg == "Blue")
+                        if (l[b.Plats - 101].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                     }
                     if (ab && ac)
                     {
-                        if (l[g.Plats + 101].Färg == "Blue")
+                        if (l[b.Plats + 101].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                     }
                     if (ab && ad)
                     {
-                        if (l[g.Plats - 99].Färg == "Blue")
+                        if (l[b.Plats - 99].Id == 3)
                         {
-                            g.Färg = "Yellow";
+                            b.Id = 2;
                         }
                     }
                 }
@@ -322,26 +305,26 @@ namespace Game1
             l1.Clear();
             l2.Clear();
             ind.Clear();
-            l1.Add("Green");
-            l2.Add("Yellow");
+            l1.Add(0);
+            l2.Add(2);
             ind.Add(0);
             l = Biomegen(l, l1, l2, ind, 0, slump, 7, true, 5, 3);
             //Snöbiomegenerering//
             sx = slump.Next(100);
             sy = slump.Next(100);
-            l[sy * 100 + sx].Färg = "White";
+            l[sy * 100 + sx].Id = 6;
             l1.Clear();
             l2.Clear();
             ind.Clear();
-            l1.Add("Green");
-            l1.Add("Yellow");
-            l1.Add("Gray");
-            l1.Add("Blue");
-            l1.Add("Deepblue");
-            l1.Add("Deepdeepblue");
-            l2.Add("White");
-            l2.Add("Lightgray");
-            l2.Add("Lightblue");
+            l1.Add(0);
+            l1.Add(2);
+            l1.Add(1);
+            l1.Add(3);
+            l1.Add(4);
+            l1.Add(5);
+            l2.Add(6);
+            l2.Add(8);
+            l2.Add(7);
             ind.Add(0);
             ind.Add(0);
             ind.Add(1);
@@ -351,23 +334,23 @@ namespace Game1
             l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
             foreach(Block b in l)
             {
-                if(b.Färg=="Lightgray" && slump.Next(2) == 0)
+                if(b.Id==8 && slump.Next(2) == 0)
                 {
-                    b.Färg = "Lightcyan";
+                    b.Id = 9;
                 }
             }
             //Skogsgenerering//
             l1.Clear();
             l2.Clear();
             ind.Clear();
-            l1.Add("Green");
-            l1.Add("Yellow");
-            l1.Add("Gray");
-            l1.Add("Blue");
-            l2.Add("Darkgreen");
-            l2.Add("Brown");
-            l2.Add("Darkcyan");
-            l2.Add("Cyan");
+            l1.Add(0);
+            l1.Add(2);
+            l1.Add(1);
+            l1.Add(3);
+            l2.Add(10);
+            l2.Add(11);
+            l2.Add(12);
+            l2.Add(13);
             for(int i = 0; i < 4; i++)
             {
                 ind.Add(i);
@@ -375,22 +358,22 @@ namespace Game1
             while (true)
             {
                 int k = slump.Next(10000);
-                if (l[k].Färg == "Green")
+                if (l[k].Id == 0)
                 {
-                    l[k].Färg = "Darkgreen";
+                    l[k].Id = 10;
                     break;
                 }
             }
             l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
             foreach (Block b in l)
             {
-                if (b.Färg == "Green" && slump.Next(10) == 0)
+                if (b.Id == 0 && slump.Next(10) == 0)
                 {
                     b.Addontype = "Tree";
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
                     b.Addontex = treeparts;
                 }
-                if (b.Färg == "Darkgreen" && slump.Next(2) == 0)
+                if (b.Id == 10 && slump.Next(2) == 0)
                 {
                     b.Addontype = "Tree";
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
@@ -403,7 +386,7 @@ namespace Game1
             }
             return l;
         }
-        private List<Block> Biomegen(List<Block> l, List<string> omvandlasfrån, List<string> omvandlastill, List<int> index, int storlek, Random slump, int spridchans, bool sep, int minspridchans, int antal)
+        private List<Block> Biomegen(List<Block> l, List<int> omvandlasfrån, List<int> omvandlastill, List<int> index, int storlek, Random slump, int spridchans, bool sep, int minspridchans, int antal)
         {
             int g = 0;
             List<int> wholebiome = new List<int>();
@@ -414,9 +397,9 @@ namespace Game1
                 wholebiome.Clear();
                 foreach (Block b in l)
                 {
-                    foreach (string s in omvandlastill)
+                    foreach (int s in omvandlastill)
                     {
-                        if (b.Färg == s)
+                        if (b.Id == s)
                         {
                             wholebiome.Add(b.Plats);
                             break;
@@ -432,9 +415,9 @@ namespace Game1
                     {
                         for (int i = 0; i < omvandlasfrån.Count; i++)
                         {
-                            if (l[e + 1].Färg == omvandlasfrån[i])
+                            if (l[e + 1].Id == omvandlasfrån[i])
                             {
-                                l[e + 1].Färg = omvandlastill[index[i]];
+                                l[e + 1].Id = omvandlastill[index[i]];
                                 break;
                             }
                         }
@@ -443,9 +426,9 @@ namespace Game1
                     {
                         for (int i = 0; i < omvandlasfrån.Count; i++)
                         {
-                            if (l[e - 1].Färg == omvandlasfrån[i])
+                            if (l[e - 1].Id == omvandlasfrån[i])
                             {
-                                l[e - 1].Färg = omvandlastill[index[i]];
+                                l[e - 1].Id = omvandlastill[index[i]];
                                 break;
                             }
                         }
@@ -454,9 +437,9 @@ namespace Game1
                     {
                         for (int i = 0; i < omvandlasfrån.Count; i++)
                         {
-                            if (l[e + 100].Färg == omvandlasfrån[i])
+                            if (l[e + 100].Id == omvandlasfrån[i])
                             {
-                                l[e + 100].Färg = omvandlastill[index[i]];
+                                l[e + 100].Id = omvandlastill[index[i]];
                                 break;
                             }
                         }
@@ -465,9 +448,9 @@ namespace Game1
                     {
                         for (int i = 0; i < omvandlasfrån.Count; i++)
                         {
-                            if (l[e - 100].Färg == omvandlasfrån[i])
+                            if (l[e - 100].Id == omvandlasfrån[i])
                             {
-                                l[e - 100].Färg = omvandlastill[index[i]];
+                                l[e - 100].Id = omvandlastill[index[i]];
                                 break;
                             }
                         }

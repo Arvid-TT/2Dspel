@@ -47,7 +47,6 @@
     <Compile Include="Fonster.cs" />
     <Compile Include="Block.cs" />
     <Compile Include="Ghost.cs" />
-    <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="Mus.cs" />

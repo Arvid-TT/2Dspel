@@ -15,6 +15,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         List<Block> l = new List<Block>();
         List<Block> lorg = new List<Block>();
+        
         Texture2D grass;
         Texture2D stone;
         Texture2D deepwater;
@@ -44,6 +45,7 @@ namespace Game1
         Texture2D onoff;
         Texture2D heart;
         Texture2D tree;
+        SpriteFont text;
         List<Item> itemlist = new List<Item>();
         List<Texture2D> itemtextures = new List<Texture2D>();
         List<Worldedit> worldedit = new List<Worldedit>();
@@ -73,7 +75,7 @@ namespace Game1
         Rectangle wetoggle;
         Player play;
         Rectangle weh;
-        Text wef = new Text("Green");
+        Siffra wef = new Siffra(0);
         List<Texture2D> allatex;
         Fonster f;
         WorldGen wg = new WorldGen();
@@ -140,7 +142,8 @@ namespace Game1
             treeparts[1] = Content.Load<Texture2D>("Tree2");
             treeparts[2] = Content.Load<Texture2D>("Tree3");
             treeparts[3] = Content.Load<Texture2D>("Tree4");
-            itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 2));
+            itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
+            text = Content.Load<SpriteFont>("Text");
             // TODO: use this.Content to load your game content here
         }
 
@@ -181,7 +184,7 @@ namespace Game1
                     foreach(Block b in l)
                     {
 
-                        b.Färg = tillf[b.Plats].Färg;
+                        b.Id = tillf[b.Plats].Id;
                         b.Addontype = tillf[b.Plats].Addontype;
                         b.Addontex = tillf[b.Plats].Addontex;
                         b.Addontrue = tillf[b.Plats].Addontrue;
@@ -192,34 +195,33 @@ namespace Game1
                         b.Addon = new Rectangle(b.Rek.X - x, b.Rek.Y - y, tillf[b.Plats].Addon.Width, tillf[b.Plats].Addon.Height);
                         if (b.Rek.Intersects(play.Pos))
                         {
-                            if (b.Färg == "Gray")
+                            if (b.Id == 1)
                             {
-                                b.Färg = "Green";
+                                b.Id = 0;
                             }
-                            else if (b.Färg == "Deepdeepblue")
+                            else if (b.Id == 5)
                             {
-                                b.Färg = "Yellow";
+                                b.Id = 2;
                             }
-                            else if (b.Färg == "Darkcyan")
+                            else if (b.Id == 12)
                             {
-                                b.Färg = "Darkgreen";
+                                b.Id = 10;
                             }
-                            else if (b.Färg == "Lightcyan" || b.Färg == "Lightgray")
+                            else if (b.Id == 9 || b.Id == 8)
                             {
-                                b.Färg = "White";
+                                b.Id = 6;
                             }
                         }
                     }
                 }
                 b.Boll = false;
-                int i;
-                for (i = 0; i < 12; i++)
+                for (int i = 0; i < 14; i++)
                 {
                     worldedit.Add(new Worldedit(i, f.Bredd - 21, 121 + i * 21));
                 }
-                weh = new Rectangle(f.Bredd - 21, 121, 21, i * 21);
+                weh = new Rectangle(f.Bredd - 21, 121, 21, worldedit.Count * 21);
                 wetoggle = new Rectangle(f.Bredd - 21, 100, 21, 21);
-                wef.Txt = "Green";
+                wef.Tal = 0;
                 we.Boll = false;
                 foreach(Block b in l)
                 {
@@ -271,7 +273,7 @@ namespace Game1
                         if (w.Bak.Intersects(mus.Hitb))
                         {
                             w.Active = true;
-                            wef.Txt = w.Färg;
+                            wef.Tal = w.Id;
                         }
                     }
                 }
@@ -363,7 +365,7 @@ namespace Game1
                     {
                         if (b.Rek.Intersects(mus.Hitb))
                         {
-                            b.Färg = wef.Txt;
+                            b.Id = wef.Tal;
                         }
                     }
                 }
@@ -373,7 +375,48 @@ namespace Game1
                     {
                         if (b.Map.Intersects(mus.Pos))
                         {
-                            b.Färg = wef.Txt;
+                            b.Id = wef.Tal;
+                        }
+                    }
+                }
+            }
+            if(mstate.RightButton == ButtonState.Pressed && oldmus.RightButton == ButtonState.Released && mstate.LeftButton == ButtonState.Released)
+            {
+                if (mus.Hitb.Intersects(inventoryhitb))
+                {
+                    for(int i = 0; i < 20; i++)
+                    {
+                        if (mus.Hitb.Intersects(inventory[i].Hitb))
+                        {
+                            if (mus.Sloot.It.Id == -1 && inventory[i].It.Id != -1)
+                            {
+                                mus.Sloot.It = inventory[i].It;
+                                mus.Sloot.Numb = inventory[i].Numb / 2;
+                                inventory[i].Numb -= mus.Sloot.Numb;
+                                if (mus.Sloot.Numb == 0)
+                                {
+                                    mus.Sloot.It = new Item();
+                                }
+                            }
+                            else if (mus.Sloot.It.Id == inventory[i].It.Id && mus.Sloot.It.Id != -1 && inventory[i].Numb < inventory[i].It.Max)
+                            {
+                                mus.Sloot.Numb--;
+                                inventory[i].Numb++;
+                                if (mus.Sloot.Numb == 0)
+                                {
+                                    mus.Sloot.It = new Item();
+                                }
+                            }
+                            else if (mus.Sloot.It.Id != -1 && inventory[i].It.Id == -1)
+                            {
+                                inventory[i].It = mus.Sloot.It;
+                                mus.Sloot.Numb--;
+                                inventory[i].Numb++;
+                                if (mus.Sloot.Numb == 0)
+                                {
+                                    mus.Sloot.It = new Item();
+                                }
+                            }
                         }
                     }
                 }
@@ -387,7 +430,7 @@ namespace Game1
             {
                 foreach(Block b in l)
                 {
-                    b.Färg = lorg[b.Plats].Färg;
+                    b.Id = lorg[b.Plats].Id;
                 }
             }
             if(kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
@@ -447,65 +490,65 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            foreach (Block gras in l)
+            foreach (Block b in l)
             {
-                if (gras.Rek.X > -100 && gras.Rek.X < f.Bredd + 10 && gras.Rek.Y > -100 && gras.Rek.Y < f.Höjd + 10)
+                if (b.Rek.X > -100 && b.Rek.X < f.Bredd + 10 && b.Rek.Y > -100 && b.Rek.Y < f.Höjd + 10)
                 {
-                    if (gras.Färg == "Green")
+                    if (b.Id == 0)
                     {
-                        spriteBatch.Draw(grass, gras.Rek, Color.White);
+                        spriteBatch.Draw(grass, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Gray")
+                    else if (b.Id == 1)
                     {
-                        spriteBatch.Draw(stone, gras.Rek, Color.White);
+                        spriteBatch.Draw(stone, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Blue")
+                    else if (b.Id == 3)
                     {
-                        spriteBatch.Draw(water, gras.Rek, Color.White);
+                        spriteBatch.Draw(water, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Yellow")
+                    else if (b.Id == 2)
                     {
-                        spriteBatch.Draw(sand, gras.Rek, Color.White);
+                        spriteBatch.Draw(sand, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Deepblue")
+                    else if (b.Id == 4)
                     {
-                        spriteBatch.Draw(deepwater, gras.Rek, Color.White);
+                        spriteBatch.Draw(deepwater, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Deepdeepblue")
+                    else if (b.Id == 5)
                     {
-                        spriteBatch.Draw(deepdeepwater, gras.Rek, Color.White);
+                        spriteBatch.Draw(deepdeepwater, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "White")
+                    else if (b.Id == 6)
                     {
-                        spriteBatch.Draw(snow, gras.Rek, Color.White);
+                        spriteBatch.Draw(snow, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Lightblue")
+                    else if (b.Id == 7)
                     {
-                        spriteBatch.Draw(ice, gras.Rek, Color.White);
+                        spriteBatch.Draw(ice, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Lightgray")
+                    else if (b.Id == 8)
                     {
-                        spriteBatch.Draw(snowstone, gras.Rek, Color.White);
+                        spriteBatch.Draw(snowstone, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Lightcyan")
+                    else if (b.Id == 9)
                     {
-                        spriteBatch.Draw(icestone, gras.Rek, Color.White);
+                        spriteBatch.Draw(icestone, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Darkgreen")
+                    else if (b.Id == 10)
                     {
-                        spriteBatch.Draw(forestgrass, gras.Rek, Color.White);
+                        spriteBatch.Draw(forestgrass, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Brown")
+                    else if (b.Id == 11)
                     {
-                        spriteBatch.Draw(dirt, gras.Rek, Color.White);
+                        spriteBatch.Draw(dirt, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Darkcyan")
+                    else if (b.Id == 12)
                     {
-                        spriteBatch.Draw(fstone, gras.Rek, Color.White);
+                        spriteBatch.Draw(fstone, b.Rek, Color.White);
                     }
-                    else if (gras.Färg == "Cyan")
+                    else if (b.Id == 13)
                     {
-                        spriteBatch.Draw(fwater, gras.Rek, Color.White);
+                        spriteBatch.Draw(fwater, b.Rek, Color.White);
                     }
                 }
 
@@ -528,63 +571,63 @@ namespace Game1
                     }
                 }
             }
-            foreach(Block gras in l)
+            foreach(Block b in l)
             {
-                if (gras.Färg == "Green")
+                if (b.Id == 0)
                 {
-                    spriteBatch.Draw(mgrass, gras.Map, Color.White);
+                    spriteBatch.Draw(mgrass, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Gray")
+                else if (b.Id == 1)
                 {
-                    spriteBatch.Draw(mstone, gras.Map, Color.White);
+                    spriteBatch.Draw(mstone, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Blue")
+                else if (b.Id == 3)
                 {
-                    spriteBatch.Draw(mwater, gras.Map, Color.White);
+                    spriteBatch.Draw(mwater, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Yellow")
+                else if (b.Id == 2)
                 {
-                    spriteBatch.Draw(msand, gras.Map, Color.White);
+                    spriteBatch.Draw(msand, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Deepblue")
+                else if (b.Id == 4)
                 {
-                    spriteBatch.Draw(mdeepwater, gras.Map, Color.White);
+                    spriteBatch.Draw(mdeepwater, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Deepdeepblue")
+                else if (b.Id == 5)
                 {
-                    spriteBatch.Draw(mdeepdeepwater, gras.Map, Color.White);
+                    spriteBatch.Draw(mdeepdeepwater, b.Map, Color.White);
                 }
-                else if (gras.Färg == "White")
+                else if (b.Id == 6)
                 {
-                    spriteBatch.Draw(snow, gras.Map, Color.White);
+                    spriteBatch.Draw(snow, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Lightblue")
+                else if (b.Id == 7)
                 {
-                    spriteBatch.Draw(ice, gras.Map, Color.White);
+                    spriteBatch.Draw(ice, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Lightgray")
+                else if (b.Id == 8)
                 {
-                    spriteBatch.Draw(snowstone, gras.Map, Color.White);
+                    spriteBatch.Draw(snowstone, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Lightcyan")
+                else if (b.Id == 9)
                 {
-                    spriteBatch.Draw(icestone, gras.Map, Color.White);
+                    spriteBatch.Draw(icestone, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Darkgreen")
+                else if (b.Id == 10)
                 {
-                    spriteBatch.Draw(forestgrass, gras.Map, Color.White);
+                    spriteBatch.Draw(forestgrass, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Brown")
+                else if (b.Id == 11)
                 {
-                    spriteBatch.Draw(dirt, gras.Map, Color.White);
+                    spriteBatch.Draw(dirt, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Darkcyan")
+                else if (b.Id == 12)
                 {
-                    spriteBatch.Draw(fstone, gras.Map, Color.White);
+                    spriteBatch.Draw(fstone, b.Map, Color.White);
                 }
-                else if (gras.Färg == "Cyan")
+                else if (b.Id == 13)
                 {
-                    spriteBatch.Draw(fwater, gras.Map, Color.White);
+                    spriteBatch.Draw(fwater, b.Map, Color.White);
                 }
             }
             foreach(Ghost g in ghosts)
@@ -608,59 +651,59 @@ namespace Game1
                     {
                         spriteBatch.Draw(pixel, w.Bak, Color.White);
                     }
-                    if (w.Färg == "Green")
+                    if (w.Id == 0)
                     {
                         spriteBatch.Draw(mgrass, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Gray")
+                    else if (w.Id == 1)
                     {
                         spriteBatch.Draw(mstone, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Blue")
+                    else if (w.Id == 3)
                     {
                         spriteBatch.Draw(mwater, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Yellow")
+                    else if (w.Id == 2)
                     {
                         spriteBatch.Draw(msand, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Deepblue")
+                    else if (w.Id == 4)
                     {
                         spriteBatch.Draw(mdeepwater, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Deepdeepblue")
+                    else if (w.Id == 5)
                     {
                         spriteBatch.Draw(mdeepdeepwater, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "White")
+                    else if (w.Id == 6)
                     {
                         spriteBatch.Draw(snow, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Lightblue")
+                    else if (w.Id == 7)
                     {
                         spriteBatch.Draw(ice, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Lightgray")
+                    else if (w.Id == 8)
                     {
                         spriteBatch.Draw(snowstone, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Lightcyan")
+                    else if (w.Id == 9)
                     {
                         spriteBatch.Draw(icestone, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Darkgreen")
+                    else if (w.Id == 10)
                     {
                         spriteBatch.Draw(forestgrass, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Brown")
+                    else if (w.Id == 11)
                     {
                         spriteBatch.Draw(dirt, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Darkcyan")
+                    else if (w.Id == 12)
                     {
                         spriteBatch.Draw(fstone, w.Förg, Color.White);
                     }
-                    else if (w.Färg == "Cyan")
+                    else if (w.Id == 13)
                     {
                         spriteBatch.Draw(fwater, w.Förg, Color.White);
                     }
@@ -692,6 +735,18 @@ namespace Game1
                 if (inventory[i].It.Id != -1)
                 {
                     spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
+                    if (inventory[i].Numb < 10)
+                    {
+                        spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                    }
+                }
+                if (i != 9)
+                {
+                    spriteBatch.DrawString(text, Convert.ToString(i + 1), new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
                 }
             }
             if (inv.Boll)
@@ -703,6 +758,14 @@ namespace Game1
                     if (inventory[i].It.Id != -1)
                     {
                         spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
+                        if (inventory[i].Numb < 10)
+                        {
+                            spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                        }
                     }
                 }
             }
@@ -718,6 +781,14 @@ namespace Game1
             else
             {
                 spriteBatch.Draw(mus.Sloot.It.Tex, mus.Sloot.Hitb, Color.White);
+                if (mus.Sloot.Numb < 10)
+                {
+                    spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                }
+                else
+                {
+                    spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                }
             }
             spriteBatch.End();
 

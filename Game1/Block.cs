@@ -12,18 +12,33 @@ namespace Game1
     {
         Rectangle rek;
         Rectangle map;
-        string färg;
+        int id;
         int plats;
         Rectangle addon;
         Rectangle[] addonext;
         Texture2D[] addontex;
         bool[] addontrue;
         string addontype;
-
-        public Block(Rectangle r, string f, int p)
+        //Item id meaning:
+        //>0 = temp
+        //0 = Grass
+        //1 = Stone
+        //2 = Sand
+        //3 = Shallow Water
+        //4 = Water
+        //5 = Deep Water
+        //6 = Snow
+        //7 = Ice
+        //8 = Snowstone
+        //9 = Icestone
+        //10 = Forest Ground
+        //11 = Dirt
+        //12 = Forest water
+        //13 = Mossy Stone
+        public Block(Rectangle r, int i, int p)
         {
             rek = r;
-            färg = f;
+            id = i;
             plats = p;
             addontype = "none";
             addonext = new Rectangle[4];
@@ -34,7 +49,7 @@ namespace Game1
         {
             rek = b.Rek;
             map = b.Map;
-            färg = b.färg;
+            id = b.Id;
             plats = b.Plats;
             addon = b.Addon;
             addonext = b.Addonext;
@@ -42,10 +57,10 @@ namespace Game1
             addontrue = new bool[4];
         }
         
-        public string Färg
+        public int Id
         {
-            set { färg = value; }
-            get { return färg; }
+            set { id = value; }
+            get { return id; }
         }
         public Rectangle Rek
         {

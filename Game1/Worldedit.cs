@@ -13,65 +13,13 @@ namespace Game1
         Rectangle bak;
         Rectangle förg;
         bool active;
-        string färg;
+        int id;
         public Worldedit(int i, int x, int y)
         {
             active = false;
             förg = new Rectangle(x + 3, y + 3, 15, 15);
             bak = new Rectangle(x, y, 21, 21);
-            if(i == 0)
-            {
-                färg = "Green";
-                active = true;
-            }
-            else if(i == 1)
-            {
-                färg = "Gray";
-            }
-            else if (i == 2)
-            {
-                färg = "Yellow";
-            }
-            else if (i == 3)
-            {
-                färg = "Blue";
-            }
-            else if (i == 4)
-            {
-                färg = "Deepblue";
-            }
-            else if (i == 5)
-            {
-                färg = "Deepdeepblue";
-            }
-            else if (i == 6)
-            {
-                färg = "White";
-            }
-            else if (i == 7)
-            {
-                färg = "Lightblue";
-            }
-            else if (i == 8)
-            {
-                färg = "Lightgray";
-            }
-            else if (i == 9)
-            {
-                färg = "Lightcyan";
-            }
-            else if (i == 10)
-            {
-                färg = "Darkgreen";
-            }
-            else if (i == 11)
-            {
-                färg = "Brown";
-            }
-            else if (i == 1)
-            {
-                färg = "Cyan";
-            }
+            id = i;
         }
         public Rectangle Bak
         {
@@ -88,10 +36,10 @@ namespace Game1
             set { active = value; }
             get { return active; }
         }
-        public string Färg
+        public int Id
         {
-            set { färg = value; }
-            get { return färg; }
+            set { id = value; }
+            get { return id; }
         }
     }
 }

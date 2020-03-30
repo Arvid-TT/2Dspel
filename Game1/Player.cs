@@ -226,39 +226,39 @@ namespace Game1
         }
         private bool Kollisionskoll(List<Block> l, int x, int y, ref bool ice)
         {
-            bool b = false;
+            bool bb = false;
             bool v = false;
             bool vv = false;
-            foreach (Block g in l)
+            foreach (Block b in l)
             {
 
                 Rectangle r = new Rectangle(x, y, 80, 40);
-                if (g.Rek.Intersects(r))
+                if (b.Rek.Intersects(r))
                 {
-                    if (g.Addontype != "none")
+                    if (b.Addontype != "none")
                     {
-                        if (g.Addon.Intersects(r))
+                        if (b.Addon.Intersects(r))
                         {
                             return false;
                         }
                     }
-                    if (g.Färg == "Gray" || g.Färg == "Deepdeepblue" || g.Färg == "Lightgray" || g.Färg == "Lightcyan" || g.Färg == "Darkcyan")
+                    if (b.Id == 1 || b.Id == 5 || b.Id == 8 || b.Id == 9 || b.Id == 12)
                     {
                         return false;
                     }
-                    else if (g.Färg == "Deepblue")
+                    else if (b.Id == 4)
                     {
                         vv = true;
                     }
-                    else if (g.Färg == "Blue" || g.Färg == "Lightblue" || g.Färg == "Cyan")
+                    else if (b.Id == 3 || b.Id == 7 || b.Id == 13)
                     {
                         v = true;
                     }
-                    if (g.Färg != "Deepblue")
+                    if (b.Id != 4)
                     {
-                        b = true;
+                        bb = true;
                     }
-                    if(g.Färg != "Lightblue")
+                    if(b.Id != 7)
                     {
                         ice = false;
                     }
@@ -276,7 +276,7 @@ namespace Game1
             {
                 speed = 5;
             }
-            return b;
+            return bb;
         }
         private int Cooldown(int cd)
         {
