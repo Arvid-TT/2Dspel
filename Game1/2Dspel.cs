@@ -15,7 +15,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         List<Block> l = new List<Block>();
         List<Block> lorg = new List<Block>();
-        
+        List<Texture2D> blocktextures = new List<Texture2D>();
         Texture2D grass;
         Texture2D stone;
         Texture2D deepwater;
@@ -112,22 +112,24 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            grass = Content.Load<Texture2D>("Grass");
-            stone = Content.Load<Texture2D>("Stone");
-            deepwater = Content.Load<Texture2D>("Water");
+            blocktextures.Add(Content.Load<Texture2D>("Grass"));
+            blocktextures.Add(Content.Load<Texture2D>("Stone"));
+
             player = Content.Load<Texture2D>("Player");
-            sand = Content.Load<Texture2D>("Sand");
-            water = Content.Load<Texture2D>("Sky");
-            deepdeepwater = Content.Load<Texture2D>("Deepf-ingwater");
-            snow = Content.Load<Texture2D>("Snow");
-            ice = Content.Load<Texture2D>("Ice");
-            snowstone = Content.Load<Texture2D>("Snowstone");
-            icestone = Content.Load<Texture2D>("Icestone");
-            forestgrass = Content.Load<Texture2D>("Forest");
-            dirt = Content.Load<Texture2D>("Dirt");
+            blocktextures.Add(Content.Load<Texture2D>("Sand"));
+
+            blocktextures.Add(Content.Load<Texture2D>("Sky"));
+            blocktextures.Add(Content.Load<Texture2D>("Water"));
+            blocktextures.Add(Content.Load<Texture2D>("Deepf-ingwater"));
+            blocktextures.Add(Content.Load<Texture2D>("Snow"));
+            blocktextures.Add(Content.Load<Texture2D>("Ice"));
+            blocktextures.Add(Content.Load<Texture2D>("Snowstone"));
+            blocktextures.Add(Content.Load<Texture2D>("Icestone"));
+            blocktextures.Add(Content.Load<Texture2D>("Forest"));
+            blocktextures.Add(Content.Load<Texture2D>("Dirt"));
             mustex = Content.Load<Texture2D>("Mus");
-            fstone = Content.Load<Texture2D>("Foreststone");
-            fwater = Content.Load<Texture2D>("Forestwater");
+            blocktextures.Add(Content.Load<Texture2D>("Foreststone"));
+            blocktextures.Add(Content.Load<Texture2D>("Forestwater"));
             mgrass = Content.Load<Texture2D>("mGrass");
             mstone = Content.Load<Texture2D>("mStone");
             mdeepwater = Content.Load<Texture2D>("mWater");
@@ -492,65 +494,7 @@ namespace Game1
             spriteBatch.Begin();
             foreach (Block b in l)
             {
-                if (b.Rek.X > -100 && b.Rek.X < f.Bredd + 10 && b.Rek.Y > -100 && b.Rek.Y < f.Höjd + 10)
-                {
-                    if (b.Id == 0)
-                    {
-                        spriteBatch.Draw(grass, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 1)
-                    {
-                        spriteBatch.Draw(stone, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 3)
-                    {
-                        spriteBatch.Draw(water, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 2)
-                    {
-                        spriteBatch.Draw(sand, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 4)
-                    {
-                        spriteBatch.Draw(deepwater, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 5)
-                    {
-                        spriteBatch.Draw(deepdeepwater, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 6)
-                    {
-                        spriteBatch.Draw(snow, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 7)
-                    {
-                        spriteBatch.Draw(ice, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 8)
-                    {
-                        spriteBatch.Draw(snowstone, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 9)
-                    {
-                        spriteBatch.Draw(icestone, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 10)
-                    {
-                        spriteBatch.Draw(forestgrass, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 11)
-                    {
-                        spriteBatch.Draw(dirt, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 12)
-                    {
-                        spriteBatch.Draw(fstone, b.Rek, Color.White);
-                    }
-                    else if (b.Id == 13)
-                    {
-                        spriteBatch.Draw(fwater, b.Rek, Color.White);
-                    }
-                }
+                spriteBatch.Draw(blocktextures[b.Id], b.Rek, Color.White);
 
             }
             spriteBatch.Draw(player, play.Pos, Color.White);
@@ -573,62 +517,7 @@ namespace Game1
             }
             foreach(Block b in l)
             {
-                if (b.Id == 0)
-                {
-                    spriteBatch.Draw(mgrass, b.Map, Color.White);
-                }
-                else if (b.Id == 1)
-                {
-                    spriteBatch.Draw(mstone, b.Map, Color.White);
-                }
-                else if (b.Id == 3)
-                {
-                    spriteBatch.Draw(mwater, b.Map, Color.White);
-                }
-                else if (b.Id == 2)
-                {
-                    spriteBatch.Draw(msand, b.Map, Color.White);
-                }
-                else if (b.Id == 4)
-                {
-                    spriteBatch.Draw(mdeepwater, b.Map, Color.White);
-                }
-                else if (b.Id == 5)
-                {
-                    spriteBatch.Draw(mdeepdeepwater, b.Map, Color.White);
-                }
-                else if (b.Id == 6)
-                {
-                    spriteBatch.Draw(snow, b.Map, Color.White);
-                }
-                else if (b.Id == 7)
-                {
-                    spriteBatch.Draw(ice, b.Map, Color.White);
-                }
-                else if (b.Id == 8)
-                {
-                    spriteBatch.Draw(snowstone, b.Map, Color.White);
-                }
-                else if (b.Id == 9)
-                {
-                    spriteBatch.Draw(icestone, b.Map, Color.White);
-                }
-                else if (b.Id == 10)
-                {
-                    spriteBatch.Draw(forestgrass, b.Map, Color.White);
-                }
-                else if (b.Id == 11)
-                {
-                    spriteBatch.Draw(dirt, b.Map, Color.White);
-                }
-                else if (b.Id == 12)
-                {
-                    spriteBatch.Draw(fstone, b.Map, Color.White);
-                }
-                else if (b.Id == 13)
-                {
-                    spriteBatch.Draw(fwater, b.Map, Color.White);
-                }
+                spriteBatch.Draw(blocktextures[b.Id], b.Map, Color.White);
             }
             foreach(Ghost g in ghosts)
             {
@@ -651,63 +540,7 @@ namespace Game1
                     {
                         spriteBatch.Draw(pixel, w.Bak, Color.White);
                     }
-                    if (w.Id == 0)
-                    {
-                        spriteBatch.Draw(mgrass, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 1)
-                    {
-                        spriteBatch.Draw(mstone, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 3)
-                    {
-                        spriteBatch.Draw(mwater, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 2)
-                    {
-                        spriteBatch.Draw(msand, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 4)
-                    {
-                        spriteBatch.Draw(mdeepwater, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 5)
-                    {
-                        spriteBatch.Draw(mdeepdeepwater, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 6)
-                    {
-                        spriteBatch.Draw(snow, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 7)
-                    {
-                        spriteBatch.Draw(ice, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 8)
-                    {
-                        spriteBatch.Draw(snowstone, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 9)
-                    {
-                        spriteBatch.Draw(icestone, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 10)
-                    {
-                        spriteBatch.Draw(forestgrass, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 11)
-                    {
-                        spriteBatch.Draw(dirt, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 12)
-                    {
-                        spriteBatch.Draw(fstone, w.Förg, Color.White);
-                    }
-                    else if (w.Id == 13)
-                    {
-                        spriteBatch.Draw(fwater, w.Förg, Color.White);
-                    }
-
+                    spriteBatch.Draw(blocktextures[w.Id], w.Förg, Color.White);
                 }
             }
             Rectangle tillf = new Rectangle(f.Bredd - 18, 103, 15, 15);

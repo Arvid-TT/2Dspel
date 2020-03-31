@@ -33,8 +33,9 @@ namespace Game1
         //9 = Icestone
         //10 = Forest Ground
         //11 = Dirt
-        //12 = Forest water
-        //13 = Mossy Stone
+        //12 = Mossy Stone
+        //13 = Forest water
+
         public Block(Rectangle r, int i, int p)
         {
             rek = r;

@@ -17,6 +17,7 @@ namespace Game1
             List<int> l1 = new List<int>();
             List<int> l2 = new List<int>();
             List<int> ind = new List<int>();
+            List<int> fillout = new List<int>();
             int p = 0;
             for (int y = höjd / 2 - 5000; y < höjd / 2 + 5000; y += 100)
             {
@@ -141,6 +142,7 @@ namespace Game1
                     }
                 }
             }
+
             foreach(Block b in l)
             {
                 if (b.Id == -1)
@@ -148,160 +150,19 @@ namespace Game1
                     b.Id = 3;
                 }
             }
-            foreach(Block b in l)
-            {
-
-                if (b.Id == 3)
-                {
-                    bool dpw = true;
-                    if (b.Plats % 100 > 0)
-                    {
-                        if (l[b.Plats - 1].Id == 0)
-                        {
-                            dpw = false;
-                        }
-
-                    }
-                    if (b.Plats % 100 < 99)
-                    {
-                        if (l[b.Plats + 1].Id == 0)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
-                    {
-                        if (l[b.Plats + 100].Id == 0)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
-                    {
-                        if (l[b.Plats - 100].Id == 0)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if (dpw)
-                    {
-                        b.Id = 4;
-                    }
-                }
-            }
-            foreach (Block b in l)
-            {
-
-                if (b.Id == 4)
-                {
-                    bool dpw = true;
-                    if (b.Plats % 100 > 0)
-                    {
-                        if (l[b.Plats - 1].Id == 0 || l[b.Plats - 1].Id == 3)
-                        {
-                            dpw = false;
-                        }
-
-                    }
-                    if (b.Plats % 100 < 99)
-                    {
-                        if (l[b.Plats + 1].Id == 0 || l[b.Plats + 1].Id == 3)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
-                    {
-                        if (l[b.Plats + 100].Id == 0 || l[b.Plats + 100].Id == 3)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
-                    {
-                        if (l[b.Plats - 100].Id == 0 || l[b.Plats - 100].Id == 3)
-                        {
-                            dpw = false;
-                        }
-                    }
-                    if (dpw)
-                    {
-                        b.Id = 5;
-                    }
-                }
-            }
-            foreach(Block b in l)
-            {
-                if (b.Id == 0)
-                {
-                    bool aa = false;
-                    bool ab = false;
-                    bool ac = false;
-                    bool ad = false;
-                    if (b.Plats % 100 > 0)
-                    {
-                        if (l[b.Plats - 1].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                        aa = true;
-
-                    }
-                    if (b.Plats % 100 < 99)
-                    {
-                        if (l[b.Plats + 1].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                        ab = true;
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 < 99)
-                    {
-                        if (l[b.Plats + 100].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                        ac = true;
-                    }
-                    if ((b.Plats - (b.Plats % 100)) / 100 > 0)
-                    {
-                        if (l[b.Plats - 100].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                        ad = true;
-                    }
-                    if (aa && ac)
-                    {
-                        if (l[b.Plats + 99].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                    }
-                    if (aa && ad)
-                    {
-                        if (l[b.Plats - 101].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                    }
-                    if (ab && ac)
-                    {
-                        if (l[b.Plats + 101].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                    }
-                    if (ab && ad)
-                    {
-                        if (l[b.Plats - 99].Id == 3)
-                        {
-                            b.Id = 2;
-                        }
-                    }
-                }
-
-            }
+            fillout.Add(1);
+            fillout.Add(3);
+            fillout.Add(4);
+            l = Surroundfill(l, fillout, 4, 3, false, 4);
+            fillout.Clear();
+            fillout.Add(1);
+            fillout.Add(4);
+            fillout.Add(5);
+            l = Surroundfill(l, fillout, 5, 4, false, 4);
+            fillout.Clear();
+            fillout.Add(3);
+            l = Surroundfill(l, fillout, 2, 0, true, 1);
+            
             l1.Clear();
             l2.Clear();
             ind.Clear();
@@ -463,6 +324,68 @@ namespace Game1
             }
             return l;
             
+        }
+        private List<Block> Surroundfill(List<Block> l, List<int> fillout, int id, int omvandlasfrån, bool corners, int req)
+        {
+
+            foreach(Block b in l)
+            {
+                int isittrue = 0;
+                if (b.Id == omvandlasfrån)
+                {
+                    if (b.Plats % 100 < 99)
+                    {
+                        isittrue += Surroundcheck(l[b.Plats + 1], fillout);
+                    }
+                    if (b.Plats % 100 > 0)
+                    {
+                        isittrue += Surroundcheck(l[b.Plats - 1], fillout);
+                    }
+                    if (b.Plats / 100 < 99)
+                    {
+                        isittrue += Surroundcheck(l[b.Plats + 100], fillout);
+                    }
+                    if (b.Plats / 100 > 0)
+                    {
+                        isittrue += Surroundcheck(l[b.Plats - 100], fillout);
+                    }
+                    if (corners)
+                    {
+                        if(b.Plats % 100 < 99 && b.Plats / 100 < 99)
+                        {
+                            isittrue += Surroundcheck(l[b.Plats + 101], fillout);
+                        }
+                        if (b.Plats % 100 < 99 && b.Plats / 100 > 0)
+                        {
+                            isittrue += Surroundcheck(l[b.Plats - 99], fillout);
+                        }
+                        if (b.Plats % 100 > 0 && b.Plats / 100 < 99)
+                        {
+                            isittrue += Surroundcheck(l[b.Plats + 99], fillout);
+                        }
+                        if (b.Plats % 100 > 0 && b.Plats / 100 > 0)
+                        {
+                            isittrue += Surroundcheck(l[b.Plats - 101], fillout);
+                        }
+                    }
+                    if (isittrue>=req)
+                    {
+                        b.Id = id;
+                    }
+                }
+            }
+            return l;
+        }
+        private int Surroundcheck(Block b, List<int> fillout)
+        {
+            foreach(int i in fillout)
+            {
+                if (b.Id == i)
+                {
+                    return 1;
+                }
+            }
+            return 0;
         }
         public List<Block> Addonextension(List<Block> l, int p)
         {
