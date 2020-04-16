@@ -16,6 +16,11 @@ namespace Game1
         List<Block> l = new List<Block>();
         List<Block> lorg = new List<Block>();
         List<Texture2D> blocktextures = new List<Texture2D>();
+        List<Menuchoice> huvudmeny = new List<Menuchoice>();
+        List<Menuchoice> worldmeny = new List<Menuchoice>();
+        List<Menuchoice> unclickablew = new List<Menuchoice>();
+        Menuchoice hmenytext;
+        Menuchoice wmenytext;
         Texture2D grass;
         Texture2D stone;
         Texture2D deepwater;
@@ -46,6 +51,9 @@ namespace Game1
         Texture2D heart;
         Texture2D tree;
         SpriteFont text;
+        SpriteFont menytext;
+        SpriteFont stortext;
+        SpriteFont mellantext;
         List<Item> itemlist = new List<Item>();
         List<Texture2D> itemtextures = new List<Texture2D>();
         List<Worldedit> worldedit = new List<Worldedit>();
@@ -79,9 +87,13 @@ namespace Game1
         List<Texture2D> allatex;
         Fonster f;
         WorldGen wg = new WorldGen();
-        Bool b = new Bool(true);
         Bool we = new Bool(false);
         Bool inv = new Bool(false);
+        Bool first = new Bool(true);
+        Bool meny = new Bool(true);
+        Bool hmeny = new Bool(true);
+        Bool normal = new Bool(false);
+        Bool wmeny = new Bool(false);
         Random rand = new Random();
 
         public Game1()
@@ -117,7 +129,7 @@ namespace Game1
 
             player = Content.Load<Texture2D>("Player");
             blocktextures.Add(Content.Load<Texture2D>("Sand"));
-
+            
             blocktextures.Add(Content.Load<Texture2D>("Sky"));
             blocktextures.Add(Content.Load<Texture2D>("Water"));
             blocktextures.Add(Content.Load<Texture2D>("Deepf-ingwater"));
@@ -146,6 +158,9 @@ namespace Game1
             treeparts[3] = Content.Load<Texture2D>("Tree4");
             itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
             text = Content.Load<SpriteFont>("Text");
+            menytext = Content.Load<SpriteFont>("Menytext");
+            stortext = Content.Load<SpriteFont>("Stortext");
+            mellantext = Content.Load<SpriteFont>("Mellanstor");
             // TODO: use this.Content to load your game content here
         }
 
@@ -173,50 +188,9 @@ namespace Game1
 
 
             play = new Player(f.Bredd, f.Höjd);
-            if (b.Boll == true)
+            if (first.Boll)
             {
-                if (l.Count==0)
-                {
-                    l = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
-                }
-                else
-                {
-                    List<Block> tillf = new List<Block>();
-                    tillf = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
-                    foreach(Block b in l)
-                    {
-
-                        b.Id = tillf[b.Plats].Id;
-                        b.Addontype = tillf[b.Plats].Addontype;
-                        b.Addontex = tillf[b.Plats].Addontex;
-                        b.Addontrue = tillf[b.Plats].Addontrue;
-                        int x;
-                        int y;
-                        x = tillf[b.Plats].Rek.X - tillf[b.Plats].Addon.X;
-                        y = tillf[b.Plats].Rek.Y - tillf[b.Plats].Addon.Y;
-                        b.Addon = new Rectangle(b.Rek.X - x, b.Rek.Y - y, tillf[b.Plats].Addon.Width, tillf[b.Plats].Addon.Height);
-                        if (b.Rek.Intersects(play.Pos))
-                        {
-                            if (b.Id == 1)
-                            {
-                                b.Id = 0;
-                            }
-                            else if (b.Id == 5)
-                            {
-                                b.Id = 2;
-                            }
-                            else if (b.Id == 12)
-                            {
-                                b.Id = 10;
-                            }
-                            else if (b.Id == 9 || b.Id == 8)
-                            {
-                                b.Id = 6;
-                            }
-                        }
-                    }
-                }
-                b.Boll = false;
+                first.Boll = false;
                 for (int i = 0; i < 14; i++)
                 {
                     worldedit.Add(new Worldedit(i, f.Bredd - 21, 121 + i * 21));
@@ -224,11 +198,6 @@ namespace Game1
                 weh = new Rectangle(f.Bredd - 21, 121, 21, worldedit.Count * 21);
                 wetoggle = new Rectangle(f.Bredd - 21, 100, 21, 21);
                 wef.Tal = 0;
-                we.Boll = false;
-                foreach(Block b in l)
-                {
-                    lorg.Add(new Block(b));
-                }
                 health = new Siffra(100);
                 hpbarbor = new Rectangle(f.Bredd - 320, 10, 210, 30);
                 hpbarbak = new Rectangle(f.Bredd - 315, 15, 200, 20);
@@ -239,242 +208,106 @@ namespace Game1
                 inventory[0].Inventory(inventory);
                 mus = new Mus(mstate);
                 inventoryhitb = new Rectangle(0, 0, 450, 50);
+                hmenytext = new Menuchoice(50, "Main Menu", stortext, f.Bredd / 2, false, 70, false, false);
+                hmenytext.Mainmenucreate(huvudmeny, menytext, f.Bredd / 2);
+                wmenytext = new Menuchoice(10, "Create custom world", menytext, f.Bredd / 2, false, 70, false, false);
+                wmenytext.Worldmenucreate(worldmeny, unclickablew, text, mellantext, f.Bredd / 2, wg);
             }
-            if (inv.Boll)
-            {
-                inventoryhitb.Height = 105;
-            }
-            else
-            {
-                inventoryhitb.Height = 50;
-            }
-            activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
             mus.Musposchange(mstate.X, mstate.Y);
-            if (mstate.LeftButton == ButtonState.Pressed)
+            if (meny.Boll)
             {
-                if (mus.Hitb.Intersects(wetoggle))
+                if (hmeny.Boll)
                 {
-                    if (oldmus.LeftButton == ButtonState.Released)
+                    foreach(Menuchoice m in huvudmeny)
                     {
-                        if (we.Boll == true)
+                        m.Active = false;
+                        if (mus.Hitb.Intersects(m.Hitb))
                         {
-                            we.Boll = false;
-                        }
-                        else if (we.Boll == false)
-                        {
-                            we.Boll = true;
+                            m.Active = true;
                         }
                     }
-
-                }
-                else if (we.Boll && mus.Hitb.Intersects(weh))
-                {
-                    foreach (Worldedit w in worldedit)
+                    if (mstate.LeftButton == ButtonState.Pressed)
                     {
-                        w.Active = false;
-                        if (w.Bak.Intersects(mus.Hitb))
-                        {
-                            w.Active = true;
-                            wef.Tal = w.Id;
-                        }
+                        mus.Huvudmenyklick(huvudmeny, meny, hmeny, normal, ref l, wg, rand, f, treeparts, wmeny);
                     }
                 }
-                else if (mus.Hitb.Intersects(inventoryhitb))
+                if (wmeny.Boll)
                 {
-                    if (oldmus.LeftButton == ButtonState.Released)
+                    foreach(Menuchoice m in worldmeny)
                     {
-                        for (int i = 0; i < inventory.Length; i++)
+                        m.Active = false;
+                        if (mus.Hitb.Intersects(m.Hitb))
                         {
-                            if (mus.Hitb.Intersects(inventory[i].Hitb))
-                            {
-                                if (kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.RightShift))
-                                {
-                                    while (true)
-                                    {
-                                        int a = inventory[i].Inventoryslotfind(inventory, inventory[i].It, i);
-                                        if (a == i)
-                                        {
-                                            break;
-                                        }
-                                        else if (inventory[a].It.Id == -1)
-                                        {
-                                            inventory[a].It = inventory[i].It;
-                                            inventory[a].Numb = inventory[i].Numb;
-                                            inventory[i].It = new Item();
-                                            inventory[i].Numb = 0;
-                                            break;
-                                        }
-                                        else if (inventory[a].Numb + inventory[i].Numb <= inventory[i].It.Max)
-                                        {
-                                            inventory[a].Numb = inventory[a].Numb + inventory[i].Numb;
-                                            inventory[i].It = new Item();
-                                            inventory[i].Numb = 0;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            int b = inventory[a].It.Max - inventory[a].Numb;
-                                            inventory[a].Numb = inventory[a].It.Max;
-                                            inventory[i].Numb -= b;
-                                        }
-                                    }
-
-                                }
-                                else if (mus.Sloot.It.Id != inventory[i].It.Id || inventory[i].It.Max == inventory[i].Numb || mus.Sloot.It.Max == mus.Sloot.Numb)
-                                {
-                                    mus.Sloot = mus.Mousecontentexchange(ref inventory[i], mus.Sloot);
-                                }
-                                else if (mus.Sloot.Numb + inventory[i].Numb <= mus.Sloot.It.Max)
-                                {
-                                    inventory[i].Numb += mus.Sloot.Numb;
-                                    mus.Sloot.It = new Item();
-                                    mus.Sloot.Numb = 0;
-                                }
-                                else
-                                {
-                                    int a = inventory[i].It.Max - inventory[i].Numb;
-                                    inventory[i].Numb = inventory[i].It.Max;
-                                    mus.Sloot.Numb -= a;
-                                }
-                            }
+                            m.Active = true;
                         }
                     }
-
-                }
-                else if (we.Boll == false)
-                {
-                    foreach(Block b in l)
+                    if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        if(mus.Hitb.Intersects(b.Rek) && b.Addontype == "Tree")
-                        {
-                            b.Addontype = "none";
-                            wg.Addonextension(l, b.Plats);
-                            if (b.Plats % 100 < 99)
-                            {
-                                wg.Addonextension(l, b.Plats + 1);
-                            }
-                            if (b.Plats / 100 < 99)
-                            {
-                                wg.Addonextension(l, b.Plats + 100);
-                            }
-                            inventory[0].Inventoryadd(inventory, itemlist[0]);
-                        }
-                    }
-                }
-                else if ((mus.Hitb.X < f.Bredd - 100 || mus.Hitb.Y > 100) && we.Boll)
-                {
-                    foreach (Block b in l)
-                    {
-                        if (b.Rek.Intersects(mus.Hitb))
-                        {
-                            b.Id = wef.Tal;
-                        }
-                    }
-                }
-                else if (we.Boll)
-                {
-                    foreach (Block b in l)
-                    {
-                        if (b.Map.Intersects(mus.Pos))
-                        {
-                            b.Id = wef.Tal;
-                        }
+                        mus.Worldmenyklick(worldmeny, unclickablew, ref l, wg, rand, treeparts, mus, mellantext, f);
                     }
                 }
             }
-            if(mstate.RightButton == ButtonState.Pressed && oldmus.RightButton == ButtonState.Released && mstate.LeftButton == ButtonState.Released)
+            if(normal.Boll)
             {
-                if (mus.Hitb.Intersects(inventoryhitb))
-                {
-                    for(int i = 0; i < 20; i++)
-                    {
-                        if (mus.Hitb.Intersects(inventory[i].Hitb))
-                        {
-                            if (mus.Sloot.It.Id == -1 && inventory[i].It.Id != -1)
-                            {
-                                mus.Sloot.It = inventory[i].It;
-                                mus.Sloot.Numb = inventory[i].Numb / 2;
-                                inventory[i].Numb -= mus.Sloot.Numb;
-                                if (mus.Sloot.Numb == 0)
-                                {
-                                    mus.Sloot.It = new Item();
-                                }
-                            }
-                            else if (mus.Sloot.It.Id == inventory[i].It.Id && mus.Sloot.It.Id != -1 && inventory[i].Numb < inventory[i].It.Max)
-                            {
-                                mus.Sloot.Numb--;
-                                inventory[i].Numb++;
-                                if (mus.Sloot.Numb == 0)
-                                {
-                                    mus.Sloot.It = new Item();
-                                }
-                            }
-                            else if (mus.Sloot.It.Id != -1 && inventory[i].It.Id == -1)
-                            {
-                                inventory[i].It = mus.Sloot.It;
-                                mus.Sloot.Numb--;
-                                inventory[i].Numb++;
-                                if (mus.Sloot.Numb == 0)
-                                {
-                                    mus.Sloot.It = new Item();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
-            if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
-            {
-                b.Boll = true;
-            }
-            if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
-            {
-                foreach(Block b in l)
-                {
-                    b.Id = lorg[b.Plats].Id;
-                }
-            }
-            if(kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
-            {
+               
                 if (inv.Boll)
                 {
-                    inv.Boll = false;
+                    inventoryhitb.Height = 105;
                 }
                 else
                 {
-                    inv.Boll = true;
+                    inventoryhitb.Height = 50;
                 }
-            }
-            if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
-            {
-                health.Tal--;
-            }
-            if (kstate.IsKeyDown(Keys.P) && health.Tal < 100)
-            {
-                health.Tal++;
-            }
-            if(kstate.IsKeyDown(Keys.L))
-            {
-                ghosts.Add(new Ghost(rand, l));
-            }
-            List<Ghost> tilfghosts = new List<Ghost>();
-            foreach(Ghost g in ghosts)
-            {
-                tilfghosts.Add(g);
+                activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-            }
-            ghosts = tilfghosts;
-            for(int i = 0; i < ghosts.Count; i++)
-            {
-                bool bo = ghosts[i].Update(play);
-                if (bo)
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist);
+                play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
+                if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
-                    ghosts.Remove(ghosts[i]);
-                    health.Tal -= 5;
+                    l = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
                 }
+                if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
+                {
+                    foreach (Block b in l)
+                    {
+                        b.Id = lorg[b.Plats].Id;
+                    }
+                }
+                if (kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
+                {
+                    if (inv.Boll)
+                    {
+                        inv.Boll = false;
+                    }
+                    else
+                    {
+                        inv.Boll = true;
+                    }
+                }
+                if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
+                {
+                    health.Tal--;
+                }
+                if (kstate.IsKeyDown(Keys.P) && health.Tal < 100)
+                {
+                    health.Tal++;
+                }
+                if (kstate.IsKeyDown(Keys.L))
+                {
+                    ghosts.Add(new Ghost(rand, l));
+                }
+                for (int i = 0; i < ghosts.Count; i++)
+                {
+                    bool bo = ghosts[i].Update(play);
+                    if (bo)
+                    {
+                        ghosts.Remove(ghosts[i]);
+                        health.Tal -= 5;
+                    }
+                }
+                hpbar.Width = health.Tal * 2;
             }
-            hpbar.Width = health.Tal * 2;
+            
             oldstate = kstate;
             oldmus = mstate;
             // TODO: Add your update logic here
@@ -492,101 +325,118 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            foreach (Block b in l)
+            if (meny.Boll)
             {
-                spriteBatch.Draw(blocktextures[b.Id], b.Rek, Color.White);
-
-            }
-            spriteBatch.Draw(player, play.Pos, Color.White);
-            foreach (Block b in l)
-            {
-                if (b.Addontype != "none")
+                if (hmeny.Boll)
                 {
-                    if (b.Addontype == "Tree")
+                    spriteBatch.DrawString(stortext, hmenytext.Text, hmenytext.Textlocation, Color.White);
+                    foreach(Menuchoice m in huvudmeny)
                     {
-                        spriteBatch.Draw(tree, b.Rek, Color.White);
-                    }
-                    for(int i = 0; i < 4; i++)
-                    {
-                        if (b.Addontrue[i])
+                        spriteBatch.DrawString(menytext, m.Text, m.Textlocation, Color.White);
+                        if (m.Active)
                         {
-                            spriteBatch.Draw(b.Addontex[i], b.Rek, Color.White);
+                            spriteBatch.DrawString(menytext, ">", m.Leftchoice, Color.White);
+                            spriteBatch.DrawString(menytext, "<", m.Rightchoice, Color.White);
                         }
                     }
                 }
-            }
-            foreach(Block b in l)
-            {
-                spriteBatch.Draw(blocktextures[b.Id], b.Map, Color.White);
-            }
-            foreach(Ghost g in ghosts)
-            {
-                spriteBatch.Draw(pixel, g.Pos, Color.Red);
-            }
-            if (we.Boll == false)
-            {
-                spriteBatch.Draw(pixel, wetoggle, Color.Red);
-            }
-            else if (we.Boll)
-            {
-                spriteBatch.Draw(pixel, wetoggle, Color.Green);
-                foreach (Worldedit w in worldedit)
+                if (wmeny.Boll)
                 {
-                    if (w.Active)
+                    spriteBatch.DrawString(menytext, wmenytext.Text, wmenytext.Textlocation, Color.White);
+                    foreach(Menuchoice m in unclickablew)
                     {
-                        spriteBatch.Draw(pixel, w.Bak, Color.Yellow);
+                        spriteBatch.DrawString(mellantext, m.Text, m.Textlocation, Color.White);
                     }
-                    else
+                    foreach(Menuchoice m in worldmeny)
                     {
-                        spriteBatch.Draw(pixel, w.Bak, Color.White);
+                        spriteBatch.DrawString(mellantext, m.Text, m.Textlocation, Color.White);
+                        if (m.Active)
+                        {
+                            spriteBatch.DrawString(mellantext, ">", m.Rightchoice, Color.White);
+                            spriteBatch.DrawString(mellantext, "<", m.Leftchoice, Color.White);
+                        }
                     }
-                    spriteBatch.Draw(blocktextures[w.Id], w.Förg, Color.White);
+                    foreach(Block b in l)
+                    {
+                        spriteBatch.Draw(blocktextures[b.Id], b.Map, Color.White);
+                    }
                 }
-            }
-            Rectangle tillf = new Rectangle(f.Bredd - 18, 103, 15, 15);
-            spriteBatch.Draw(pixel, tillf, Color.White);
-            tillf = new Rectangle(tillf.X + 1, tillf.Y + 1, 13, 13);
-            if (we.Boll)
-            {
-                spriteBatch.Draw(onoff, tillf, Color.Green);
+                spriteBatch.Draw(mustex, mus.Pos, Color.White);
             }
             else
             {
-                spriteBatch.Draw(onoff, tillf, Color.Red);
-            }
-            for(int i = 0; i < 10; i++)
-            {
-                if (i == activeslot.Tal)
+                foreach (Block b in l)
                 {
-                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Yellow);
+                    spriteBatch.Draw(blocktextures[b.Id], b.Rek, Color.White);
+
+                }
+                spriteBatch.Draw(player, play.Pos, Color.White);
+                foreach (Block b in l)
+                {
+                    if (b.Addontype != "none")
+                    {
+                        if (b.Addontype == "Tree")
+                        {
+                            spriteBatch.Draw(tree, b.Rek, Color.White);
+                        }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (b.Addontrue[i])
+                            {
+                                spriteBatch.Draw(b.Addontex[i], b.Rek, Color.White);
+                            }
+                        }
+                    }
+                }
+                foreach (Block b in l)
+                {
+                    spriteBatch.Draw(blocktextures[b.Id], b.Map, Color.White);
+                }
+                foreach (Ghost g in ghosts)
+                {
+                    spriteBatch.Draw(pixel, g.Pos, Color.Red);
+                }
+                if (we.Boll == false)
+                {
+                    spriteBatch.Draw(pixel, wetoggle, Color.Red);
+                }
+                else if (we.Boll)
+                {
+                    spriteBatch.Draw(pixel, wetoggle, Color.Green);
+                    foreach (Worldedit w in worldedit)
+                    {
+                        if (w.Active)
+                        {
+                            spriteBatch.Draw(pixel, w.Bak, Color.Yellow);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(pixel, w.Bak, Color.White);
+                        }
+                        spriteBatch.Draw(blocktextures[w.Id], w.Förg, Color.White);
+                    }
+                }
+                Rectangle tillf = new Rectangle(f.Bredd - 18, 103, 15, 15);
+                spriteBatch.Draw(pixel, tillf, Color.White);
+                tillf = new Rectangle(tillf.X + 1, tillf.Y + 1, 13, 13);
+                if (we.Boll)
+                {
+                    spriteBatch.Draw(onoff, tillf, Color.Green);
                 }
                 else
                 {
-                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
+                    spriteBatch.Draw(onoff, tillf, Color.Red);
                 }
-                spriteBatch.Draw(pixel, inventory[i].Förg, Color.DarkBlue);
-                if (inventory[i].It.Id != -1)
+                for (int i = 0; i < 10; i++)
                 {
-                    spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
-                    if (inventory[i].Numb < 10)
+                    if (i == activeslot.Tal)
                     {
-                        spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                        spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Yellow);
                     }
                     else
                     {
-                        spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                        spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
                     }
-                }
-                if (i != 9)
-                {
-                    spriteBatch.DrawString(text, Convert.ToString(i + 1), new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
-                }
-            }
-            if (inv.Boll)
-            {
-                for(int i = 10; i < 20; i++)
-                {
-                    spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
                     spriteBatch.Draw(pixel, inventory[i].Förg, Color.DarkBlue);
                     if (inventory[i].It.Id != -1)
                     {
@@ -600,29 +450,55 @@ namespace Game1
                             spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                         }
                     }
+                    if (i != 9)
+                    {
+                        spriteBatch.DrawString(text, Convert.ToString(i + 1), new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
+                    }
                 }
-            }
-            spriteBatch.Draw(pixel, hpbarbor, Color.White);
-            spriteBatch.Draw(pixel, hpbarbak, Color.Black);
-            spriteBatch.Draw(pixel, hpbar, Color.Red);
-            spriteBatch.Draw(heart, healthheart, Color.White);
-
-            if (mus.Sloot.It.Id == -1)
-            {
-                spriteBatch.Draw(mustex, mus.Pos, Color.White);
-            }
-            else
-            {
-                spriteBatch.Draw(mus.Sloot.It.Tex, mus.Sloot.Hitb, Color.White);
-                if (mus.Sloot.Numb < 10)
+                if (inv.Boll)
                 {
-                    spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                    for (int i = 10; i < 20; i++)
+                    {
+                        spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Blue);
+                        spriteBatch.Draw(pixel, inventory[i].Förg, Color.DarkBlue);
+                        if (inventory[i].It.Id != -1)
+                        {
+                            spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
+                            if (inventory[i].Numb < 10)
+                            {
+                                spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                            }
+                            else
+                            {
+                                spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
+                            }
+                        }
+                    }
+                }
+                spriteBatch.Draw(pixel, hpbarbor, Color.White);
+                spriteBatch.Draw(pixel, hpbarbak, Color.Black);
+                spriteBatch.Draw(pixel, hpbar, Color.Red);
+                spriteBatch.Draw(heart, healthheart, Color.White);
+
+                if (mus.Sloot.It.Id == -1)
+                {
+                    spriteBatch.Draw(mustex, mus.Pos, Color.White);
                 }
                 else
                 {
-                    spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                    spriteBatch.Draw(mus.Sloot.It.Tex, mus.Sloot.Hitb, Color.White);
+                    if (mus.Sloot.Numb < 10)
+                    {
+                        spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
+                    }
                 }
+                spriteBatch.DrawString(menytext, "Test", new Vector2(100, 100), Color.White);
             }
+
             spriteBatch.End();
 
             base.Draw(gameTime);

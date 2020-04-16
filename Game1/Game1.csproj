@@ -48,6 +48,7 @@
     <Compile Include="Block.cs" />
     <Compile Include="Ghost.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="Menuchoice.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="Mus.cs" />
     <Compile Include="Player.cs" />

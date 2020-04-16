@@ -123,10 +123,22 @@ namespace Game1
                 addon.Y += y;
             }
         }
+        public void Mapposchange(int x, int y)
+        {
+            map.X += x;
+            map.Y += y;
+        }
         public void Poschange(int x, int y)
         {
             rek.X = x;
             rek.Y = y;
+        }
+        public void Double()
+        {
+            map.Width *= 2;
+            map.Height *= 2;
+            map.X += plats % 100;
+            map.Y += plats / 100;
         }
     }
 }

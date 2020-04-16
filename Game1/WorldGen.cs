@@ -10,7 +10,72 @@ namespace Game1
 {
     class WorldGen
     {
-
+        int antalfloder;
+        int antalsjöar;
+        int havsstorlek;
+        int sjöstorlek;
+        int flodbredd;
+        int snöstorlek;
+        int skogsstorlek;
+        int antalsnöar;
+        int antalskogar;
+        public WorldGen()
+        {
+            antalsjöar = 2;
+            sjöstorlek = 200;
+            snöstorlek = 1000;
+            skogsstorlek = 1000;
+            havsstorlek = 1000;
+            antalfloder = 1;
+            flodbredd = 3;
+            antalsnöar = 1;
+            antalskogar = 1;
+        }
+        public int Antalfloder
+        {
+            set { antalfloder = value; }
+            get { return antalfloder; }
+        }
+        public int Antalsjöar
+        {
+            set { antalsjöar = value; }
+            get { return antalsjöar; }
+        }
+        public int Havsstorlek
+        {
+            set { havsstorlek = value; }
+            get { return havsstorlek; }
+        }
+        public int Sjöstorlek
+        {
+            set { sjöstorlek = value; }
+            get { return sjöstorlek; }
+        }
+        public int Flodbredd
+        {
+            set { flodbredd = value; }
+            get { return flodbredd; }
+        }
+        public int Snöstorlek
+        {
+            set { snöstorlek = value; }
+            get { return snöstorlek; }
+        }
+        public int Skogsstorlek
+        {
+            set { skogsstorlek = value; }
+            get { return skogsstorlek; }
+        }
+        public int Antalskogar
+        {
+            set { antalskogar = value; }
+            get { return antalskogar; }
+        }
+        public int Antalsnöar
+        {
+            set { antalsnöar = value; }
+            get { return antalsnöar; }
+        }
         public List<Block> Generate(int höjd, int bredd, Random slump, Texture2D[] treeparts)
         {
             List<Block> l = new List<Block>();
@@ -50,7 +115,7 @@ namespace Game1
             }
             int sx;
             int sy;
-            for(int i = 0; i < 2; i++)
+            for(int i = 0; i < antalsjöar; i++)
             {
                 int temp = slump.Next(10000);
                 sy = temp / 100;
@@ -66,7 +131,7 @@ namespace Game1
                 ind.Add(0);
                 ind.Add(0);
                 ind.Add(0);
-                l = Biomegen(l, l1, l2, ind, 200, slump, 4, false, 3, 0);
+                l = Biomegen(l, l1, l2, ind, sjöstorlek, slump, 4, false, 3, 0);
                 l[temp].Id = -2;
                 int d;
                 if (sy < 50 && sx < 50)
@@ -132,7 +197,7 @@ namespace Game1
                 l1.Add(0);
                 l2.Add(-2);
                 ind.Add(0);
-                Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, 3);
+                Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, flodbredd);
                
                 foreach (Block b in l)
                 {
@@ -192,7 +257,7 @@ namespace Game1
             ind.Add(2);
             ind.Add(2);
             ind.Add(2);
-            l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
+            l = Biomegen(l, l1, l2, ind, snöstorlek, slump, 4, false, 3, 0);
             foreach(Block b in l)
             {
                 if(b.Id==8 && slump.Next(2) == 0)
@@ -225,7 +290,7 @@ namespace Game1
                     break;
                 }
             }
-            l = Biomegen(l, l1, l2, ind, 1000, slump, 4, false, 3, 0);
+            l = Biomegen(l, l1, l2, ind, skogsstorlek, slump, 4, false, 3, 0);
             foreach (Block b in l)
             {
                 if (b.Id == 0 && slump.Next(10) == 0)

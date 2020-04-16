@@ -145,6 +145,20 @@
 /processorParam:TextureFormat=Color
 /build:mDeepf-ingwater.png
 
+#begin Mellanstor.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Mellanstor.spritefont
+
+#begin Menytext.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Menytext.spritefont
+
 #begin mGrass.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -312,6 +326,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Stone.png
+
+#begin Stortext.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Stortext.spritefont
 
 #begin Text.spritefont
 /importer:FontDescriptionImporter
