@@ -53,11 +53,11 @@ namespace Game1
             s2.It = s3.It;
             return s2;
         }
-        public void Huvudmenyklick(List<Menuchoice> m, Bool meny, Bool hmeny,Bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, Texture2D[] t, Bool wmeny)
+        public void Huvudmenyklick(List<Menuchoice> m, Bool meny, Bool hmeny,Bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, Bool wmeny)
         {
             if (m[0].Active)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, slump, t);
+                l = wg.Generate(f.Höjd, f.Bredd, slump);
                 meny.Boll = false;
                 hmeny.Boll = false;
                 normal.Boll = true;
@@ -66,16 +66,16 @@ namespace Game1
             {
                 hmeny.Boll = false;
                 wmeny.Boll = true;
-                l = wg.Generate(f.Höjd, f.Bredd, slump, t);
+                l = wg.Generate(f.Höjd, f.Bredd, slump);
                 foreach(Block b in l)
                 {
-                    b.Mapposchange(-f.Bredd / 4, 60);
+                    b.Mapposchange(-f.Bredd / 4, 100);
                     b.Double();
                 }
             }
             
         }
-        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, ref List<Block> l, WorldGen wg, Random slump, Texture2D[] t, Mus mus, SpriteFont sf, Fonster f)
+        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, Bool meny, Bool wmeny, Bool n, Bool hmeny)
         {
             bool b = false;
             
@@ -146,15 +146,15 @@ namespace Game1
             }
             else if (m[5].Active)
             {
-                if (mus.Hitb.X > m[5].Hitb.X + m[5].Hitb.Width / 2 && wg.Sjöstorlek <= 9500)
+                if (mus.Hitb.X > m[5].Hitb.X + m[5].Hitb.Width / 2 && wg.Sjöstorlek <= 1900)
                 {
-                    wg.Sjöstorlek += 500;
+                    wg.Sjöstorlek += 100;
                 }
-                else if (mus.Hitb.X < m[5].Hitb.X + m[5].Hitb.Width / 2 && wg.Sjöstorlek >= 500)
+                else if (mus.Hitb.X < m[5].Hitb.X + m[5].Hitb.Width / 2 && wg.Sjöstorlek >= 100)
                 {
-                    wg.Sjöstorlek -= 500;
+                    wg.Sjöstorlek -= 100;
                 }
-                m[5] = new Menuchoice(m[5].Hitb.Y, Convert.ToString(wg.Flodbredd), sf, m[5].Hitb.X + m[5].Hitb.Width / 2, true, m[5].Hitb.Height, true, true);
+                m[5] = new Menuchoice(m[5].Hitb.Y, Convert.ToString(wg.Sjöstorlek), sf, m[5].Hitb.X + m[5].Hitb.Width / 2, true, m[5].Hitb.Height, true, true);
                 b = true;
             }
             else if (m[6].Active)
@@ -197,12 +197,31 @@ namespace Game1
                 m[8] = new Menuchoice(m[8].Hitb.Y, Convert.ToString(wg.Snöstorlek), sf, m[8].Hitb.X + m[8].Hitb.Width / 2, true, m[8].Hitb.Height, true, true);
                 b = true;
             }
+            else if (c[0].Active)
+            {
+                b = true;
+            }
+            else if (c[1].Active)
+            {
+                l = wg.Generate(f.Höjd, f.Bredd, slump);
+                meny.Boll = false;
+                wmeny.Boll = false;
+                n.Boll = true;
+                return;
+            }
+            else if (c[2].Active)
+            {
+                wmeny.Boll = false;
+                hmeny.Boll = true;
+
+                wg = new WorldGen();
+            }
             if (b)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, slump, t);
+                l = wg.Generate(f.Höjd, f.Bredd, slump);
                 foreach (Block bb in l)
                 {
-                    bb.Mapposchange(-f.Bredd / 4, 60);
+                    bb.Mapposchange(-f.Bredd / 4, 100);
                     bb.Double();
                 }
             }
@@ -304,20 +323,28 @@ namespace Game1
                 {
                     foreach (Block b in l)
                     {
-                        if (hitb.Intersects(b.Rek) && b.Addontype == "Tree")
+                        if (hitb.Intersects(b.Rek))
                         {
-                            b.Addontype = "none";
-                            wg.Addonextension(l, b.Plats);
-                            if (b.Plats % 100 < 99)
+                            if (b.Addontype == 1)
                             {
-                                wg.Addonextension(l, b.Plats + 1);
+                                b.Addontype = 0;
+                                wg.Addonextension(l, b.Plats);
+                                if (b.Plats % 100 < 99)
+                                {
+                                    wg.Addonextension(l, b.Plats + 1);
+                                }
+                                if (b.Plats / 100 < 99)
+                                {
+                                    wg.Addonextension(l, b.Plats + 100);
+                                }
+                                inventory[0].Inventoryadd(inventory, itemlist[0]);
                             }
-                            if (b.Plats / 100 < 99)
+                            else if (b.Addontype == 2)
                             {
-                                wg.Addonextension(l, b.Plats + 100);
+                                b.Addontype = 0;
                             }
-                            inventory[0].Inventoryadd(inventory, itemlist[0]);
                         }
+
                     }
                 }
                 else if ((hitb.X < f.Bredd - 100 || hitb.Y > 100) && we.Boll)

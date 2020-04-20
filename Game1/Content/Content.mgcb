@@ -231,6 +231,18 @@
 /processorParam:TextureFormat=Color
 /build:mWater.png
 
+#begin nothing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:nothing.png
+
 #begin OnOff.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -314,6 +326,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Snowstone.png
+
+#begin sten.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sten.png
 
 #begin Stone.png
 /importer:TextureImporter

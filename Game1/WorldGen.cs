@@ -22,7 +22,7 @@ namespace Game1
         public WorldGen()
         {
             antalsjöar = 2;
-            sjöstorlek = 200;
+            sjöstorlek = 400;
             snöstorlek = 1000;
             skogsstorlek = 1000;
             havsstorlek = 1000;
@@ -76,13 +76,14 @@ namespace Game1
             set { antalsnöar = value; }
             get { return antalsnöar; }
         }
-        public List<Block> Generate(int höjd, int bredd, Random slump, Texture2D[] treeparts)
+        public List<Block> Generate(int höjd, int bredd, Random slump)
         {
             List<Block> l = new List<Block>();
             List<int> l1 = new List<int>();
             List<int> l2 = new List<int>();
             List<int> ind = new List<int>();
             List<int> fillout = new List<int>();
+            List<int> riverstartpoints = new List<int>();
             int p = 0;
             for (int y = höjd / 2 - 5000; y < höjd / 2 + 5000; y += 100)
             {
@@ -115,24 +116,98 @@ namespace Game1
             }
             int sx;
             int sy;
-            for(int i = 0; i < antalsjöar; i++)
+            //Havsgeneration//
+            int s = slump.Next(4);
+            if (s == 0)
             {
-                int temp = slump.Next(10000);
-                sy = temp / 100;
-                sx = temp % 100;
-                l[temp].Id = 3;
-                l1.Clear();
-                l2.Clear();
-                ind.Clear();
-                l1.Add(0);
-                l1.Add(1);
-                l1.Add(-1);
-                l2.Add(3);
-                ind.Add(0);
-                ind.Add(0);
-                ind.Add(0);
-                l = Biomegen(l, l1, l2, ind, sjöstorlek, slump, 4, false, 3, 0);
-                l[temp].Id = -2;
+                l[0].Id = -1;
+            }
+            else if (s == 1)
+            {
+                l[99].Id = -1;
+            }
+            else if (s == 2)
+            {
+                l[9900].Id = -1;
+            }
+            else
+            {
+                l[9999].Id = -1;
+            }
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add(0);
+            l1.Add(1);
+            l2.Add(-1);
+            ind.Add(0);
+            ind.Add(0);
+            l = Biomegen(l, l1, l2, ind, havsstorlek, slump, 4, false, 3, 0);
+            //Sjögeneration//
+            for (int i = 0; i < antalsjöar; i++)
+            {
+                sx = slump.Next(100);
+                sy = slump.Next(100);
+                Rectangle tillf = new Rectangle(l[sy * 100 + sx].Rek.X - 1000, l[sy * 100 + sx].Rek.Y - 1000, 2100, 2100);
+                bool abc = true;
+                foreach (Block b in l)
+                {
+                    if ((b.Id == 3 || b.Id == -1) && b.Rek.Intersects(tillf))
+                    {
+                        abc = false;
+                        i--;
+                        break;
+                    }
+                }
+                if (abc)
+                {
+                    l[sy * 100 + sx].Id = 3;
+                    riverstartpoints.Add(l[sy * 100 + sx].Plats);
+                }
+                
+            }
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add(0);
+            l1.Add(1);
+            l2.Add(3);
+            ind.Add(0);
+            ind.Add(0);
+            l = Biomegen(l, l1, l2, ind, sjöstorlek, slump, 4, false, 3, 0);
+            foreach(Block b in l)
+            {
+                if (b.Id == -1)
+                {
+                    b.Id = 3;
+                }
+            }
+            //Flodgenerering//
+            for(int i = 0; i < antalfloder; i++)
+            {
+                int t = slump.Next(396);
+                if (t < 100)
+                {
+                    riverstartpoints.Add(t);
+                }
+                else if (t < 199)
+                {
+                    riverstartpoints.Add(t + 9800);
+                }
+                else if (t < 297)
+                {
+                    riverstartpoints.Add((t - 198) * 100);
+                }
+                else
+                {
+                    riverstartpoints.Add((t - 296) * 100 + 99);
+                }
+            }
+            foreach (int e in riverstartpoints)
+            {
+                sx = e % 100;
+                sy = e / 100;
+                l[e].Id = -2;
                 int d;
                 if (sy < 50 && sx < 50)
                 {
@@ -191,30 +266,25 @@ namespace Game1
                     }
                     l[sy * 100 + sx].Id = -2;
                 }
-                l1.Clear();
-                l2.Clear();
-                ind.Clear();
-                l1.Add(0);
-                l2.Add(-2);
-                ind.Add(0);
-                Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, flodbredd);
+
                
                 foreach (Block b in l)
                 {
-                    if (b.Id == -2 || b.Id == 3)
+                    if (b.Id == -2)
                     {
-                        b.Id = -1;
+                        b.Id = 3;
                     }
                 }
             }
+            l1.Clear();
+            l2.Clear();
+            ind.Clear();
+            l1.Add(0);
+            l2.Add(3);
+            ind.Add(0);
+            Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, flodbredd);
 
-            foreach(Block b in l)
-            {
-                if (b.Id == -1)
-                {
-                    b.Id = 3;
-                }
-            }
+            //Stranggen//
             fillout.Add(1);
             fillout.Add(3);
             fillout.Add(4);
@@ -236,9 +306,28 @@ namespace Game1
             ind.Add(0);
             l = Biomegen(l, l1, l2, ind, 0, slump, 7, true, 5, 3);
             //Snöbiomegenerering//
-            sx = slump.Next(100);
-            sy = slump.Next(100);
-            l[sy * 100 + sx].Id = 6;
+            for(int i = 0; i < antalsnöar; i++)
+            {
+                sx = slump.Next(100);
+                sy = slump.Next(100);
+                Rectangle tillf = new Rectangle(l[sy * 100 + sx].Rek.X - 1000, l[sy * 100 + sx].Rek.Y - 1000, 2100, 2100);
+                bool abc = true;
+                foreach (Block b in l)
+                {
+                    if (b.Id == 6 && b.Rek.Intersects(tillf))
+                    {
+                        abc = false;
+                        i--;
+                        break;
+                    }
+                }
+                if (abc)
+                {
+                    l[sy * 100 + sx].Id = 6;
+                }
+
+            }
+
             l1.Clear();
             l2.Clear();
             ind.Clear();
@@ -266,6 +355,33 @@ namespace Game1
                 }
             }
             //Skogsgenerering//
+            for (int i = 0; i < antalskogar;)
+            {
+                sx = slump.Next(100);
+                sy = slump.Next(100);
+                Rectangle tillf = new Rectangle(l[sy * 100 + sx].Rek.X - 1000, l[sy * 100 + sx].Rek.Y - 1000, 2100, 2100);
+                bool abc = false;
+                if (l[sy * 100 + sx].Id == 0)
+                {
+                    abc = true;
+                    i++;
+                }
+                foreach (Block b in l)
+                {
+                    if (b.Id == 10 && b.Rek.Intersects(tillf) && abc)
+                    {
+                        abc = false;
+                        i--;
+                        break;
+                    }
+                }
+                if (abc)
+                {
+
+                    l[sy * 100 + sx].Id = 10;
+                }
+
+            }
             l1.Clear();
             l2.Clear();
             ind.Clear();
@@ -281,30 +397,24 @@ namespace Game1
             {
                 ind.Add(i);
             }
-            while (true)
-            {
-                int k = slump.Next(10000);
-                if (l[k].Id == 0)
-                {
-                    l[k].Id = 10;
-                    break;
-                }
-            }
             l = Biomegen(l, l1, l2, ind, skogsstorlek, slump, 4, false, 3, 0);
             foreach (Block b in l)
             {
                 if (b.Id == 0 && slump.Next(10) == 0)
                 {
-                    b.Addontype = "Tree";
+                    b.Addontype = 1;
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
-                    b.Addontex = treeparts;
+                }
+                else if(b.Id==0 && slump.Next(10) == 0 && b.Addontype == 0)
+                {
+                    b.Addontype = 2;
                 }
                 if (b.Id == 10 && slump.Next(2) == 0)
                 {
-                    b.Addontype = "Tree";
+                    b.Addontype = 1;
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
-                    b.Addontex = treeparts;
                 }
+                
             }
             foreach(Block b in l)
             {
@@ -396,44 +506,91 @@ namespace Game1
             foreach(Block b in l)
             {
                 int isittrue = 0;
+                bool t = false;
                 if (b.Id == omvandlasfrån)
                 {
+                    isittrue += 4;
                     if (b.Plats % 100 < 99)
                     {
-                        isittrue += Surroundcheck(l[b.Plats + 1], fillout);
+                        if(Surroundcheck(l[b.Plats + 1], fillout))
+                        {
+                            t = true;
+                            isittrue++;
+                        }
+                        isittrue--;
                     }
                     if (b.Plats % 100 > 0)
                     {
-                        isittrue += Surroundcheck(l[b.Plats - 1], fillout);
+                        if(Surroundcheck(l[b.Plats - 1], fillout))
+                        {
+                            t = true;
+                            isittrue++;
+                        }
+                        isittrue--;
+                    
                     }
                     if (b.Plats / 100 < 99)
                     {
-                        isittrue += Surroundcheck(l[b.Plats + 100], fillout);
+                        if(Surroundcheck(l[b.Plats + 100], fillout))
+                        {
+                            t = true;
+                            isittrue++;
+                        }
+                        isittrue--;
+               
                     }
                     if (b.Plats / 100 > 0)
                     {
-                        isittrue += Surroundcheck(l[b.Plats - 100], fillout);
+                        if(Surroundcheck(l[b.Plats - 100], fillout))
+                        {
+                            t = true;
+                            isittrue++;
+                        }
+                        isittrue--;
+  
                     }
                     if (corners)
                     {
+                        isittrue += 4;
                         if(b.Plats % 100 < 99 && b.Plats / 100 < 99)
                         {
-                            isittrue += Surroundcheck(l[b.Plats + 101], fillout);
+                            if(Surroundcheck(l[b.Plats + 101], fillout))
+                            {
+                                t = true;
+                                isittrue++;
+                            }
+                            isittrue--;
+
                         }
                         if (b.Plats % 100 < 99 && b.Plats / 100 > 0)
                         {
-                            isittrue += Surroundcheck(l[b.Plats - 99], fillout);
+                            if(Surroundcheck(l[b.Plats - 99], fillout))
+                            {
+                                t = true;
+                                isittrue++;
+                            }
+                            isittrue--;
                         }
                         if (b.Plats % 100 > 0 && b.Plats / 100 < 99)
                         {
-                            isittrue += Surroundcheck(l[b.Plats + 99], fillout);
+                            if(Surroundcheck(l[b.Plats + 99], fillout))
+                            {
+                                t = true;
+                                isittrue++;
+                            }
+                            isittrue--;
                         }
                         if (b.Plats % 100 > 0 && b.Plats / 100 > 0)
                         {
-                            isittrue += Surroundcheck(l[b.Plats - 101], fillout);
+                            if(Surroundcheck(l[b.Plats - 101], fillout))
+                            {
+                                t = true;
+                                isittrue++;
+                            }
+                            isittrue--;
                         }
                     }
-                    if (isittrue>=req)
+                    if (isittrue>=req && t)
                     {
                         b.Id = id;
                     }
@@ -441,16 +598,16 @@ namespace Game1
             }
             return l;
         }
-        private int Surroundcheck(Block b, List<int> fillout)
+        private bool Surroundcheck(Block b, List<int> fillout)
         {
             foreach(int i in fillout)
             {
                 if (b.Id == i)
                 {
-                    return 1;
+                    return true;
                 }
             }
-            return 0;
+            return false;
         }
         public List<Block> Addonextension(List<Block> l, int p)
         {

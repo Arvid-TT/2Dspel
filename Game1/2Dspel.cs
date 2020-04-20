@@ -19,37 +19,16 @@ namespace Game1
         List<Menuchoice> huvudmeny = new List<Menuchoice>();
         List<Menuchoice> worldmeny = new List<Menuchoice>();
         List<Menuchoice> unclickablew = new List<Menuchoice>();
+        List<Menuchoice> clickablew = new List<Menuchoice>();
+        List<Texture2D> addons = new List<Texture2D>();
+        List<Texture2D[]> addonextensions = new List<Texture2D[]>();
         Menuchoice hmenytext;
         Menuchoice wmenytext;
-        Texture2D grass;
-        Texture2D stone;
-        Texture2D deepwater;
-        Texture2D water;
         Texture2D player;
-        Texture2D sand;
-        Texture2D deepdeepwater;
-        Texture2D mgrass;
-        Texture2D mstone;
-        Texture2D mdeepwater;
-        Texture2D mwater;
-        Texture2D msand;
-        Texture2D mdeepdeepwater;
-        Texture2D snow;
-        Texture2D ice;
-        Texture2D snowstone;
-        Texture2D icestone;
-        Texture2D forestgrass;
-        Texture2D dirt;
-        Texture2D msnow;
-        Texture2D mice;
-        Texture2D[] treeparts = new Texture2D[4];
-        Texture2D fstone;
-        Texture2D fwater;
         Texture2D mustex;
         Texture2D pixel;
         Texture2D onoff;
         Texture2D heart;
-        Texture2D tree;
         SpriteFont text;
         SpriteFont menytext;
         SpriteFont stortext;
@@ -112,7 +91,9 @@ namespace Game1
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            addonextensions.Add(new Texture2D[4]);
+            addonextensions.Add(new Texture2D[4]);
+            addonextensions.Add(new Texture2D[4]);
             base.Initialize();
         }
 
@@ -126,7 +107,7 @@ namespace Game1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             blocktextures.Add(Content.Load<Texture2D>("Grass"));
             blocktextures.Add(Content.Load<Texture2D>("Stone"));
-
+            addons.Add(Content.Load<Texture2D>("nothing"));
             player = Content.Load<Texture2D>("Player");
             blocktextures.Add(Content.Load<Texture2D>("Sand"));
             
@@ -142,20 +123,20 @@ namespace Game1
             mustex = Content.Load<Texture2D>("Mus");
             blocktextures.Add(Content.Load<Texture2D>("Foreststone"));
             blocktextures.Add(Content.Load<Texture2D>("Forestwater"));
-            mgrass = Content.Load<Texture2D>("mGrass");
-            mstone = Content.Load<Texture2D>("mStone");
-            mdeepwater = Content.Load<Texture2D>("mWater");
             pixel = Content.Load<Texture2D>("Pixel");
-            msand = Content.Load<Texture2D>("mSand");
-            mwater = Content.Load<Texture2D>("mSky");
-            mdeepdeepwater = Content.Load<Texture2D>("mDeepf-ingwater");
             onoff = Content.Load<Texture2D>("OnOff");
             heart = Content.Load<Texture2D>("Hjärta");
-            tree = Content.Load<Texture2D>("Tree");
-            treeparts[0] = Content.Load<Texture2D>("Tree1");
-            treeparts[1] = Content.Load<Texture2D>("Tree2");
-            treeparts[2] = Content.Load<Texture2D>("Tree3");
-            treeparts[3] = Content.Load<Texture2D>("Tree4");
+            addons.Add(Content.Load<Texture2D>("tree"));
+            addons.Add(Content.Load<Texture2D>("sten"));
+            for (int i = 0; i < 4; i++)
+            {
+                addonextensions[0][i] = Content.Load<Texture2D>("nothing");
+                addonextensions[2][i] = Content.Load<Texture2D>("nothing");
+            }
+            addonextensions[1][0] = Content.Load<Texture2D>("Tree1");
+            addonextensions[1][1] = Content.Load<Texture2D>("Tree2");
+            addonextensions[1][2] = Content.Load<Texture2D>("Tree3");
+            addonextensions[1][3] = Content.Load<Texture2D>("Tree4");
             itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
@@ -211,7 +192,7 @@ namespace Game1
                 hmenytext = new Menuchoice(50, "Main Menu", stortext, f.Bredd / 2, false, 70, false, false);
                 hmenytext.Mainmenucreate(huvudmeny, menytext, f.Bredd / 2);
                 wmenytext = new Menuchoice(10, "Create custom world", menytext, f.Bredd / 2, false, 70, false, false);
-                wmenytext.Worldmenucreate(worldmeny, unclickablew, text, mellantext, f.Bredd / 2, wg);
+                wmenytext.Worldmenucreate(worldmeny, unclickablew, clickablew, text, mellantext, f.Bredd / 2, wg);
             }
             mus.Musposchange(mstate.X, mstate.Y);
             if (meny.Boll)
@@ -228,7 +209,7 @@ namespace Game1
                     }
                     if (mstate.LeftButton == ButtonState.Pressed)
                     {
-                        mus.Huvudmenyklick(huvudmeny, meny, hmeny, normal, ref l, wg, rand, f, treeparts, wmeny);
+                        mus.Huvudmenyklick(huvudmeny, meny, hmeny, normal, ref l, wg, rand, f, wmeny);
                     }
                 }
                 if (wmeny.Boll)
@@ -241,9 +222,17 @@ namespace Game1
                             m.Active = true;
                         }
                     }
+                    foreach(Menuchoice m in clickablew)
+                    {
+                        m.Active = false;
+                        if (mus.Hitb.Intersects(m.Hitb))
+                        {
+                            m.Active = true;
+                        }
+                    }
                     if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        mus.Worldmenyklick(worldmeny, unclickablew, ref l, wg, rand, treeparts, mus, mellantext, f);
+                        mus.Worldmenyklick(worldmeny, unclickablew, clickablew , ref l, wg, rand, mus, mellantext, f, meny, wmeny, normal, hmeny);
                     }
                 }
             }
@@ -264,7 +253,7 @@ namespace Game1
                 play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
-                    l = wg.Generate(f.Höjd, f.Bredd, rand, treeparts);
+                    l = wg.Generate(f.Höjd, f.Bredd, rand);
                 }
                 if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
                 {
@@ -356,7 +345,32 @@ namespace Game1
                             spriteBatch.DrawString(mellantext, "<", m.Leftchoice, Color.White);
                         }
                     }
-                    foreach(Block b in l)
+                    foreach(Menuchoice m in clickablew)
+                    {
+                        spriteBatch.DrawString(mellantext, m.Text, m.Textlocation, Color.White);
+                    }
+                    for(int i = 0; i < 3; i++)
+                    {
+                        if (clickablew[i].Active)
+                        {
+                            if (i == 0)
+                            {
+                                spriteBatch.DrawString(mellantext, "<", clickablew[i].Rightchoice, Color.White);
+                                spriteBatch.DrawString(mellantext, ">", clickablew[i].Leftchoice, Color.White);
+                            }
+                            else if (i == 1)
+                            {
+                                spriteBatch.DrawString(mellantext, "-->", clickablew[i].Rightchoice, Color.White);
+                            }
+                            else if (i == 2)
+                            {
+                                spriteBatch.DrawString(mellantext, "<--", new Vector2(clickablew[i].Leftchoice.X - 2 * mellantext.LineSpacing, clickablew[i].Leftchoice.Y), Color.White);
+                            }
+                        }
+
+                    }
+
+                    foreach (Block b in l)
                     {
                         spriteBatch.Draw(blocktextures[b.Id], b.Map, Color.White);
                     }
@@ -373,17 +387,14 @@ namespace Game1
                 spriteBatch.Draw(player, play.Pos, Color.White);
                 foreach (Block b in l)
                 {
-                    if (b.Addontype != "none")
+                    if (b.Addontype != 0)
                     {
-                        if (b.Addontype == "Tree")
-                        {
-                            spriteBatch.Draw(tree, b.Rek, Color.White);
-                        }
+                        spriteBatch.Draw(addons[b.Addontype], b.Rek, Color.White);
                         for (int i = 0; i < 4; i++)
                         {
                             if (b.Addontrue[i])
                             {
-                                spriteBatch.Draw(b.Addontex[i], b.Rek, Color.White);
+                                spriteBatch.Draw(addonextensions[b.Addontype][i], b.Rek, Color.White);
                             }
                         }
                     }
@@ -496,7 +507,6 @@ namespace Game1
                         spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
                     }
                 }
-                spriteBatch.DrawString(menytext, "Test", new Vector2(100, 100), Color.White);
             }
 
             spriteBatch.End();

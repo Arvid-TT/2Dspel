@@ -78,7 +78,7 @@ namespace Game1
             m.Add(new Menuchoice(300, "Create Custom World", sf, f, false, 30, true, false));
             m.Add(new Menuchoice(400, "Settings", sf, f, false, 30, true, false));
         }
-        public void Worldmenucreate(List<Menuchoice> m, List<Menuchoice> u, SpriteFont sf1, SpriteFont sf2, int f, WorldGen wg)
+        public void Worldmenucreate(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, SpriteFont sf1, SpriteFont sf2, int f, WorldGen wg)
         {
             u.Add(new Menuchoice(70, "Number of Lakes", sf2, f/2, false, 10, false, false));
             m.Add(new Menuchoice(70, Convert.ToString(wg.Antalsjöar), sf2, f, false, 20, true, true));
@@ -98,6 +98,10 @@ namespace Game1
             m.Add(new Menuchoice(280, Convert.ToString(wg.Skogsstorlek), sf2, f, false, 20, true, true));
             u.Add(new Menuchoice(310, "Arctic Size", sf2, f / 2, false, 10, false, false));
             m.Add(new Menuchoice(310, Convert.ToString(wg.Snöstorlek), sf2, f, false, 20, true, true));
+            u.Add(new Menuchoice(70, "Example World", sf2, 3 * f / 2, false, 10, false, false));
+            c.Add(new Menuchoice(310, "Regenerate", sf2, 3 * f / 2, false, 20, true, false));
+            c.Add(new Menuchoice(400, "Generate World", sf2, 3 * f / 2, false, 20, true, false));
+            c.Add(new Menuchoice(400, "Back", sf2, f / 2, false, 20, true, false));
         }
     }
 }

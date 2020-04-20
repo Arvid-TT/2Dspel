@@ -16,9 +16,8 @@ namespace Game1
         int plats;
         Rectangle addon;
         Rectangle[] addonext;
-        Texture2D[] addontex;
         bool[] addontrue;
-        string addontype;
+        int addontype;
         //Item id meaning:
         //>0 = temp
         //0 = Grass
@@ -36,14 +35,17 @@ namespace Game1
         //12 = Mossy Stone
         //13 = Forest water
 
+        //Item addontype meaning
+        //0 = no addon
+        //1 = tree
+
         public Block(Rectangle r, int i, int p)
         {
             rek = r;
             id = i;
             plats = p;
-            addontype = "none";
+            addontype = 0;
             addonext = new Rectangle[4];
-            addontex = new Texture2D[4];
             addontrue = new bool[4];
         }
         public Block(Block b)
@@ -88,15 +90,10 @@ namespace Game1
             set { addon = value; }
             get { return addon; }
         }
-        public string Addontype
+        public int Addontype
         {
             set { addontype = value; }
             get { return addontype; }
-        }
-        public Texture2D[] Addontex
-        {
-            set { addontex = value; }
-            get { return addontex; }
         }
         public bool[] Addontrue
         {
@@ -110,7 +107,7 @@ namespace Game1
         public void Poschangex(int x)
         {
             rek.X += x;
-            if (addontype != "none")
+            if (addontype != 0)
             {
                 addon.X += x;
             }
@@ -118,7 +115,7 @@ namespace Game1
         public void Poschangey(int y)
         {
             rek.Y += y;
-            if (addontype != "none")
+            if (addontype != 0)
             {
                 addon.Y += y;
             }
