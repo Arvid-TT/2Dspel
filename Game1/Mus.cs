@@ -339,9 +339,15 @@ namespace Game1
                                 }
                                 inventory[0].Inventoryadd(inventory, itemlist[0]);
                             }
-                            else if (b.Addontype == 2)
+                            else if (b.Addontype == 2 && hitb.Intersects(b.Addon))
                             {
                                 b.Addontype = 0;
+                                inventory[1].Inventoryadd(inventory, itemlist[1]);
+                            }
+                            else if(b.Addontype == 3 && hitb.Intersects(b.Addon))
+                            {
+                                b.Addontype = 0;
+                                inventory[2].Inventoryadd(inventory, itemlist[2]);
                             }
                         }
 

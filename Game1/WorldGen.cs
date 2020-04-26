@@ -408,6 +408,12 @@ namespace Game1
                 else if(b.Id==0 && slump.Next(10) == 0 && b.Addontype == 0)
                 {
                     b.Addontype = 2;
+                    b.Addon = new Rectangle(b.Rek.X + slump.Next(80), b.Rek.Y + slump.Next(80), 20, 20);
+                }
+                else if (b.Id == 0 && slump.Next(10) == 0 && b.Addontype == 0)
+                {
+                    b.Addontype = 3;
+                    b.Addon = new Rectangle(b.Rek.X + slump.Next(50), b.Rek.Y + slump.Next(50), 50, 50);
                 }
                 if (b.Id == 10 && slump.Next(2) == 0)
                 {

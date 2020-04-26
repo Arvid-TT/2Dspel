@@ -128,6 +128,7 @@ namespace Game1
             heart = Content.Load<Texture2D>("Hjärta");
             addons.Add(Content.Load<Texture2D>("tree"));
             addons.Add(Content.Load<Texture2D>("sten"));
+            addons.Add(Content.Load<Texture2D>("stiik"));
             for (int i = 0; i < 4; i++)
             {
                 addonextensions[0][i] = Content.Load<Texture2D>("nothing");
@@ -138,6 +139,8 @@ namespace Game1
             addonextensions[1][2] = Content.Load<Texture2D>("Tree3");
             addonextensions[1][3] = Content.Load<Texture2D>("Tree4");
             itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
+            itemlist.Add(new Item(1, Content.Load<Texture2D>("steen"), 16));
+            itemlist.Add(new Item(2, Content.Load<Texture2D>("stick"), 16));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -382,12 +385,15 @@ namespace Game1
                 foreach (Block b in l)
                 {
                     spriteBatch.Draw(blocktextures[b.Id], b.Rek, Color.White);
-
+                    if (b.Addontype >= 2)
+                    {
+                        spriteBatch.Draw(addons[b.Addontype], b.Addon, Color.White);
+                    }
                 }
                 spriteBatch.Draw(player, play.Pos, Color.White);
                 foreach (Block b in l)
                 {
-                    if (b.Addontype != 0)
+                    if (b.Addontype == 1)
                     {
                         spriteBatch.Draw(addons[b.Addontype], b.Rek, Color.White);
                         for (int i = 0; i < 4; i++)
@@ -456,6 +462,7 @@ namespace Game1
                         {
                             spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                         }
+                        
                         else
                         {
                             spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
@@ -464,6 +471,10 @@ namespace Game1
                     if (i != 9)
                     {
                         spriteBatch.DrawString(text, Convert.ToString(i + 1), new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(text, "0", new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
                     }
                 }
                 if (inv.Boll)
