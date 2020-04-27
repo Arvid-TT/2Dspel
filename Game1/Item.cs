@@ -15,6 +15,9 @@ namespace Game1
         //Item id list:
         //-1 = inget
         //0 = trä
+        //1 = sten
+        //2 = pinne
+        //3 = flinta
         public Item()
         {
             id = -1;

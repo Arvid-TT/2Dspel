@@ -44,6 +44,8 @@
     <Compile Include="2Dspel.cs" />
     <Compile Include="Bool.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Craftcheck.cs" />
+    <Compile Include="Crafting.cs" />
     <Compile Include="Fonster.cs" />
     <Compile Include="Block.cs" />
     <Compile Include="Ghost.cs" />

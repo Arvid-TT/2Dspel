@@ -18,6 +18,8 @@ namespace Game1
         Rectangle[] addonext;
         bool[] addontrue;
         int addontype;
+        int hp;
+        int maxhp;
         //Item id meaning:
         //>0 = temp
         //0 = Grass

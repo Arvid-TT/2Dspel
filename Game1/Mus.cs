@@ -226,7 +226,7 @@ namespace Game1
                 }
             }
         }
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, Bool we, Rectangle weh, Siffra wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist)
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, Bool we, Rectangle weh, Siffra wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -328,6 +328,7 @@ namespace Game1
                             if (b.Addontype == 1)
                             {
                                 b.Addontype = 0;
+                                total[0].Numb++;
                                 wg.Addonextension(l, b.Plats);
                                 if (b.Plats % 100 < 99)
                                 {
@@ -342,11 +343,13 @@ namespace Game1
                             else if (b.Addontype == 2 && hitb.Intersects(b.Addon))
                             {
                                 b.Addontype = 0;
+                                total[1].Numb++;
                                 inventory[1].Inventoryadd(inventory, itemlist[1]);
                             }
                             else if(b.Addontype == 3 && hitb.Intersects(b.Addon))
                             {
                                 b.Addontype = 0;
+                                total[2].Numb++;
                                 inventory[2].Inventoryadd(inventory, itemlist[2]);
                             }
                         }

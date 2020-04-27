@@ -22,6 +22,9 @@ namespace Game1
         List<Menuchoice> clickablew = new List<Menuchoice>();
         List<Texture2D> addons = new List<Texture2D>();
         List<Texture2D[]> addonextensions = new List<Texture2D[]>();
+        List<Craftcheck> total = new List<Craftcheck>();
+        List<Crafting> allcrafts = new List<Crafting>();
+        List<Crafting> craftable = new List<Crafting>();
         Menuchoice hmenytext;
         Menuchoice wmenytext;
         Texture2D player;
@@ -44,6 +47,8 @@ namespace Game1
         Rectangle hpbarbak;
         Rectangle hpbarbor;
         Rectangle healthheart;
+        Rectangle Craftingoutline = new Rectangle(5, 115, 0, 40);
+        Rectangle Craftinginside = new Rectangle(8, 118, 0, 34);
         Siffra health;
         KeyboardState oldstate;
         MouseState oldmus;
@@ -94,6 +99,7 @@ namespace Game1
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
+
             base.Initialize();
         }
 
@@ -141,6 +147,7 @@ namespace Game1
             itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
             itemlist.Add(new Item(1, Content.Load<Texture2D>("steen"), 16));
             itemlist.Add(new Item(2, Content.Load<Texture2D>("stick"), 16));
+            itemlist.Add(new Item(3, Content.Load<Texture2D>("flint"), 16));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -171,9 +178,10 @@ namespace Game1
             MouseState mstate = Mouse.GetState();
 
 
-            play = new Player(f.Bredd, f.Höjd);
+
             if (first.Boll)
             {
+                play = new Player(f.Bredd, f.Höjd);
                 first.Boll = false;
                 for (int i = 0; i < 14; i++)
                 {
@@ -196,6 +204,13 @@ namespace Game1
                 hmenytext.Mainmenucreate(huvudmeny, menytext, f.Bredd / 2);
                 wmenytext = new Menuchoice(10, "Create custom world", menytext, f.Bredd / 2, false, 70, false, false);
                 wmenytext.Worldmenucreate(worldmeny, unclickablew, clickablew, text, mellantext, f.Bredd / 2, wg);
+                for(int i = 0; i < itemlist.Count; i++)
+                {
+                    total.Add(new Craftcheck(i, 0));
+                }
+                List<Craftcheck> temp = new List<Craftcheck>();
+                temp.Add(new Craftcheck(1, 2));
+                allcrafts.Add(new Crafting(temp, 3));
             }
             mus.Musposchange(mstate.X, mstate.Y);
             if (meny.Boll)
@@ -252,7 +267,7 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist, total);
                 play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
@@ -275,6 +290,10 @@ namespace Game1
                     {
                         inv.Boll = true;
                     }
+                    allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist);
+                    Craftingoutline.Width = craftable.Count * 40;
+                    Craftinginside.Width = Craftingoutline.Width - 6;
+
                 }
                 if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
                 {
@@ -495,6 +514,12 @@ namespace Game1
                                 spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                             }
                         }
+                    }
+                    spriteBatch.Draw(pixel, Craftingoutline, Color.Blue);
+                    spriteBatch.Draw(pixel, Craftinginside, Color.LightBlue);
+                    foreach(Crafting c in craftable)
+                    {
+                        spriteBatch.Draw(c.Place.It.Tex, c.Place.Hitb, Color.White);
                     }
                 }
                 spriteBatch.Draw(pixel, hpbarbor, Color.White);
