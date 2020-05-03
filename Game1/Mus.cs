@@ -226,7 +226,7 @@ namespace Game1
                 }
             }
         }
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, Bool we, Rectangle weh, Siffra wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total)
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, Bool we, Rectangle weh, Siffra wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -319,6 +319,42 @@ namespace Game1
                     }
 
                 }
+                else if (hitb.Intersects(outline))
+                {
+                    if (oldmus.LeftButton == ButtonState.Released)
+                    {
+                        foreach (Crafting c in craftable)
+                        {
+                            if (hitb.Intersects(c.Place.Hitb))
+                            {
+                                if (kstate.IsKeyDown(Keys.RightShift) || kstate.IsKeyDown(Keys.LeftShift))
+                                {
+                                    inventory[0].Inventoryadd(inventory, itemlist[c.End]);
+                                    total[c.End].Numb++;
+                                    foreach (Craftcheck cc in c.Req)
+                                    {
+                                        total[cc.Id].Numb -= cc.Numb;
+                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb);
+                                    }
+                                    allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
+                                }
+                                else if (sloot.It.Id == -1 || sloot.It.Id == c.End)
+                                {
+                                    sloot.It = itemlist[c.End];
+                                    sloot.Numb++;
+                                    total[c.End].Numb++;
+                                    foreach (Craftcheck cc in c.Req)
+                                    {
+                                        total[cc.Id].Numb -= cc.Numb;
+                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb);
+                                    }
+                                    allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
                 else if (we.Boll == false)
                 {
                     foreach (Block b in l)
@@ -339,18 +375,21 @@ namespace Game1
                                     wg.Addonextension(l, b.Plats + 100);
                                 }
                                 inventory[0].Inventoryadd(inventory, itemlist[0]);
+                                allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                             }
                             else if (b.Addontype == 2 && hitb.Intersects(b.Addon))
                             {
                                 b.Addontype = 0;
                                 total[1].Numb++;
                                 inventory[1].Inventoryadd(inventory, itemlist[1]);
+                                allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                             }
-                            else if(b.Addontype == 3 && hitb.Intersects(b.Addon))
+                            else if (b.Addontype == 3 && hitb.Intersects(b.Addon))
                             {
                                 b.Addontype = 0;
                                 total[2].Numb++;
                                 inventory[2].Inventoryadd(inventory, itemlist[2]);
+                                allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                             }
                         }
 

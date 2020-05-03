@@ -124,5 +124,39 @@ namespace Game1
                 }
             }
         }
+        public void Inventoryremove(Slot[] inv, Item item, int numb)
+        {
+            while (true)
+            {
+                int search = -1;
+                int ant = 100;
+                for (int i = 0; i < inv.Length; i++)
+                {
+                    if (inv[i].It == item && ant > inv[i].Numb)
+                    {
+                        ant = inv[i].Numb;
+                        search = i;
+                    }
+                }
+                if (ant > numb && search > -1)
+                {
+                    inv[search].Numb -= numb;
+                    return;
+                }
+                else if (ant == numb && search > -1)
+                {
+                    inv[search].Numb = 0;
+                    inv[search].It = new Item();
+                    return;
+                }
+                else if(ant < numb && search > -1)
+                {
+                    inv[search].Numb = 0;
+                    inv[search].It = new Item();
+                    numb -= ant;
+                }
+            }
+
+        }
     }
 }

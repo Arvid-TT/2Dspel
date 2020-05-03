@@ -32,6 +32,7 @@ namespace Game1
         Texture2D pixel;
         Texture2D onoff;
         Texture2D heart;
+        Texture2D pil;
         SpriteFont text;
         SpriteFont menytext;
         SpriteFont stortext;
@@ -47,8 +48,8 @@ namespace Game1
         Rectangle hpbarbak;
         Rectangle hpbarbor;
         Rectangle healthheart;
-        Rectangle Craftingoutline = new Rectangle(5, 115, 0, 40);
-        Rectangle Craftinginside = new Rectangle(8, 118, 0, 34);
+        Rectangle craftingoutline = new Rectangle(5, 115, 0, 40);
+        Rectangle craftinginside = new Rectangle(8, 118, 0, 34);
         Siffra health;
         KeyboardState oldstate;
         MouseState oldmus;
@@ -152,6 +153,7 @@ namespace Game1
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
             mellantext = Content.Load<SpriteFont>("Mellanstor");
+            pil = Content.Load<Texture2D>("pil");
             // TODO: use this.Content to load your game content here
         }
 
@@ -267,7 +269,7 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist, total);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside);
                 play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
@@ -290,10 +292,7 @@ namespace Game1
                     {
                         inv.Boll = true;
                     }
-                    allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist);
-                    Craftingoutline.Width = craftable.Count * 40;
-                    Craftinginside.Width = Craftingoutline.Width - 6;
-
+    
                 }
                 if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
                 {
@@ -515,8 +514,8 @@ namespace Game1
                             }
                         }
                     }
-                    spriteBatch.Draw(pixel, Craftingoutline, Color.Blue);
-                    spriteBatch.Draw(pixel, Craftinginside, Color.LightBlue);
+                    spriteBatch.Draw(pixel, craftingoutline, Color.Blue);
+                    spriteBatch.Draw(pixel, craftinginside, Color.LightBlue);
                     foreach(Crafting c in craftable)
                     {
                         spriteBatch.Draw(c.Place.It.Tex, c.Place.Hitb, Color.White);

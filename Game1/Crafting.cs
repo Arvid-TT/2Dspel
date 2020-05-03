@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +32,7 @@ namespace Game1
             set { place = value; }
             get { return place; }
         }
-        public void Transfer(ref List<Crafting> n, List<Craftcheck> cc, List<Crafting> a, List<Item> itemlist)
+        public void Transfer(ref List<Crafting> n, List<Craftcheck> cc, List<Crafting> a, List<Item> itemlist, ref Rectangle outline, ref Rectangle inside)
         {
             n.Clear();
             for (int i = 0; i < a.Count; i++)
@@ -53,6 +54,10 @@ namespace Game1
             {
                 n[i].Place = new Slot(true, 0, 5 + 40 * i, 115, itemlist[n[i].End]);
             }
+
+            outline.Width = n.Count * 40;
+            inside.Width = outline.Width - 6;
+
         }
     }
 

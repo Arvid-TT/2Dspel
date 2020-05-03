@@ -76,6 +76,17 @@ namespace Game1
             set { antalsnöar = value; }
             get { return antalsnöar; }
         }
+        /// <summary>
+       
+        /// </summary>
+        /// <param name="höjd"></param>
+        /// <param name="bredd"></param>
+        /// <param name="slump"></param>
+        /// <returns></returns>
+        
+        /// <summary>
+        /// Generates world
+        /// </summary>
         public List<Block> Generate(int höjd, int bredd, Random slump)
         {
             List<Block> l = new List<Block>();
