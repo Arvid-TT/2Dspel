@@ -37,6 +37,7 @@ namespace Game1
         SpriteFont menytext;
         SpriteFont stortext;
         SpriteFont mellantext;
+        SpriteFont smalltext;
         List<Item> itemlist = new List<Item>();
         List<Texture2D> itemtextures = new List<Texture2D>();
         List<Worldedit> worldedit = new List<Worldedit>();
@@ -50,6 +51,8 @@ namespace Game1
         Rectangle healthheart;
         Rectangle craftingoutline = new Rectangle(5, 115, 0, 40);
         Rectangle craftinginside = new Rectangle(8, 118, 0, 34);
+        Rectangle craftshow;
+        Rectangle craftarrow;
         Siffra health;
         KeyboardState oldstate;
         MouseState oldmus;
@@ -80,6 +83,8 @@ namespace Game1
         Bool normal = new Bool(false);
         Bool wmeny = new Bool(false);
         Random rand = new Random();
+        int muscrafting = 300;
+        bool muscraft;
 
         public Game1()
         {
@@ -153,6 +158,7 @@ namespace Game1
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
             mellantext = Content.Load<SpriteFont>("Mellanstor");
+            smalltext = Content.Load<SpriteFont>("litentext");
             pil = Content.Load<Texture2D>("pil");
             // TODO: use this.Content to load your game content here
         }
@@ -213,6 +219,11 @@ namespace Game1
                 List<Craftcheck> temp = new List<Craftcheck>();
                 temp.Add(new Craftcheck(1, 2));
                 allcrafts.Add(new Crafting(temp, 3));
+                temp.Clear();
+                temp.Add(new Craftcheck(2, 1));
+                temp.Add(new Craftcheck(0, 1));
+                allcrafts.Add(new Crafting(temp, 1));
+                temp.Clear();
             }
             mus.Musposchange(mstate.X, mstate.Y);
             if (meny.Boll)
@@ -292,7 +303,34 @@ namespace Game1
                     {
                         inv.Boll = true;
                     }
-    
+
+
+                }
+                if (mus.Hitb.Intersects(craftingoutline) && inv.Boll)
+                {
+                    muscraft = true;
+                    if (muscrafting < craftable.Count && mus.Hitb.Intersects(craftable[muscrafting].Place.Hitb))
+                    {
+                        
+                    }
+                    else
+                    {
+                        for (int i = 0; i < craftable.Count; i++)
+                        {
+                            if (mus.Hitb.Intersects(craftable[i].Place.Hitb))
+                            {
+                                craftable[i].Requirementshow(ref craftarrow, ref craftshow);
+                                muscrafting = i;
+                                
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    muscraft = false;
                 }
                 if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
                 {
@@ -520,6 +558,17 @@ namespace Game1
                     {
                         spriteBatch.Draw(c.Place.It.Tex, c.Place.Hitb, Color.White);
                     }
+                    if(muscraft)
+                    {
+
+                        spriteBatch.Draw(pixel, craftshow, Color.DarkBlue);
+                        spriteBatch.Draw(pil, craftarrow, Color.DarkBlue);
+                        for(int i = 0; i < craftable[muscrafting].Req.Count; i++)
+                        {
+                            spriteBatch.Draw(itemlist[craftable[muscrafting].Req[i].Id].Tex, new Rectangle(craftshow.X + i * 40, craftshow.Y, 40, 40), Color.White);
+                        }
+                    }
+                    
                 }
                 spriteBatch.Draw(pixel, hpbarbor, Color.White);
                 spriteBatch.Draw(pixel, hpbarbak, Color.Black);

@@ -14,7 +14,11 @@ namespace Game1
         Slot place;
         public Crafting(List<Craftcheck> r, int e)
         {
-            req = r;
+            req = new List<Craftcheck>();
+            foreach(Craftcheck rr in r)
+            {
+                req.Add(new Craftcheck(rr.Id, rr.Numb));
+            }
             end = e;
         }
         public List<Craftcheck> Req
@@ -58,6 +62,18 @@ namespace Game1
             outline.Width = n.Count * 40;
             inside.Width = outline.Width - 6;
 
+        }
+        public void Requirementshow(ref Rectangle p, ref Rectangle o)
+        {
+            p = new Rectangle(place.Hitb.X, place.Hitb.Y + 40, 40, 20);
+            if(place.Hitb.X - req.Count*20 >= -15)
+            {
+                o = new Rectangle(place.Hitb.X + 20 - req.Count * 20, place.Hitb.Y + 60, req.Count * 40, 40);
+            }
+            else
+            {
+                o = new Rectangle(5, place.Hitb.Y + 60, req.Count * 40, 40);
+            }
         }
     }
 

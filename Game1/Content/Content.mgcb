@@ -133,6 +133,13 @@
 /processorParam:TextureFormat=Color
 /build:Icestone.png
 
+#begin litentext.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:litentext.spritefont
+
 #begin Log.png
 /importer:TextureImporter
 /processor:TextureProcessor

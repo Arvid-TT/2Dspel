@@ -338,7 +338,7 @@ namespace Game1
                                     }
                                     allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                                 }
-                                else if (sloot.It.Id == -1 || sloot.It.Id == c.End)
+                                else if (sloot.It.Id == -1 || (sloot.It.Id == c.End && sloot.Numb < Sloot.It.Max))
                                 {
                                     sloot.It = itemlist[c.End];
                                     sloot.Numb++;
