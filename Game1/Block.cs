@@ -20,6 +20,7 @@ namespace Game1
         int addontype;
         int hp;
         int maxhp;
+        int tool;
         //Item id meaning:
         //>0 = temp
         //0 = Grass
@@ -40,6 +41,8 @@ namespace Game1
         //Item addontype meaning
         //0 = no addon
         //1 = tree
+        //2 = stone
+        //3 = stick
 
         public Block(Rectangle r, int i, int p)
         {
@@ -101,6 +104,21 @@ namespace Game1
         {
             set { addontrue = value; }
             get { return addontrue; }
+        }
+        public int Hp
+        {
+            set { hp = value; }
+            get { return hp; }
+        }
+        public int Maxhp
+        {
+            set { maxhp = value; }
+            get { return maxhp; }
+        }
+        public int Tool
+        {
+            set { tool = value; }
+            get { return tool; }
         }
         public void Draw(SpriteBatch spritebatch)
         {

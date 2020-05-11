@@ -27,7 +27,7 @@ namespace Game1
             set { speed = value; }
             get { return speed; }
         }
-        public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, Siffra xauto, Siffra yauto, Siffra xautoscd, Siffra yautoscd, Siffra xautohcd, Siffra yautoncd, Siffra xautovcd, Siffra yautoucd, List<Ghost> ghosts)
+        public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, ref int xauto, ref int yauto, ref int xautoscd, ref int yautoscd, ref int xautohcd, ref int yautoncd, ref int xautovcd, ref int yautoucd, List<Ghost> ghosts)
         {
             bool icy = true;
             if (kstate.IsKeyDown(Keys.W))
@@ -50,14 +50,14 @@ namespace Game1
 
                 }
 
-                if (icy && yautoucd.Tal == 0)
+                if (icy && yautoucd  == 0)
                 {
-                    if (yauto.Tal < 6)
+                    if (yauto  < 6)
                     {
-                        yauto.Tal++;
+                        yauto ++;
                     }
-                    yautoscd.Tal = 30;
-                    yautoucd.Tal = 10;
+                    yautoscd  = 30;
+                    yautoucd  = 10;
                 }
             }
             if (kstate.IsKeyDown(Keys.S))
@@ -78,14 +78,14 @@ namespace Game1
                     }
                 }
 
-                if (icy && yautoncd.Tal == 0)
+                if (icy && yautoncd  == 0)
                 {
-                    if (yauto.Tal > -6)
+                    if (yauto  > -6)
                     {
-                        yauto.Tal--;
+                        yauto --;
                     }
-                    yautoscd.Tal = 30;
-                    yautoncd.Tal = 10;
+                    yautoscd  = 30;
+                    yautoncd  = 10;
                 }
             }
             if (kstate.IsKeyDown(Keys.A))
@@ -106,14 +106,14 @@ namespace Game1
                     }
                 }
 
-                if (icy && xautovcd.Tal == 0)
+                if (icy && xautovcd  == 0)
                 {
-                    if (xauto.Tal < 6)
+                    if (xauto  < 6)
                     {
-                        xauto.Tal++;
+                        xauto ++;
                     }
-                    xautoscd.Tal = 30;
-                    xautovcd.Tal = 10;
+                    xautoscd  = 30;
+                    xautovcd  = 10;
                 }
             }
             if (kstate.IsKeyDown(Keys.D))
@@ -134,93 +134,93 @@ namespace Game1
                     }
                 }
 
-                if (icy && xautohcd.Tal == 0)
+                if (icy && xautohcd  == 0)
                 {
-                    if (xauto.Tal > -6)
+                    if (xauto  > -6)
                     {
-                        xauto.Tal--;
+                        xauto --;
                     }
-                    xautoscd.Tal = 30;
-                    xautohcd.Tal = 10;
+                    xautoscd  = 30;
+                    xautohcd  = 10;
                 }
             }
-            if (Kollisionskoll(l, pos.X - xauto.Tal, pos.Y, ref icy) == true)
+            if (Kollisionskoll(l, pos.X - xauto , pos.Y, ref icy) == true)
             {
                 foreach (Block b in l)
                 {
-                    b.Poschangex(xauto.Tal);
+                    b.Poschangex(xauto );
                 }
                 foreach (Ghost g in ghosts)
                 {
-                    g.Poschange(g.Pos.X + xauto.Tal, g.Pos.Y);
+                    g.Poschange(g.Pos.X + xauto , g.Pos.Y);
                 }
 
             }
             else
             {
-                xauto.Tal = 0;
+                xauto  = 0;
             }
-            if (Kollisionskoll(l, pos.X, pos.Y - yauto.Tal, ref icy) == true)
+            if (Kollisionskoll(l, pos.X, pos.Y - yauto , ref icy) == true)
             {
                 foreach (Block b in l)
                 {
-                    b.Poschangey(yauto.Tal);
+                    b.Poschangey(yauto );
                 }
                 foreach (Ghost g in ghosts)
                 {
-                    g.Poschange(g.Pos.X, g.Pos.Y + yauto.Tal);
+                    g.Poschange(g.Pos.X, g.Pos.Y + yauto );
                 }
             }
             else
             {
-                yauto.Tal = 0;
+                yauto  = 0;
             }
-            if (xautoscd.Tal == 0)
+            if (xautoscd  == 0)
             {
 
-                if (xauto.Tal < 0)
+                if (xauto  < 0)
                 {
-                    xauto.Tal++;
+                    xauto ++;
                 }
-                else if (xauto.Tal > 0)
+                else if (xauto  > 0)
                 {
-                    xauto.Tal--;
+                    xauto --;
                 }
                 if (icy)
                 {
-                    xautoscd.Tal = 30;
+                    xautoscd  = 30;
                 }
                 else
                 {
-                    xautoscd.Tal = 5;
+                    xautoscd  = 5;
                 }
             }
-            if(yautoscd.Tal == 0)
+            if(yautoscd  == 0)
             {
-                if (yauto.Tal < 0)
+                if (yauto  < 0)
                 {
-                    yauto.Tal++;
+                    yauto ++;
                 }
-                else if (yauto.Tal > 0)
+                else if (yauto  > 0)
                 {
-                    yauto.Tal--;
+                    yauto --;
                 }
                 if (icy)
                 {
-                    yautoscd.Tal = 30;
+                    yautoscd  = 30;
                 }
                 else
                 {
-                    yautoscd.Tal = 5;
+                    yautoscd  = 5;
                 }
             }
 
-            yautoucd.Tal = Cooldown(yautoucd.Tal);
-            xautovcd.Tal = Cooldown(xautovcd.Tal);
-            yautoncd.Tal = Cooldown(yautoncd.Tal);
-            xautohcd.Tal = Cooldown(xautohcd.Tal);
-            yautoscd.Tal = Cooldown(yautoscd.Tal);
-            xautoscd.Tal = Cooldown(xautoscd.Tal);
+            yautoucd  = Cooldown(yautoucd );
+            xautovcd  = Cooldown(xautovcd );
+            yautoncd  = Cooldown(yautoncd );
+            xautohcd  = Cooldown(xautohcd );
+            yautoscd  = Cooldown(yautoscd );
+            xautoscd  = Cooldown(xautoscd );
 
 
         }

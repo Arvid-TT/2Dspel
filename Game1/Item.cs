@@ -12,12 +12,20 @@ namespace Game1
         int id;
         Texture2D tex;
         int max;
+        int type;
+        int tooldmg;
         //Item id list:
         //-1 = inget
         //0 = trä
         //1 = sten
         //2 = pinne
         //3 = flinta
+
+        //Item type list:
+        //0 = crafting
+        //1 = axe
+        //2 = pickaxe
+
         public Item()
         {
             id = -1;
@@ -27,6 +35,14 @@ namespace Game1
             id = i;
             tex = t;
             max = m;
+        }
+        public Item(int i, Texture2D t, int m, int ty, int td)
+        {
+            id = i;
+            tex = t;
+            max = m;
+            type = ty;
+            tooldmg = td;
         }
         public int Id
         {
@@ -42,6 +58,16 @@ namespace Game1
         {
             set { max = value; }
             get { return max; }
+        }
+        public int Tooldmg
+        {
+            set { tooldmg = value; }
+            get { return tooldmg; }
+        }
+        public int Type
+        {
+            set { type = value; }
+            get { return type; }
         }
     }
 }

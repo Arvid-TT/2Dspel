@@ -53,19 +53,19 @@ namespace Game1
             s2.It = s3.It;
             return s2;
         }
-        public void Huvudmenyklick(List<Menuchoice> m, Bool meny, Bool hmeny,Bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, Bool wmeny)
+        public void Huvudmenyklick(List<Menuchoice> m, ref bool meny, ref bool hmeny, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, ref bool wmeny)
         {
             if (m[0].Active)
             {
                 l = wg.Generate(f.Höjd, f.Bredd, slump);
-                meny.Boll = false;
-                hmeny.Boll = false;
-                normal.Boll = true;
+                meny  = false;
+                hmeny  = false;
+                normal  = true;
             }
             else if (m[1].Active)
             {
-                hmeny.Boll = false;
-                wmeny.Boll = true;
+                hmeny  = false;
+                wmeny  = true;
                 l = wg.Generate(f.Höjd, f.Bredd, slump);
                 foreach(Block b in l)
                 {
@@ -75,7 +75,7 @@ namespace Game1
             }
             
         }
-        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, Bool meny, Bool wmeny, Bool n, Bool hmeny)
+        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, ref bool meny, ref bool wmeny, ref bool n, ref bool hmeny)
         {
             bool b = false;
             
@@ -204,15 +204,15 @@ namespace Game1
             else if (c[1].Active)
             {
                 l = wg.Generate(f.Höjd, f.Bredd, slump);
-                meny.Boll = false;
-                wmeny.Boll = false;
-                n.Boll = true;
+                meny  = false;
+                wmeny  = false;
+                n  = true;
                 return;
             }
             else if (c[2].Active)
             {
-                wmeny.Boll = false;
-                hmeny.Boll = true;
+                wmeny  = false;
+                hmeny  = true;
 
                 wg = new WorldGen();
             }
@@ -226,7 +226,7 @@ namespace Game1
                 }
             }
         }
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, Bool we, Rectangle weh, Siffra wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside)
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -234,18 +234,18 @@ namespace Game1
                 {
                     if (oldmus.LeftButton == ButtonState.Released)
                     {
-                        if (we.Boll == true)
+                        if (we  == true)
                         {
-                            we.Boll = false;
+                            we  = false;
                         }
-                        else if (we.Boll == false)
+                        else if (we  == false)
                         {
-                            we.Boll = true;
+                            we  = true;
                         }
                     }
 
                 }
-                else if (we.Boll && hitb.Intersects(weh))
+                else if (we  && hitb.Intersects(weh))
                 {
                     foreach (Worldedit w in worldedit)
                     {
@@ -253,7 +253,7 @@ namespace Game1
                         if (w.Bak.Intersects(hitb))
                         {
                             w.Active = true;
-                            wef.Tal = w.Id;
+                            wef  = w.Id;
                         }
                     }
                 }
@@ -334,7 +334,7 @@ namespace Game1
                                     foreach (Craftcheck cc in c.Req)
                                     {
                                         total[cc.Id].Numb -= cc.Numb;
-                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb);
+                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb, sloot);
                                     }
                                     allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                                 }
@@ -346,7 +346,7 @@ namespace Game1
                                     foreach (Craftcheck cc in c.Req)
                                     {
                                         total[cc.Id].Numb -= cc.Numb;
-                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb);
+                                        inventory[0].Inventoryremove(inventory, itemlist[cc.Id], cc.Numb, sloot);
                                     }
                                     allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                                 }
@@ -355,27 +355,41 @@ namespace Game1
                         }
                     }
                 }
-                else if (we.Boll == false)
+                else if (we  == false)
                 {
                     foreach (Block b in l)
                     {
                         if (hitb.Intersects(b.Rek))
                         {
-                            if (b.Addontype == 1)
+                            if (b.Maxhp > 0 && b.Tool == inventory[inv].It.Type)
                             {
-                                b.Addontype = 0;
-                                total[0].Numb++;
-                                wg.Addonextension(l, b.Plats);
-                                if (b.Plats % 100 < 99)
+                                b.Hp -= inventory[inv].It.Tooldmg;
+                                if (b.Hp == 0)
                                 {
-                                    wg.Addonextension(l, b.Plats + 1);
+                                    if (b.Addontype == 1) 
+                                    {
+                                        for(int i = 0; i <= slump.Next(2); i++)
+                                        {
+                                            total[0].Numb++;
+                                            inventory[0].Inventoryadd(inventory, itemlist[0]);
+                                        }
+
+                 
+                                    }
+                                    else if (b.Addontype == 0)
+                                    {
+                                        b.Id = 11;
+                                        for(int i = 0; i <= slump.Next(1, 5); i++)
+                                        {
+                                            total[1].Numb++;
+                                            inventory[0].Inventoryadd(inventory, itemlist[1]);
+                                        }
+                                    }
+                                    b.Maxhp = 0;
+                                    b.Addontype = 0;
+                                    wg.Addonextension(l, b.Plats);
+                                    allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                                 }
-                                if (b.Plats / 100 < 99)
-                                {
-                                    wg.Addonextension(l, b.Plats + 100);
-                                }
-                                inventory[0].Inventoryadd(inventory, itemlist[0]);
-                                allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
                             }
                             else if (b.Addontype == 2 && hitb.Intersects(b.Addon))
                             {
@@ -395,23 +409,23 @@ namespace Game1
 
                     }
                 }
-                else if ((hitb.X < f.Bredd - 100 || hitb.Y > 100) && we.Boll)
+                else if ((hitb.X < f.Bredd - 100 || hitb.Y > 100) && we )
                 {
                     foreach (Block b in l)
                     {
                         if (b.Rek.Intersects(hitb))
                         {
-                            b.Id = wef.Tal;
+                            b.Id = wef;
                         }
                     }
                 }
-                else if (we.Boll)
+                else if (we )
                 {
                     foreach (Block b in l)
                     {
                         if (b.Map.Intersects(pos))
                         {
-                            b.Id = wef.Tal;
+                            b.Id = wef ;
                         }
                     }
                 }

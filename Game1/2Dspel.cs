@@ -43,7 +43,7 @@ namespace Game1
         List<Worldedit> worldedit = new List<Worldedit>();
         List<Ghost> ghosts = new List<Ghost>();
         Mus mus;
-        Siffra activeslot = new Siffra(0);
+        int activeslot = 0;
         Misc misc = new Misc();
         Rectangle hpbar;
         Rectangle hpbarbak;
@@ -53,35 +53,35 @@ namespace Game1
         Rectangle craftinginside = new Rectangle(8, 118, 0, 34);
         Rectangle craftshow;
         Rectangle craftarrow;
-        Siffra health;
+        int health;
         KeyboardState oldstate;
         MouseState oldmus;
-        Siffra xauto = new Siffra(0);
-        Siffra yauto = new Siffra(0);
-        Siffra xautovcd = new Siffra(0);
-        Siffra yautoucd = new Siffra(0);
-        Siffra xautohcd = new Siffra(0);
-        Siffra yautoncd = new Siffra(0);
-        Siffra yautoscd = new Siffra(0);
-        Siffra xautoscd = new Siffra(0);
-        Siffra xautocd = new Siffra(0);
-        Siffra yautocd = new Siffra(0);
+        int xauto = 0;
+        int yauto = 0;
+        int xautovcd = 0;
+        int yautoucd = 0;
+        int xautohcd = 0;
+        int yautoncd = 0;
+        int yautoscd = 0;
+        int xautoscd = 0;
+        int xautocd = 0;
+        int yautocd = 0;
         Slot[] inventory = new Slot[20];
         Rectangle inventoryhitb;
         Rectangle wetoggle;
         Player play;
         Rectangle weh;
-        Siffra wef = new Siffra(0);
+        int wef = 0;
         List<Texture2D> allatex;
         Fonster f;
         WorldGen wg = new WorldGen();
-        Bool we = new Bool(false);
-        Bool inv = new Bool(false);
-        Bool first = new Bool(true);
-        Bool meny = new Bool(true);
-        Bool hmeny = new Bool(true);
-        Bool normal = new Bool(false);
-        Bool wmeny = new Bool(false);
+        bool we = false;
+        bool inv = false;
+        bool first = true;
+        bool meny = true;
+        bool hmeny = true;
+        bool normal = false;
+        bool wmeny = false;
         Random rand = new Random();
         int muscrafting = 300;
         bool muscraft;
@@ -154,6 +154,7 @@ namespace Game1
             itemlist.Add(new Item(1, Content.Load<Texture2D>("steen"), 16));
             itemlist.Add(new Item(2, Content.Load<Texture2D>("stick"), 16));
             itemlist.Add(new Item(3, Content.Load<Texture2D>("flint"), 16));
+            itemlist.Add(new Item(4, Content.Load<Texture2D>("hatchet"), 1, 1, 1));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -187,21 +188,21 @@ namespace Game1
 
 
 
-            if (first.Boll)
+            if (first )
             {
                 play = new Player(f.Bredd, f.Höjd);
-                first.Boll = false;
+                first  = false;
                 for (int i = 0; i < 14; i++)
                 {
                     worldedit.Add(new Worldedit(i, f.Bredd - 21, 121 + i * 21));
                 }
                 weh = new Rectangle(f.Bredd - 21, 121, 21, worldedit.Count * 21);
                 wetoggle = new Rectangle(f.Bredd - 21, 100, 21, 21);
-                wef.Tal = 0;
-                health = new Siffra(100);
+                wef  = 0;
+                health = 100;
                 hpbarbor = new Rectangle(f.Bredd - 320, 10, 210, 30);
                 hpbarbak = new Rectangle(f.Bredd - 315, 15, 200, 20);
-                hpbar = new Rectangle(f.Bredd - 315, 15, health.Tal * 2, 20);
+                hpbar = new Rectangle(f.Bredd - 315, 15, health  * 2, 20);
                 healthheart = new Rectangle(f.Bredd - 330, 7, 30, 30);
                 ghosts.Clear();
                 inventory[0] = new Slot();
@@ -220,15 +221,15 @@ namespace Game1
                 temp.Add(new Craftcheck(1, 2));
                 allcrafts.Add(new Crafting(temp, 3));
                 temp.Clear();
+                temp.Add(new Craftcheck(3, 1));
                 temp.Add(new Craftcheck(2, 1));
-                temp.Add(new Craftcheck(0, 1));
-                allcrafts.Add(new Crafting(temp, 1));
+                allcrafts.Add(new Crafting(temp, 4));
                 temp.Clear();
             }
             mus.Musposchange(mstate.X, mstate.Y);
-            if (meny.Boll)
+            if (meny )
             {
-                if (hmeny.Boll)
+                if (hmeny )
                 {
                     foreach(Menuchoice m in huvudmeny)
                     {
@@ -240,10 +241,10 @@ namespace Game1
                     }
                     if (mstate.LeftButton == ButtonState.Pressed)
                     {
-                        mus.Huvudmenyklick(huvudmeny, meny, hmeny, normal, ref l, wg, rand, f, wmeny);
+                        mus.Huvudmenyklick(huvudmeny, ref meny, ref hmeny, ref normal, ref l, wg, rand, f, ref wmeny);
                     }
                 }
-                if (wmeny.Boll)
+                if (wmeny )
                 {
                     foreach(Menuchoice m in worldmeny)
                     {
@@ -263,14 +264,14 @@ namespace Game1
                     }
                     if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        mus.Worldmenyklick(worldmeny, unclickablew, clickablew , ref l, wg, rand, mus, mellantext, f, meny, wmeny, normal, hmeny);
+                        mus.Worldmenyklick(worldmeny, unclickablew, clickablew , ref l, wg, rand, mus, mellantext, f, ref meny, ref wmeny, ref normal, ref hmeny);
                     }
                 }
             }
-            if(normal.Boll)
+            if(normal )
             {
                
-                if (inv.Boll)
+                if (inv )
                 {
                     inventoryhitb.Height = 105;
                 }
@@ -280,8 +281,8 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, we, weh, wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside);
-                play.Update(ref l, kstate, mstate, xauto, yauto, xautoscd, yautoscd, xautohcd, yautoncd, xautovcd, yautoucd, ghosts);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand);
+                play.Update(ref l, kstate, mstate, ref xauto, ref yauto, ref xautoscd, ref yautoscd, ref xautohcd, ref yautoncd, ref xautovcd, ref yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
                     l = wg.Generate(f.Höjd, f.Bredd, rand);
@@ -295,50 +296,44 @@ namespace Game1
                 }
                 if (kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
                 {
-                    if (inv.Boll)
+                    if (inv )
                     {
-                        inv.Boll = false;
+                        inv  = false;
                     }
                     else
                     {
-                        inv.Boll = true;
+                        inv  = true;
                     }
 
 
                 }
-                if (mus.Hitb.Intersects(craftingoutline) && inv.Boll)
+                if (mus.Hitb.Intersects(craftingoutline) && inv )
                 {
                     muscraft = true;
-                    if (muscrafting < craftable.Count && mus.Hitb.Intersects(craftable[muscrafting].Place.Hitb))
+                    for (int i = 0; i < craftable.Count; i++)
                     {
-                        
-                    }
-                    else
-                    {
-                        for (int i = 0; i < craftable.Count; i++)
+                        if (mus.Hitb.Intersects(craftable[i].Place.Hitb))
                         {
-                            if (mus.Hitb.Intersects(craftable[i].Place.Hitb))
-                            {
-                                craftable[i].Requirementshow(ref craftarrow, ref craftshow);
-                                muscrafting = i;
-                                
-                                break;
-                            }
+                            craftable[i].Requirementshow(ref craftarrow, ref craftshow);
+                            muscrafting = i;
+
+                            break;
                         }
                     }
+
 
                 }
                 else
                 {
                     muscraft = false;
                 }
-                if (kstate.IsKeyDown(Keys.O) && health.Tal > 0)
+                if (kstate.IsKeyDown(Keys.O) && health  > 0)
                 {
-                    health.Tal--;
+                    health --;
                 }
-                if (kstate.IsKeyDown(Keys.P) && health.Tal < 100)
+                if (kstate.IsKeyDown(Keys.P) && health  < 100)
                 {
-                    health.Tal++;
+                    health ++;
                 }
                 if (kstate.IsKeyDown(Keys.L))
                 {
@@ -350,10 +345,10 @@ namespace Game1
                     if (bo)
                     {
                         ghosts.Remove(ghosts[i]);
-                        health.Tal -= 5;
+                        health  -= 5;
                     }
                 }
-                hpbar.Width = health.Tal * 2;
+                hpbar.Width = health  * 2;
             }
             
             oldstate = kstate;
@@ -373,9 +368,9 @@ namespace Game1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            if (meny.Boll)
+            if (meny )
             {
-                if (hmeny.Boll)
+                if (hmeny )
                 {
                     spriteBatch.DrawString(stortext, hmenytext.Text, hmenytext.Textlocation, Color.White);
                     foreach(Menuchoice m in huvudmeny)
@@ -388,7 +383,7 @@ namespace Game1
                         }
                     }
                 }
-                if (wmeny.Boll)
+                if (wmeny )
                 {
                     spriteBatch.DrawString(menytext, wmenytext.Text, wmenytext.Textlocation, Color.White);
                     foreach(Menuchoice m in unclickablew)
@@ -469,11 +464,11 @@ namespace Game1
                 {
                     spriteBatch.Draw(pixel, g.Pos, Color.Red);
                 }
-                if (we.Boll == false)
+                if (we  == false)
                 {
                     spriteBatch.Draw(pixel, wetoggle, Color.Red);
                 }
-                else if (we.Boll)
+                else if (we )
                 {
                     spriteBatch.Draw(pixel, wetoggle, Color.Green);
                     foreach (Worldedit w in worldedit)
@@ -492,7 +487,7 @@ namespace Game1
                 Rectangle tillf = new Rectangle(f.Bredd - 18, 103, 15, 15);
                 spriteBatch.Draw(pixel, tillf, Color.White);
                 tillf = new Rectangle(tillf.X + 1, tillf.Y + 1, 13, 13);
-                if (we.Boll)
+                if (we )
                 {
                     spriteBatch.Draw(onoff, tillf, Color.Green);
                 }
@@ -502,7 +497,7 @@ namespace Game1
                 }
                 for (int i = 0; i < 10; i++)
                 {
-                    if (i == activeslot.Tal)
+                    if (i == activeslot )
                     {
                         spriteBatch.Draw(pixel, inventory[i].Hitb, Color.Yellow);
                     }
@@ -514,12 +509,12 @@ namespace Game1
                     if (inventory[i].It.Id != -1)
                     {
                         spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
-                        if (inventory[i].Numb < 10)
+                        if (inventory[i].Numb < 10 && inventory[i].It.Max > 1)
                         {
                             spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                         }
-                        
-                        else
+
+                        else if (inventory[i].It.Max > 1)
                         {
                             spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                         }
@@ -533,7 +528,7 @@ namespace Game1
                         spriteBatch.DrawString(text, "0", new Vector2(inventory[i].Förg.X, inventory[i].Förg.Y), Color.White);
                     }
                 }
-                if (inv.Boll)
+                if (inv )
                 {
                     for (int i = 10; i < 20; i++)
                     {
@@ -542,11 +537,11 @@ namespace Game1
                         if (inventory[i].It.Id != -1)
                         {
                             spriteBatch.Draw(inventory[i].It.Tex, inventory[i].Hitb, Color.White);
-                            if (inventory[i].Numb < 10)
+                            if (inventory[i].Numb < 10 && inventory[i].It.Max > 1)
                             {
                                 spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                             }
-                            else
+                            else if(inventory[i].It.Max > 1)
                             {
                                 spriteBatch.DrawString(text, Convert.ToString(inventory[i].Numb), new Vector2(inventory[i].Förg.X + 34 - 2 * text.LineSpacing, inventory[i].Förg.Y + 24), Color.White);
                             }
@@ -582,11 +577,11 @@ namespace Game1
                 else
                 {
                     spriteBatch.Draw(mus.Sloot.It.Tex, mus.Sloot.Hitb, Color.White);
-                    if (mus.Sloot.Numb < 10)
+                    if (mus.Sloot.Numb < 10 && mus.Sloot.It.Max > 1)
                     {
                         spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
                     }
-                    else
+                    else if(mus.Sloot.It.Max > 1)
                     {
                         spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
                     }

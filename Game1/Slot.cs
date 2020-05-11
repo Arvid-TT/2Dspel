@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Game1
 {
     class Slot
@@ -16,7 +15,6 @@ namespace Game1
         Rectangle förg;
         public Slot()
         {
-
         }
         public Slot(bool c, int n, int x, int y)
         {
@@ -69,9 +67,9 @@ namespace Game1
 
         public void Inventory(Slot[] s)
         {
-            for(int y = 0; y < 2; y++)
+            for (int y = 0; y < 2; y++)
             {
-                for(int x = 0; x < 10; x++)
+                for (int x = 0; x < 10; x++)
                 {
                     s[y * 10 + x] = new Slot(false, 0, 5 + 45 * x, 10 + 50 * y);
                 }
@@ -88,9 +86,9 @@ namespace Game1
         }
         public int Inventoryslotfind(Slot[] inv, Item item, int orgpos)
         {
-            for(int i = 0; i < inv.Length; i++)
+            for (int i = 0; i < inv.Length; i++)
             {
-                if(inv[i].It==item && i != orgpos && inv[i].Numb<item.Max)
+                if (inv[i].It == item && i != orgpos && inv[i].Numb < item.Max)
                 {
                     return i;
                 }
@@ -106,15 +104,15 @@ namespace Game1
         }
         public void Inventoryadd(Slot[] inv, Item item)
         {
-            foreach(Slot s in inv)
+            foreach (Slot s in inv)
             {
-                if (s.It == item && s.Numb<item.Max)
+                if (s.It == item && s.Numb < item.Max)
                 {
                     s.Numb++;
                     return;
                 }
             }
-            foreach(Slot s in inv)
+            foreach (Slot s in inv)
             {
                 if (s.It.Id == -1)
                 {
@@ -124,7 +122,7 @@ namespace Game1
                 }
             }
         }
-        public void Inventoryremove(Slot[] inv, Item item, int numb)
+        public void Inventoryremove(Slot[] inv, Item item, int numb, Slot mus)
         {
             while (true)
             {
@@ -138,6 +136,10 @@ namespace Game1
                         search = i;
                     }
                 }
+                if (mus.It == item && ant == 100)
+                {
+                    ant = mus.Numb;
+                }
                 if (ant > numb && search > -1)
                 {
                     inv[search].Numb -= numb;
@@ -149,11 +151,25 @@ namespace Game1
                     inv[search].It = new Item();
                     return;
                 }
-                else if(ant < numb && search > -1)
+                else if (ant < numb && search > -1)
                 {
                     inv[search].Numb = 0;
                     inv[search].It = new Item();
                     numb -= ant;
+                }
+                else
+                {
+                    if (ant > numb)
+                    {
+                        mus.Numb -= numb;
+                        return;
+                    }
+                    else if(ant == numb)
+                    {
+                        mus.Numb = 0;
+                        mus.It = new Item();
+                        return;
+                    }
                 }
             }
 

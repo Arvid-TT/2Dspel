@@ -436,6 +436,22 @@ namespace Game1
             foreach(Block b in l)
             {
                 l = Addonextension(l, b.Plats);
+                if(b.Id == 1 || b.Id == 7 || b.Id == 8 || b.Id == 12)
+                {
+                    b.Maxhp = 500;
+                    b.Hp = b.Maxhp;
+                    b.Tool = 2;
+                }
+                else if (b.Addontype == 1)
+                {
+                    b.Hp = 50;
+                    b.Maxhp = 50;
+                    b.Tool = 1;
+                }
+                else
+                {
+                    b.Maxhp = 0;
+                }
             }
             return l;
         }
@@ -632,27 +648,53 @@ namespace Game1
             {
                 if (l[p].Addontype == l[p - 1].Addontype)
                 {
-                    l[p - 1].Addontrue[1] = true;
                     l[p].Addontrue[3] = true;
+                    l[p - 1].Addontrue[1] = true;
                 }
                 else
                 {
-                    l[p - 1].Addontrue[1] = false;
                     l[p].Addontrue[3] = false;
+                    l[p - 1].Addontrue[1] = false;
                 }
-
+            }
+            if (p % 100 < 99)
+            {
+                if (l[p].Addontype == l[p + 1].Addontype)
+                {
+                    l[p].Addontrue[1] = true;
+                    l[p + 1].Addontrue[3] = true;
+                }
+                else
+                {
+                    l[p].Addontrue[1] = false;
+                    l[p + 1].Addontrue[3] = false;
+                }
             }
             if (p / 100 > 0)
             {
                 if (l[p].Addontype == l[p - 100].Addontype)
                 {
-                    l[p - 100].Addontrue[2] = true;
                     l[p].Addontrue[0] = true;
+                    l[p - 100].Addontrue[2] = true;
                 }
                 else
                 {
-                    l[p - 100].Addontrue[2] = false;
                     l[p].Addontrue[0] = false;
+                    l[p - 100].Addontrue[2] = false;
+                }
+            }
+            if (p / 100 < 99)
+            {
+
+                if (l[p].Addontype == l[p + 100].Addontype)
+                {
+                    l[p].Addontrue[2] = true;
+                    l[p + 100].Addontrue[0] = true;
+                }
+                else
+                {
+                    l[p].Addontrue[2] = false;
+                    l[p + 100].Addontrue[0] = false;
                 }
 
             }
