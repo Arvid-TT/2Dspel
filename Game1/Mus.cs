@@ -373,7 +373,11 @@ namespace Game1
                                             total[0].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[0]);
                                         }
-
+                                        if (slump.Next(2) == 0)
+                                        {
+                                            total[5].Numb++;
+                                            inventory[0].Inventoryadd(inventory, itemlist[5]);
+                                        }
                  
                                     }
                                     else if (b.Addontype == 0)

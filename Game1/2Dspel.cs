@@ -155,6 +155,8 @@ namespace Game1
             itemlist.Add(new Item(2, Content.Load<Texture2D>("stick"), 16));
             itemlist.Add(new Item(3, Content.Load<Texture2D>("flint"), 16));
             itemlist.Add(new Item(4, Content.Load<Texture2D>("hatchet"), 1, 1, 1));
+            itemlist.Add(new Item(5, Content.Load<Texture2D>("Plant fiber"), 16));
+            itemlist.Add(new Item(6, Content.Load<Texture2D>("Pickaxe"), 1, 2, 1));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -224,6 +226,11 @@ namespace Game1
                 temp.Add(new Craftcheck(3, 1));
                 temp.Add(new Craftcheck(2, 1));
                 allcrafts.Add(new Crafting(temp, 4));
+                temp.Clear();
+                temp.Add(new Craftcheck(3, 2));
+                temp.Add(new Craftcheck(2, 1));
+                temp.Add(new Craftcheck(5, 1));
+                allcrafts.Add(new Crafting(temp, 6));
                 temp.Clear();
             }
             mus.Musposchange(mstate.X, mstate.Y);
@@ -561,6 +568,10 @@ namespace Game1
                         for(int i = 0; i < craftable[muscrafting].Req.Count; i++)
                         {
                             spriteBatch.Draw(itemlist[craftable[muscrafting].Req[i].Id].Tex, new Rectangle(craftshow.X + i * 40, craftshow.Y, 40, 40), Color.White);
+                            if(craftable[muscrafting].Req[i].Numb > 1)
+                            {
+                                spriteBatch.DrawString(text, Convert.ToString(craftable[muscrafting].Req[i].Numb), new Vector2(craftshow.X + i * 40 + 30, craftshow.Y + 30), Color.White);
+                            }
                         }
                     }
                     
