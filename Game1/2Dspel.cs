@@ -105,7 +105,9 @@ namespace Game1
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
-
+            addonextensions.Add(new Texture2D[4]);
+            addonextensions.Add(new Texture2D[4]);
+            addonextensions.Add(new Texture2D[4]);
             base.Initialize();
         }
 
@@ -141,15 +143,26 @@ namespace Game1
             addons.Add(Content.Load<Texture2D>("tree"));
             addons.Add(Content.Load<Texture2D>("sten"));
             addons.Add(Content.Load<Texture2D>("stiik"));
+            addons.Add(Content.Load<Texture2D>("Trävägg"));
+            addons.Add(Content.Load<Texture2D>("Stenvgg"));
             for (int i = 0; i < 4; i++)
             {
                 addonextensions[0][i] = Content.Load<Texture2D>("nothing");
                 addonextensions[2][i] = Content.Load<Texture2D>("nothing");
+                addonextensions[3][i] = Content.Load<Texture2D>("nothing");
             }
             addonextensions[1][0] = Content.Load<Texture2D>("Tree1");
             addonextensions[1][1] = Content.Load<Texture2D>("Tree2");
             addonextensions[1][2] = Content.Load<Texture2D>("Tree3");
             addonextensions[1][3] = Content.Load<Texture2D>("Tree4");
+            addonextensions[4][0] = Content.Load<Texture2D>("Trävägg 1");
+            addonextensions[4][1] = Content.Load<Texture2D>("Trävägg 2");
+            addonextensions[4][2] = Content.Load<Texture2D>("Trävägg 3");
+            addonextensions[4][3] = Content.Load<Texture2D>("Trävägg 4");
+            addonextensions[5][0] = Content.Load<Texture2D>("Stenvgg 1");
+            addonextensions[5][1] = Content.Load<Texture2D>("Stenvgg 2");
+            addonextensions[5][2] = Content.Load<Texture2D>("Stenvgg 3");
+            addonextensions[5][3] = Content.Load<Texture2D>("Stenvgg 4");
             itemlist.Add(new Item(0, Content.Load<Texture2D>("Log"), 16));
             itemlist.Add(new Item(1, Content.Load<Texture2D>("steen"), 16));
             itemlist.Add(new Item(2, Content.Load<Texture2D>("stick"), 16));
@@ -157,6 +170,8 @@ namespace Game1
             itemlist.Add(new Item(4, Content.Load<Texture2D>("hatchet"), 1, 1, 1));
             itemlist.Add(new Item(5, Content.Load<Texture2D>("Plant fiber"), 16));
             itemlist.Add(new Item(6, Content.Load<Texture2D>("Pickaxe"), 1, 2, 1));
+            itemlist.Add(new Item(7, Content.Load<Texture2D>("Travägg"), 16));
+            itemlist.Add(new Item(8, Content.Load<Texture2D>("stnvgg"), 16));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -232,6 +247,12 @@ namespace Game1
                 temp.Add(new Craftcheck(5, 1));
                 allcrafts.Add(new Crafting(temp, 6));
                 temp.Clear();
+                temp.Add(new Craftcheck(0, 2));
+                allcrafts.Add(new Crafting(temp, 7));
+                temp.Clear();
+                temp.Add(new Craftcheck(1, 2));
+                allcrafts.Add(new Crafting(temp, 8));
+                temp.Clear();
             }
             mus.Musposchange(mstate.X, mstate.Y);
             if (meny )
@@ -288,7 +309,7 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand, play.Pos);
                 play.Update(ref l, kstate, mstate, ref xauto, ref yauto, ref xautoscd, ref yautoscd, ref xautohcd, ref yautoncd, ref xautovcd, ref yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
@@ -446,6 +467,17 @@ namespace Game1
                     if (b.Addontype >= 2)
                     {
                         spriteBatch.Draw(addons[b.Addontype], b.Addon, Color.White);
+                        for(int i = 1; i < 4; i++)
+                        {
+                            if (b.Addontrue[i])
+                            {
+                                spriteBatch.Draw(addonextensions[b.Addontype][i], b.Rek, Color.White);
+                            }
+                        }
+                        if (b.Addontrue[0])
+                        {
+                            spriteBatch.Draw(addonextensions[b.Addontype][0], b.Rek, Color.White);
+                        }
                     }
                 }
                 spriteBatch.Draw(player, play.Pos, Color.White);
@@ -462,6 +494,7 @@ namespace Game1
                             }
                         }
                     }
+
                 }
                 foreach (Block b in l)
                 {

@@ -43,6 +43,7 @@ namespace Game1
         //1 = tree
         //2 = stone
         //3 = stick
+        //4 = Trävägg
 
         public Block(Rectangle r, int i, int p)
         {

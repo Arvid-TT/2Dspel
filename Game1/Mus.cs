@@ -226,7 +226,7 @@ namespace Game1
                 }
             }
         }
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump)
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -366,9 +366,9 @@ namespace Game1
                                 b.Hp -= inventory[inv].It.Tooldmg;
                                 if (b.Hp == 0)
                                 {
-                                    if (b.Addontype == 1) 
+                                    if (b.Addontype == 1)
                                     {
-                                        for(int i = 0; i <= slump.Next(2); i++)
+                                        for (int i = 0; i <= slump.Next(2); i++)
                                         {
                                             total[0].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[0]);
@@ -378,12 +378,22 @@ namespace Game1
                                             total[5].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[5]);
                                         }
-                 
+
+                                    }
+                                    else if (b.Addontype == 7)
+                                    {
+                                        total[7].Numb++;
+                                        inventory[0].Inventoryadd(inventory, itemlist[7]);
+                                    }
+                                    else if (b.Addontype == 8)
+                                    {
+                                        total[8].Numb++;
+                                        inventory[0].Inventoryadd(inventory, itemlist[8]);
                                     }
                                     else if (b.Addontype == 0)
                                     {
                                         b.Id = 11;
-                                        for(int i = 0; i <= slump.Next(1, 5); i++)
+                                        for (int i = 0; i <= slump.Next(1, 5); i++)
                                         {
                                             total[1].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[1]);
@@ -408,6 +418,28 @@ namespace Game1
                                 total[2].Numb++;
                                 inventory[2].Inventoryadd(inventory, itemlist[2]);
                                 allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
+                            }
+                            else if (b.Addontype == 0 && inventory[inv].It.Id == 7 && player.Intersects(b.Rek) == false)
+                            {
+                                b.Addontype = 4;
+                                b.Maxhp = 100;
+                                b.Hp = 100;
+                                b.Tool = 1;
+                                b.Addon = new Rectangle(b.Rek.X, b.Rek.Y, b.Rek.Width, b.Rek.Height);
+                                wg.Addonextension(l, b.Plats);
+                                total[7].Numb--;
+                                inventory[0].Inventoryremove(inventory, itemlist[7], 1, sloot);
+                            }
+                            else if (b.Addontype == 0 && inventory[inv].It.Id == 8 && player.Intersects(b.Rek) == false)
+                            {
+                                b.Addontype = 5;
+                                b.Maxhp = 100;
+                                b.Hp = 100;
+                                b.Tool = 2;
+                                b.Addon = new Rectangle(b.Rek.X, b.Rek.Y, b.Rek.Width, b.Rek.Height);
+                                wg.Addonextension(l, b.Plats);
+                                total[8].Numb--;
+                                inventory[0].Inventoryremove(inventory, itemlist[8], 1, sloot);
                             }
                         }
 
