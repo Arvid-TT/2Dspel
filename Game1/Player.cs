@@ -229,20 +229,27 @@ namespace Game1
             bool bb = false;
             bool v = false;
             bool vv = false;
+            bool vg = false;
             foreach (Block b in l)
             {
 
                 Rectangle r = new Rectangle(x, y, 80, 40);
                 if (b.Rek.Intersects(r))
                 {
-                    if (b.Addontype == 1 || b.Addontype > 3)
+                    if (b.Addontype == 1 || (b.Addontype > 3 && b.Addontype < 6))
                     {
                         if (b.Addon.Intersects(r))
                         {
                             return false;
                         }
                     }
-                    if (b.Id == 1 || b.Id == 5 || b.Id == 8 || b.Id == 9 || b.Id == 12)
+                    else if (b.Addontype == 6 || b.Addontype == 7)
+                    {
+                        vg = true;
+                        ice = false;
+                        bb = true;
+                    }
+                    else if (b.Id == 1 || b.Id == 5 || b.Id == 8 || b.Id == 9 || b.Id == 12 || b.Id == 14)
                     {
                         return false;
                     }
@@ -264,7 +271,11 @@ namespace Game1
                     }
                 }
             }
-            if (vv)
+            if (vg)
+            {
+                speed = 6;
+            }
+            else if (vv)
             {
                 speed = 1;
             }

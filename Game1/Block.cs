@@ -37,6 +37,7 @@ namespace Game1
         //11 = Dirt
         //12 = Mossy Stone
         //13 = Forest water
+        //14 = Iron
 
         //Item addontype meaning
         //0 = no addon
@@ -54,16 +55,27 @@ namespace Game1
             addonext = new Rectangle[4];
             addontrue = new bool[4];
         }
-        public Block(Block b)
+        public Block(Rectangle r, Rectangle m, int i, int p, Rectangle a, Rectangle an1, Rectangle an2, Rectangle an3, Rectangle an4, bool n1, bool n2, bool n3, bool n4, int at, int h, int mh, int t)
         {
-            rek = b.Rek;
-            map = b.Map;
-            id = b.Id;
-            plats = b.Plats;
-            addon = b.Addon;
-            addonext = b.Addonext;
-            addontype = b.Addontype;
+            rek = new Rectangle(r.X, r.Y, r.Width, r.Height);
+            map = new Rectangle(m.X, m.Y, m.Width, m.Height);
+            id = i;
+            plats = p;
+            addon = new Rectangle(a.X, a.Y, a.Width, a.Height);
+            addonext = new Rectangle[4];
+            addonext[0] = new Rectangle(an1.X, an1.Y, an1.Width, an1.Height);
+            addonext[1] = new Rectangle(an2.X, an2.Y, an2.Width, an2.Height);
+            addonext[2] = new Rectangle(an3.X, an3.Y, an3.Width, an3.Height);
+            addonext[3] = new Rectangle(an4.X, an4.Y, an4.Width, an4.Height);
             addontrue = new bool[4];
+            addontrue[0] = n1;
+            addontrue[1] = n2;
+            addontrue[2] = n3;
+            addontrue[3] = n4;
+            addontype = at;
+            hp = h;
+            maxhp = mh;
+            tool = t;
         }
         
         public int Id

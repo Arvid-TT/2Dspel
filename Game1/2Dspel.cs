@@ -20,6 +20,8 @@ namespace Game1
         List<Menuchoice> worldmeny = new List<Menuchoice>();
         List<Menuchoice> unclickablew = new List<Menuchoice>();
         List<Menuchoice> clickablew = new List<Menuchoice>();
+        List<Menuchoice> gamemenu = new List<Menuchoice>();
+        Menuchoice ingamemeny;
         List<Texture2D> addons = new List<Texture2D>();
         List<Texture2D[]> addonextensions = new List<Texture2D[]>();
         List<Craftcheck> total = new List<Craftcheck>();
@@ -53,6 +55,8 @@ namespace Game1
         Rectangle craftinginside = new Rectangle(8, 118, 0, 34);
         Rectangle craftshow;
         Rectangle craftarrow;
+        Rectangle gamemenuin;
+        Rectangle gamemenuout;
         int health;
         KeyboardState oldstate;
         MouseState oldmus;
@@ -82,6 +86,8 @@ namespace Game1
         bool hmeny = true;
         bool normal = false;
         bool wmeny = false;
+        bool inmeny = false;
+        bool loopcancel = false;
         Random rand = new Random();
         int muscrafting = 300;
         bool muscraft;
@@ -102,6 +108,8 @@ namespace Game1
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            addonextensions.Add(new Texture2D[4]);
+            addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
             addonextensions.Add(new Texture2D[4]);
@@ -137,6 +145,7 @@ namespace Game1
             mustex = Content.Load<Texture2D>("Mus");
             blocktextures.Add(Content.Load<Texture2D>("Foreststone"));
             blocktextures.Add(Content.Load<Texture2D>("Forestwater"));
+            blocktextures.Add(Content.Load<Texture2D>("jrn"));
             pixel = Content.Load<Texture2D>("Pixel");
             onoff = Content.Load<Texture2D>("OnOff");
             heart = Content.Load<Texture2D>("Hjärta");
@@ -145,11 +154,15 @@ namespace Game1
             addons.Add(Content.Load<Texture2D>("stiik"));
             addons.Add(Content.Load<Texture2D>("Trävägg"));
             addons.Add(Content.Load<Texture2D>("Stenvgg"));
+            addons.Add(Content.Load<Texture2D>("trägolv"));
+            addons.Add(Content.Load<Texture2D>("stenvg"));
             for (int i = 0; i < 4; i++)
             {
                 addonextensions[0][i] = Content.Load<Texture2D>("nothing");
                 addonextensions[2][i] = Content.Load<Texture2D>("nothing");
                 addonextensions[3][i] = Content.Load<Texture2D>("nothing");
+                addonextensions[6][i] = Content.Load<Texture2D>("nothing");
+                addonextensions[7][i] = Content.Load<Texture2D>("nothing");
             }
             addonextensions[1][0] = Content.Load<Texture2D>("Tree1");
             addonextensions[1][1] = Content.Load<Texture2D>("Tree2");
@@ -170,8 +183,10 @@ namespace Game1
             itemlist.Add(new Item(4, Content.Load<Texture2D>("hatchet"), 1, 1, 1));
             itemlist.Add(new Item(5, Content.Load<Texture2D>("Plant fiber"), 16));
             itemlist.Add(new Item(6, Content.Load<Texture2D>("Pickaxe"), 1, 2, 1));
-            itemlist.Add(new Item(7, Content.Load<Texture2D>("Travägg"), 16));
+            itemlist.Add(new Item(7, Content.Load<Texture2D>("Tragvgg"), 16));
             itemlist.Add(new Item(8, Content.Load<Texture2D>("stnvgg"), 16));
+            itemlist.Add(new Item(9, Content.Load<Texture2D>("Tragolv"), 16));
+            itemlist.Add(new Item(10, Content.Load<Texture2D>("stengolv"), 16));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -197,8 +212,7 @@ namespace Game1
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+           
 
             KeyboardState kstate = Keyboard.GetState();
             MouseState mstate = Mouse.GetState();
@@ -237,22 +251,11 @@ namespace Game1
                 List<Craftcheck> temp = new List<Craftcheck>();
                 temp.Add(new Craftcheck(1, 2));
                 allcrafts.Add(new Crafting(temp, 3));
-                temp.Clear();
-                temp.Add(new Craftcheck(3, 1));
-                temp.Add(new Craftcheck(2, 1));
-                allcrafts.Add(new Crafting(temp, 4));
-                temp.Clear();
-                temp.Add(new Craftcheck(3, 2));
-                temp.Add(new Craftcheck(2, 1));
-                temp.Add(new Craftcheck(5, 1));
-                allcrafts.Add(new Crafting(temp, 6));
-                temp.Clear();
-                temp.Add(new Craftcheck(0, 2));
-                allcrafts.Add(new Crafting(temp, 7));
-                temp.Clear();
-                temp.Add(new Craftcheck(1, 2));
-                allcrafts.Add(new Crafting(temp, 8));
-                temp.Clear();
+                allcrafts[0].Craftingcreation(allcrafts);
+                gamemenuout = new Rectangle(f.Bredd / 2 - 125, 70, 250, 300);
+                gamemenuin = new Rectangle(gamemenuout.X + 5, gamemenuout.Y + 5, gamemenuout.Width - 10, gamemenuout.Height - 10);
+                ingamemeny = new Menuchoice(90, "Paused", menytext, f.Bredd / 2, false, 50, false, false);
+                ingamemeny.Ingamemenucreate(gamemenu, mellantext, f.Bredd / 2);
             }
             mus.Musposchange(mstate.X, mstate.Y);
             if (meny )
@@ -267,9 +270,9 @@ namespace Game1
                             m.Active = true;
                         }
                     }
-                    if (mstate.LeftButton == ButtonState.Pressed)
+                    if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        mus.Huvudmenyklick(huvudmeny, ref meny, ref hmeny, ref normal, ref l, wg, rand, f, ref wmeny);
+                        mus.Huvudmenyklick(huvudmeny, ref meny, ref hmeny, ref normal, ref l, wg, rand, f, ref wmeny, ref lorg);
                     }
                 }
                 if (wmeny )
@@ -292,7 +295,34 @@ namespace Game1
                     }
                     if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        mus.Worldmenyklick(worldmeny, unclickablew, clickablew , ref l, wg, rand, mus, mellantext, f, ref meny, ref wmeny, ref normal, ref hmeny);
+                        mus.Worldmenyklick(worldmeny, unclickablew, clickablew , ref l, wg, rand, mus, mellantext, f, ref meny, ref wmeny, ref normal, ref hmeny, ref lorg);
+                    }
+                }
+            }
+            if (inmeny)
+            {
+                if (kstate.IsKeyDown(Keys.Escape) && oldstate.IsKeyUp(Keys.Escape))
+                {
+                    inmeny = false;
+                    normal = true;
+                    loopcancel = false;
+                }
+                foreach(Menuchoice m in gamemenu)
+                {
+                    m.Active = false;
+                    if (mus.Hitb.Intersects(m.Hitb))
+                    {
+                        m.Active = true;
+                    }
+
+                }
+                if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
+                {
+                    bool end = false;
+                    mus.Ingamemenuklick(gamemenu, ref inmeny, ref normal, ref l, wg, rand, f.Höjd, f.Bredd, ref hmeny, ref end, ref lorg, ref meny);
+                    if (end)
+                    {
+                        Exit();
                     }
                 }
             }
@@ -313,7 +343,7 @@ namespace Game1
                 play.Update(ref l, kstate, mstate, ref xauto, ref yauto, ref xautoscd, ref yautoscd, ref xautohcd, ref yautoncd, ref xautovcd, ref yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
-                    l = wg.Generate(f.Höjd, f.Bredd, rand);
+                    l = wg.Generate(f.Höjd, f.Bredd, rand, ref lorg);
                 }
                 if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
                 {
@@ -377,6 +407,12 @@ namespace Game1
                     }
                 }
                 hpbar.Width = health  * 2;
+                if(kstate.IsKeyDown(Keys.Escape) && oldstate.IsKeyUp(Keys.Escape) && loopcancel)
+                {
+                    inmeny = true;
+                    normal = false;
+                }
+                loopcancel = true;
             }
             
             oldstate = kstate;
@@ -459,8 +495,9 @@ namespace Game1
                 }
                 spriteBatch.Draw(mustex, mus.Pos, Color.White);
             }
-            else
+            else if (normal || inmeny)
             {
+
                 foreach (Block b in l)
                 {
                     spriteBatch.Draw(blocktextures[b.Id], b.Rek, Color.White);
@@ -613,8 +650,22 @@ namespace Game1
                 spriteBatch.Draw(pixel, hpbarbak, Color.Black);
                 spriteBatch.Draw(pixel, hpbar, Color.Red);
                 spriteBatch.Draw(heart, healthheart, Color.White);
-
-                if (mus.Sloot.It.Id == -1)
+                if (inmeny)
+                {
+                    spriteBatch.Draw(pixel, gamemenuout, Color.White);
+                    spriteBatch.Draw(pixel, gamemenuin, Color.Black);
+                    spriteBatch.DrawString(menytext, ingamemeny.Text, ingamemeny.Textlocation, Color.White);
+                    foreach (Menuchoice m in gamemenu)
+                    {
+                        spriteBatch.DrawString(mellantext, m.Text, m.Textlocation, Color.White);
+                        if (m.Active)
+                        {
+                            spriteBatch.DrawString(mellantext, ">", m.Leftchoice, Color.White);
+                            spriteBatch.DrawString(mellantext, "<", m.Rightchoice, Color.White);
+                        }
+                    }
+                }
+                if (mus.Sloot.It.Id == -1 || inmeny)
                 {
                     spriteBatch.Draw(mustex, mus.Pos, Color.White);
                 }
@@ -630,6 +681,7 @@ namespace Game1
                         spriteBatch.DrawString(text, Convert.ToString(mus.Sloot.Numb), new Vector2(mus.Sloot.Förg.X + 34 - 2 * text.LineSpacing, mus.Sloot.Förg.Y + 24), Color.White);
                     }
                 }
+
             }
 
             spriteBatch.End();

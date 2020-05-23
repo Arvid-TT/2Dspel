@@ -87,7 +87,7 @@ namespace Game1
         /// <summary>
         /// Generates world
         /// </summary>
-        public List<Block> Generate(int höjd, int bredd, Random slump)
+        public List<Block> Generate(int höjd, int bredd, Random slump, ref List<Block> lorg)
         {
             List<Block> l = new List<Block>();
             List<int> l1 = new List<int>();
@@ -124,6 +124,10 @@ namespace Game1
                 int tx = b.Plats % 100;
                 int ty = (b.Plats - tx) / 100;
                 b.Map = new Rectangle(bredd + tx - 100, ty, 1, 1);
+                if (b.Id == 1 && slump.Next(10) == 0)
+                {
+                    b.Id = 14;
+                }
             }
             int sx;
             int sy;
@@ -438,6 +442,12 @@ namespace Game1
                 l = Addonextension(l, b.Plats);
                 if(b.Id == 1 || b.Id == 7 || b.Id == 8 || b.Id == 12)
                 {
+                    b.Maxhp = 200;
+                    b.Hp = b.Maxhp;
+                    b.Tool = 2;
+                }
+                else if (b.Id == 14)
+                {
                     b.Maxhp = 500;
                     b.Hp = b.Maxhp;
                     b.Tool = 2;
@@ -452,6 +462,10 @@ namespace Game1
                 {
                     b.Maxhp = 0;
                 }
+            }
+            foreach(Block b in l)
+            {
+                lorg.Add(new Block(b.Rek, b.Map, b.Id, b.Plats, b.Addon, b.Addonext[0], b.Addonext[1], b.Addonext[2], b.Addonext[3], b.Addontrue[0], b.Addontrue[1], b.Addontrue[2], b.Addontrue[3], b.Addontype, b.Hp, b.Maxhp, b.Tool));
             }
             return l;
         }

@@ -103,5 +103,13 @@ namespace Game1
             c.Add(new Menuchoice(400, "Generate World", sf2, 3 * f / 2, false, 20, true, false));
             c.Add(new Menuchoice(400, "Back", sf2, f / 2, false, 20, true, false));
         }
+        public void Ingamemenucreate(List<Menuchoice> m, SpriteFont sf, int f)
+        {
+            m.Add(new Menuchoice(160, "Resume", sf, f, true, 20, true, false));
+            m.Add(new Menuchoice(200, "Reset", sf, f, true, 20, true, false));
+            m.Add(new Menuchoice(240, "Regenerate", sf, f, true, 20, true, false));
+            m.Add(new Menuchoice(280, "Main Menu", sf, f, true, 20, true, false));
+            m.Add(new Menuchoice(320, "Quit Game", sf, f, true, 20, true, false));
+        }
     }
 }

@@ -75,6 +75,34 @@ namespace Game1
                 o = new Rectangle(5, place.Hitb.Y + 60, req.Count * 40, 40);
             }
         }
+        public void Craftingcreation(List<Crafting> c)
+        {
+            List<Craftcheck> temp = new List<Craftcheck>();
+            temp.Add(new Craftcheck(0, 1));
+            c.Add(new Crafting(temp, 1));
+            temp.Clear();
+            temp.Add(new Craftcheck(3, 1));
+            temp.Add(new Craftcheck(2, 1));
+            c.Add(new Crafting(temp, 4));
+            temp.Clear();
+            temp.Add(new Craftcheck(3, 2));
+            temp.Add(new Craftcheck(2, 1));
+            temp.Add(new Craftcheck(5, 1));
+            c.Add(new Crafting(temp, 6));
+            temp.Clear();
+            temp.Add(new Craftcheck(0, 2));
+            c.Add(new Crafting(temp, 7));
+            temp.Clear();
+            temp.Add(new Craftcheck(0, 3));
+            c.Add(new Crafting(temp, 9));
+            temp.Clear();
+            temp.Add(new Craftcheck(1, 2));
+            c.Add(new Crafting(temp, 8));
+            temp.Clear();
+            temp.Add(new Craftcheck(1, 3));
+            c.Add(new Crafting(temp, 10));
+            temp.Clear();
+        }
     }
 
 }

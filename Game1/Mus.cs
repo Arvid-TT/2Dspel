@@ -53,11 +53,11 @@ namespace Game1
             s2.It = s3.It;
             return s2;
         }
-        public void Huvudmenyklick(List<Menuchoice> m, ref bool meny, ref bool hmeny, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, ref bool wmeny)
+        public void Huvudmenyklick(List<Menuchoice> m, ref bool meny, ref bool hmeny, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, ref bool wmeny, ref List<Block> lorg)
         {
             if (m[0].Active)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, slump);
+                l = wg.Generate(f.Höjd, f.Bredd, slump, ref lorg);
                 meny  = false;
                 hmeny  = false;
                 normal  = true;
@@ -66,7 +66,7 @@ namespace Game1
             {
                 hmeny  = false;
                 wmeny  = true;
-                l = wg.Generate(f.Höjd, f.Bredd, slump);
+                l = wg.Generate(f.Höjd, f.Bredd, slump, ref lorg);
                 foreach(Block b in l)
                 {
                     b.Mapposchange(-f.Bredd / 4, 100);
@@ -75,7 +75,7 @@ namespace Game1
             }
             
         }
-        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, ref bool meny, ref bool wmeny, ref bool n, ref bool hmeny)
+        public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, ref bool meny, ref bool wmeny, ref bool n, ref bool hmeny, ref List<Block> lorg)
         {
             bool b = false;
             
@@ -203,7 +203,7 @@ namespace Game1
             }
             else if (c[1].Active)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, slump);
+                l = wg.Generate(f.Höjd, f.Bredd, slump, ref lorg);
                 meny  = false;
                 wmeny  = false;
                 n  = true;
@@ -218,12 +218,51 @@ namespace Game1
             }
             if (b)
             {
-                l = wg.Generate(f.Höjd, f.Bredd, slump);
+                l = wg.Generate(f.Höjd, f.Bredd, slump, ref lorg);
                 foreach (Block bb in l)
                 {
                     bb.Mapposchange(-f.Bredd / 4, 100);
                     bb.Double();
                 }
+            }
+        }
+        public void Ingamemenuklick(List<Menuchoice> m, ref bool ing, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, int h, int br, ref bool menu, ref bool end, ref List<Block> lorg, ref bool men)
+        {
+            if (m[0].Active)
+            {
+                ing = false;
+                normal = true;
+                return;
+            }
+            if (m[1].Active)
+            {
+                ing = false;
+                normal = true;
+                l.Clear();
+                foreach(Block b in lorg)
+                {
+                    l.Add(new Block(b.Rek, b.Map, b.Id, b.Plats, b.Addon, b.Addonext[0], b.Addonext[1], b.Addonext[2], b.Addonext[3], b.Addontrue[0], b.Addontrue[1], b.Addontrue[2], b.Addontrue[3], b.Addontype, b.Hp, b.Maxhp, b.Tool));
+                }
+                return;
+            }
+            if (m[2].Active)
+            {
+                l = wg.Generate(h, br, slump, ref lorg);
+                ing = false;
+                normal = true;
+                return;
+            }
+            if (m[3].Active)
+            {
+                menu = true;
+                ing = false;
+                men = true;
+                return;
+            }
+            if (m[4].Active)
+            {
+                end = true;
+                return;
             }
         }
         public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player)
@@ -380,12 +419,12 @@ namespace Game1
                                         }
 
                                     }
-                                    else if (b.Addontype == 7)
+                                    else if (b.Addontype == 4)
                                     {
                                         total[7].Numb++;
                                         inventory[0].Inventoryadd(inventory, itemlist[7]);
                                     }
-                                    else if (b.Addontype == 8)
+                                    else if (b.Addontype == 5)
                                     {
                                         total[8].Numb++;
                                         inventory[0].Inventoryadd(inventory, itemlist[8]);
@@ -440,6 +479,28 @@ namespace Game1
                                 wg.Addonextension(l, b.Plats);
                                 total[8].Numb--;
                                 inventory[0].Inventoryremove(inventory, itemlist[8], 1, sloot);
+                            }
+                            else if (b.Addontype == 0 && inventory[inv].It.Id == 9)
+                            {
+                                b.Addontype = 6;
+                                b.Maxhp = 100;
+                                b.Hp = 100;
+                                b.Tool = 1;
+                                b.Addon = new Rectangle(b.Rek.X, b.Rek.Y, b.Rek.Width, b.Rek.Height);
+                                wg.Addonextension(l, b.Plats);
+                                total[9].Numb--;
+                                inventory[0].Inventoryremove(inventory, itemlist[9], 1, sloot);
+                            }
+                            else if (b.Addontype == 0 && inventory[inv].It.Id == 10)
+                            {
+                                b.Addontype = 7;
+                                b.Maxhp = 100;
+                                b.Hp = 100;
+                                b.Tool = 2;
+                                b.Addon = new Rectangle(b.Rek.X, b.Rek.Y, b.Rek.Width, b.Rek.Height);
+                                wg.Addonextension(l, b.Plats);
+                                total[10].Numb--;
+                                inventory[0].Inventoryremove(inventory, itemlist[10], 1, sloot);
                             }
                         }
 
