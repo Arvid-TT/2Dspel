@@ -57,6 +57,11 @@ namespace Game1
             set { förg = value; }
             get { return förg; }
         }
+        /// <summary>
+        /// Byter plats på en slot.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Slotposchange(int x, int y)
         {
             hitb.X = x;
@@ -64,7 +69,10 @@ namespace Game1
             förg.X = x + 3;
             förg.Y = y + 3;
         }
-
+        /// <summary>
+        /// Skapar inventoryt.
+        /// </summary>
+        /// <param name="s"></param>
         public void Inventory(Slot[] s)
         {
             for (int y = 0; y < 2; y++)
@@ -75,15 +83,13 @@ namespace Game1
                 }
             }
         }
-        public void Contentexchange(ref Slot s1, ref Slot s2)
-        {
-            Slot s3 = new Slot(s1.Contain, s1.Numb, s1.Hitb.X, s1.Hitb.Y);
-            s3.It = s1.It;
-            s1 = new Slot(s2.Contain, s2.Numb, s1.Hitb.X, s1.Hitb.Y);
-            s1.It = s2.It;
-            s2 = new Slot(s3.Contain, s3.Numb, s2.Hitb.X, s2.Hitb.Y);
-            s2.It = s3.It;
-        }
+        /// <summary>
+        /// Hittar rutan i inventoryt med det rätta föremålet.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <param name="item"></param>
+        /// <param name="orgpos"></param>
+        /// <returns></returns>
         public int Inventoryslotfind(Slot[] inv, Item item, int orgpos)
         {
             for (int i = 0; i < inv.Length; i++)
@@ -102,6 +108,11 @@ namespace Game1
             }
             return orgpos;
         }
+        /// <summary>
+        /// Lägger till ett föremål i inventoryt.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <param name="item"></param>
         public void Inventoryadd(Slot[] inv, Item item)
         {
             foreach (Slot s in inv)
@@ -122,6 +133,13 @@ namespace Game1
                 }
             }
         }
+        /// <summary>
+        /// Tar bort ett antal av ett visst föremål från inventoryt.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <param name="item"></param>
+        /// <param name="numb"></param>
+        /// <param name="mus"></param>
         public void Inventoryremove(Slot[] inv, Item item, int numb, Slot mus)
         {
             while (true)

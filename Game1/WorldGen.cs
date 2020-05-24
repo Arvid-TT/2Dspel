@@ -77,16 +77,12 @@ namespace Game1
             get { return antalsnöar; }
         }
         /// <summary>
-       
+        /// Genererar en ny värld utifrån ens valda inställningar.
         /// </summary>
         /// <param name="höjd"></param>
         /// <param name="bredd"></param>
         /// <param name="slump"></param>
         /// <returns></returns>
-        
-        /// <summary>
-        /// Generates world
-        /// </summary>
         public List<Block> Generate(int höjd, int bredd, Random slump, ref List<Block> lorg)
         {
             List<Block> l = new List<Block>();
@@ -104,6 +100,7 @@ namespace Game1
                     p++;
                 }
             }
+            //Stengeneration
             foreach(Block b in l)
             {
                 if (slump.Next(100) == 0)
@@ -124,10 +121,6 @@ namespace Game1
                 int tx = b.Plats % 100;
                 int ty = (b.Plats - tx) / 100;
                 b.Map = new Rectangle(bredd + tx - 100, ty, 1, 1);
-                if (b.Id == 1 && slump.Next(10) == 0)
-                {
-                    b.Id = 14;
-                }
             }
             int sx;
             int sy;
@@ -196,6 +189,7 @@ namespace Game1
                 {
                     b.Id = 3;
                 }
+               
             }
             //Flodgenerering//
             for(int i = 0; i < antalfloder; i++)
@@ -298,8 +292,15 @@ namespace Game1
             l2.Add(3);
             ind.Add(0);
             Biomegen(l, l1, l2, ind, 0, slump, 2, true, 1, flodbredd);
-
-            //Stranggen//
+            //Järnoregenerering//
+            foreach (Block b in l)
+            {
+                if (b.Id == 1 && slump.Next(10) == 1)
+                {
+                    b.Id = 14;
+                }
+            }
+            //Strandgenerering//
             fillout.Add(1);
             fillout.Add(3);
             fillout.Add(4);
@@ -425,7 +426,7 @@ namespace Game1
                     b.Addontype = 2;
                     b.Addon = new Rectangle(b.Rek.X + slump.Next(80), b.Rek.Y + slump.Next(80), 20, 20);
                 }
-                else if (b.Id == 0 && slump.Next(10) == 0 && b.Addontype == 0)
+                else if (b.Id == 0 && slump.Next(30) == 0 && b.Addontype == 0)
                 {
                     b.Addontype = 3;
                     b.Addon = new Rectangle(b.Rek.X + slump.Next(50), b.Rek.Y + slump.Next(50), 50, 50);
@@ -435,7 +436,11 @@ namespace Game1
                     b.Addontype = 1;
                     b.Addon = new Rectangle(b.Rek.X + 40, b.Rek.Y + 40, 20, 20);
                 }
-                
+                if (b.Id == 6 && slump.Next(5) == 0)
+                {
+                    b.Addontype = 2;
+                    b.Addon = new Rectangle(b.Rek.X + slump.Next(80), b.Rek.Y + slump.Next(80), 20, 20);
+                }
             }
             foreach(Block b in l)
             {
@@ -463,12 +468,67 @@ namespace Game1
                     b.Maxhp = 0;
                 }
             }
+            int abcd = slump.Next(2);
+            for(int y = 49; y < 51; y++)
+            {
+                for(int x = 49; x < 51; x++)
+                {
+                    l[y * 100 + x].Addontype = 6 + abcd;
+                    l[y * 100 + x].Maxhp = 100;
+                    l[y * 100 + x].Hp = 100;
+                    l[y * 100 + x].Addon = new Rectangle(l[y * 100 + x].Rek.X, l[y * 100 + x].Rek.Y, l[y * 100 + x].Rek.Width, l[y * 100 + x].Rek.Height);
+                    l[y * 100 + x].Tool = abcd + 1;
+             
+                }
+            }
+            for (int y = 48; y < 52; y += 3)
+            {
+                for (int x = 48; x < 52; x += 3)
+                {
+                    l[y * 100 + x].Addontype = 4 + abcd;
+                    l[y * 100 + x].Maxhp = 100;
+                    l[y * 100 + x].Hp = 100;
+                    l[y * 100 + x].Addon = new Rectangle(l[y * 100 + x].Rek.X, l[y * 100 + x].Rek.Y, l[y * 100 + x].Rek.Width, l[y * 100 + x].Rek.Height);
+                    l[y * 100 + x].Tool = abcd + 1;
+                    Addonextension(l, y * 100 + x);
+                }
+            }
+            for (int y = 48; y < 52; y++)
+            {
+                for(int x = 48; x<52; x++)
+                {
+                    l[y * 100 + x].Id = 0;
+                    if(l[y * 100 + x].Addontype < 4)
+                    {
+                        l[y * 100 + x].Addontype = 1;
+                        l[y * 100 + x].Maxhp = 50;
+                        l[y * 100 + x].Hp = 50;
+                        l[y * 100 + x].Addon = new Rectangle(l[y * 100 + x].Rek.X + 40, l[y * 100 + x].Rek.Y + 40, 20, 20);
+                        l[y * 100 + x].Tool = 1;
+                        Addonextension(l, y * 100 + x);
+                    }
+                }
+            }
             foreach(Block b in l)
             {
                 lorg.Add(new Block(b.Rek, b.Map, b.Id, b.Plats, b.Addon, b.Addonext[0], b.Addonext[1], b.Addonext[2], b.Addonext[3], b.Addontrue[0], b.Addontrue[1], b.Addontrue[2], b.Addontrue[3], b.Addontype, b.Hp, b.Maxhp, b.Tool));
             }
             return l;
         }
+        /// <summary>
+        /// Expanderar en biome utifrån ett block. Antingen expanderar den ett visst antal gånger eller tills biomen har expanderat till en viss storlek.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="omvandlasfrån"></param>
+        /// <param name="omvandlastill"></param>
+        /// <param name="index"></param>
+        /// <param name="storlek"></param>
+        /// <param name="slump"></param>
+        /// <param name="spridchans"></param>
+        /// <param name="sep"></param>
+        /// <param name="minspridchans"></param>
+        /// <param name="antal"></param>
+        /// <returns></returns>
         private List<Block> Biomegen(List<Block> l, List<int> omvandlasfrån, List<int> omvandlastill, List<int> index, int storlek, Random slump, int spridchans, bool sep, int minspridchans, int antal)
         {
             int g = 0;
@@ -547,6 +607,16 @@ namespace Game1
             return l;
             
         }
+        /// <summary>
+        /// Ersätter en blocktyp med ett annat om det omringas av tillräckligt många av ett visst block.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="fillout"></param>
+        /// <param name="id"></param>
+        /// <param name="omvandlasfrån"></param>
+        /// <param name="corners"></param>
+        /// <param name="req"></param>
+        /// <returns></returns>
         private List<Block> Surroundfill(List<Block> l, List<int> fillout, int id, int omvandlasfrån, bool corners, int req)
         {
 
@@ -645,6 +715,12 @@ namespace Game1
             }
             return l;
         }
+        /// <summary>
+        /// Ser om ett block på en viss plats är av rätt blocktyp för att bidra till att ett annat block ska ändra blocktyp.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="fillout"></param>
+        /// <returns></returns>
         private bool Surroundcheck(Block b, List<int> fillout)
         {
             foreach(int i in fillout)
@@ -656,6 +732,12 @@ namespace Game1
             }
             return false;
         }
+        /// <summary>
+        /// Tittar på de addons som finns runtomkring det valda blocket för att se hur addonsen ska ansluta till varandra.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public List<Block> Addonextension(List<Block> l, int p)
         {
             if (p % 100 > 0)

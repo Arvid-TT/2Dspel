@@ -16,10 +16,22 @@ namespace Game1
         int tooldmg;
         //Item id list:
         //-1 = inget
-        //0 = trä
-        //1 = sten
-        //2 = pinne
-        //3 = flinta
+        //0 = wood
+        //1 = stone
+        //2 = stick
+        //3 = flint
+        //4 = hatchet
+        //5 = plant fiber
+        //6 = flint pickaxe
+        //7 = wooden wall
+        //8 = stone wall
+        //9 = wooden path
+        //10 = stone path
+        //11 = iron ore
+        //12 = coal
+        //13 = iron ingot
+        //14 = iron pickaxe
+        //15 = iron axe
 
         //Item type list:
         //0 = crafting

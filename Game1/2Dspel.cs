@@ -45,6 +45,7 @@ namespace Game1
         List<Worldedit> worldedit = new List<Worldedit>();
         List<Ghost> ghosts = new List<Ghost>();
         Mus mus;
+        Rectangle trash;
         int activeslot = 0;
         Misc misc = new Misc();
         Rectangle hpbar;
@@ -187,6 +188,11 @@ namespace Game1
             itemlist.Add(new Item(8, Content.Load<Texture2D>("stnvgg"), 16));
             itemlist.Add(new Item(9, Content.Load<Texture2D>("Tragolv"), 16));
             itemlist.Add(new Item(10, Content.Load<Texture2D>("stengolv"), 16));
+            itemlist.Add(new Item(11, Content.Load<Texture2D>("irn ore"), 16));
+            itemlist.Add(new Item(12, Content.Load<Texture2D>("coal"), 16));
+            itemlist.Add(new Item(13, Content.Load<Texture2D>("iron"), 16));
+            itemlist.Add(new Item(14, Content.Load<Texture2D>("iron Pickaxe"), 1, 2, 3));
+            itemlist.Add(new Item(15, Content.Load<Texture2D>("axe"), 1, 1, 3));
             text = Content.Load<SpriteFont>("Text");
             menytext = Content.Load<SpriteFont>("Menytext");
             stortext = Content.Load<SpriteFont>("Stortext");
@@ -238,6 +244,7 @@ namespace Game1
                 ghosts.Clear();
                 inventory[0] = new Slot();
                 inventory[0].Inventory(inventory);
+                trash = new Rectangle(inventory[19].Hitb.X + 50, inventory[19].Hitb.Y, 40, 40);
                 mus = new Mus(mstate);
                 inventoryhitb = new Rectangle(0, 0, 450, 50);
                 hmenytext = new Menuchoice(50, "Main Menu", stortext, f.Bredd / 2, false, 70, false, false);
@@ -272,7 +279,12 @@ namespace Game1
                     }
                     if (mstate.LeftButton == ButtonState.Pressed && oldmus.LeftButton == ButtonState.Released)
                     {
-                        mus.Huvudmenyklick(huvudmeny, ref meny, ref hmeny, ref normal, ref l, wg, rand, f, ref wmeny, ref lorg);
+                        bool end = false;
+                        mus.Huvudmenyklick(huvudmeny, ref meny, ref hmeny, ref normal, ref l, wg, rand, f, ref wmeny, ref lorg, ref end);
+                        if (end)
+                        {
+                            Exit();
+                        }
                     }
                 }
                 if (wmeny )
@@ -339,18 +351,11 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand, play.Pos);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand, play.Pos, trash);
                 play.Update(ref l, kstate, mstate, ref xauto, ref yauto, ref xautoscd, ref yautoscd, ref xautohcd, ref yautoncd, ref xautovcd, ref yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
                     l = wg.Generate(f.Höjd, f.Bredd, rand, ref lorg);
-                }
-                if (kstate.IsKeyDown(Keys.OemPlus) && oldstate.IsKeyUp(Keys.OemPlus))
-                {
-                    foreach (Block b in l)
-                    {
-                        b.Id = lorg[b.Plats].Id;
-                    }
                 }
                 if (kstate.IsKeyDown(Keys.Tab) && oldstate.IsKeyUp(Keys.Tab))
                 {
@@ -644,7 +649,7 @@ namespace Game1
                             }
                         }
                     }
-                    
+                    spriteBatch.Draw(pixel, trash, Color.Black);
                 }
                 spriteBatch.Draw(pixel, hpbarbor, Color.White);
                 spriteBatch.Draw(pixel, hpbarbak, Color.Black);

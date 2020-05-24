@@ -35,6 +35,11 @@ namespace Game1
             set { sloot = value; }
             get { return sloot; }
         }
+        /// <summary>
+        /// Bestämmer musen och dess delars nya position varje frame.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Musposchange(int x, int y)
         {
             pos.X = x - 10;
@@ -43,6 +48,12 @@ namespace Game1
             hitb.Y = y;
             sloot.Slotposchange(x - 20, y - 20);
         }
+        /// <summary>
+        /// Byter plats på föremålen mellan musen och ett slot i inventoryt.
+        /// </summary>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
         public Slot Mousecontentexchange(ref Slot s1, Slot s2)
         {
             Slot s3 = new Slot(s1.Contain, s1.Numb, s1.Hitb.X, s1.Hitb.Y);
@@ -53,7 +64,21 @@ namespace Game1
             s2.It = s3.It;
             return s2;
         }
-        public void Huvudmenyklick(List<Menuchoice> m, ref bool meny, ref bool hmeny, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, ref bool wmeny, ref List<Block> lorg)
+        /// <summary>
+        /// Bestämmer vad som händer när man klickar i huvudmenyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="meny"></param>
+        /// <param name="hmeny"></param>
+        /// <param name="normal"></param>
+        /// <param name="l"></param>
+        /// <param name="wg"></param>
+        /// <param name="slump"></param>
+        /// <param name="f"></param>
+        /// <param name="wmeny"></param>
+        /// <param name="lorg"></param>
+        /// <param name="end"></param>
+        public void Huvudmenyklick(List<Menuchoice> m, ref bool meny, ref bool hmeny, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, Fonster f, ref bool wmeny, ref List<Block> lorg, ref bool end)
         {
             if (m[0].Active)
             {
@@ -73,8 +98,29 @@ namespace Game1
                     b.Double();
                 }
             }
-            
+            else if (m[2].Active)
+            {
+                end = true;
+                return;
+            }
         }
+        /// <summary>
+        /// Bestämmer vad som händer när man klickar i världsmenyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="u"></param>
+        /// <param name="c"></param>
+        /// <param name="l"></param>
+        /// <param name="wg"></param>
+        /// <param name="slump"></param>
+        /// <param name="mus"></param>
+        /// <param name="sf"></param>
+        /// <param name="f"></param>
+        /// <param name="meny"></param>
+        /// <param name="wmeny"></param>
+        /// <param name="n"></param>
+        /// <param name="hmeny"></param>
+        /// <param name="lorg"></param>
         public void Worldmenyklick(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, ref List<Block> l, WorldGen wg, Random slump, Mus mus, SpriteFont sf, Fonster f, ref bool meny, ref bool wmeny, ref bool n, ref bool hmeny, ref List<Block> lorg)
         {
             bool b = false;
@@ -226,6 +272,21 @@ namespace Game1
                 }
             }
         }
+        /// <summary>
+        /// Bestämmer vad som händer om man klickar i in-game menyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="ing"></param>
+        /// <param name="normal"></param>
+        /// <param name="l"></param>
+        /// <param name="wg"></param>
+        /// <param name="slump"></param>
+        /// <param name="h"></param>
+        /// <param name="br"></param>
+        /// <param name="menu"></param>
+        /// <param name="end"></param>
+        /// <param name="lorg"></param>
+        /// <param name="men"></param>
         public void Ingamemenuklick(List<Menuchoice> m, ref bool ing, ref bool normal, ref List<Block> l, WorldGen wg, Random slump, int h, int br, ref bool menu, ref bool end, ref List<Block> lorg, ref bool men)
         {
             if (m[0].Active)
@@ -265,7 +326,33 @@ namespace Game1
                 return;
             }
         }
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player)
+        /// <summary>
+        /// Uppdaterar allt som har med musen att göra.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="worldedit"></param>
+        /// <param name="kstate"></param>
+        /// <param name="mstate"></param>
+        /// <param name="oldmus"></param>
+        /// <param name="inventory"></param>
+        /// <param name="wetoggle"></param>
+        /// <param name="we"></param>
+        /// <param name="weh"></param>
+        /// <param name="wef"></param>
+        /// <param name="inventoryhitb"></param>
+        /// <param name="f"></param>
+        /// <param name="wg"></param>
+        /// <param name="itemlist"></param>
+        /// <param name="total"></param>
+        /// <param name="craftable"></param>
+        /// <param name="allcrafts"></param>
+        /// <param name="outline"></param>
+        /// <param name="inside"></param>
+        /// <param name="inv"></param>
+        /// <param name="slump"></param>
+        /// <param name="player"></param>
+        /// <param name="trash"></param>
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player, Rectangle trash)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -358,6 +445,17 @@ namespace Game1
                     }
 
                 }
+                else if (hitb.Intersects(trash))
+                {
+                    if (sloot.It.Id != -1)
+                    {
+                        total[sloot.It.Id].Numb -= sloot.Numb;
+                        sloot.Numb = 0;
+                        sloot.It = new Item();
+                        allcrafts[0].Transfer(ref craftable, total, allcrafts, itemlist, ref outline, ref inside);
+                    }
+
+                }
                 else if (hitb.Intersects(outline))
                 {
                     if (oldmus.LeftButton == ButtonState.Released)
@@ -400,10 +498,10 @@ namespace Game1
                     {
                         if (hitb.Intersects(b.Rek))
                         {
-                            if (b.Maxhp > 0 && b.Tool == inventory[inv].It.Type)
+                            if (b.Maxhp > 0 && b.Tool == inventory[inv].It.Type && player.Intersects(b.Rek) == false)
                             {
                                 b.Hp -= inventory[inv].It.Tooldmg;
-                                if (b.Hp == 0)
+                                if (b.Hp <= 0)
                                 {
                                     if (b.Addontype == 1)
                                     {
@@ -412,7 +510,7 @@ namespace Game1
                                             total[0].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[0]);
                                         }
-                                        if (slump.Next(2) == 0)
+                                        if (slump.Next(10) == 0)
                                         {
                                             total[5].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[5]);
@@ -431,12 +529,28 @@ namespace Game1
                                     }
                                     else if (b.Addontype == 0)
                                     {
-                                        b.Id = 11;
+                                        
                                         for (int i = 0; i <= slump.Next(1, 5); i++)
                                         {
                                             total[1].Numb++;
                                             inventory[0].Inventoryadd(inventory, itemlist[1]);
                                         }
+                                        if (b.Id == 14)
+                                        {
+
+                                            total[11].Numb++;
+                                            inventory[0].Inventoryadd(inventory, itemlist[11]);
+
+                                        }
+                                        else
+                                        {
+                                            if (slump.Next(10) == 0)
+                                            {
+                                                total[12].Numb++;
+                                                inventory[0].Inventoryadd(inventory, itemlist[12]);
+                                            }
+                                        }
+                                        b.Id = 11;
                                     }
                                     b.Maxhp = 0;
                                     b.Addontype = 0;

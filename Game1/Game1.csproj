@@ -55,7 +55,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slot.cs" />
-    <Compile Include="Text.cs" />
     <Compile Include="Worldedit.cs" />
     <Compile Include="WorldGen.cs" />
   </ItemGroup>

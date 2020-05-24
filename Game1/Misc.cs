@@ -9,6 +9,13 @@ namespace Game1
 {
     class Misc
     {
+        /// <summary>
+        /// Bestämmer vilken ruta i hotbaren som ska vara aktiv,
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="k"></param>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public int Inventoryselect(int s, KeyboardState k, KeyboardState o)
         {
             if (k.IsKeyDown(Keys.D1) && o.IsKeyUp(Keys.D1))

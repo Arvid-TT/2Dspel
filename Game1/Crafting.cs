@@ -36,6 +36,15 @@ namespace Game1
             set { place = value; }
             get { return place; }
         }
+        /// <summary>
+        /// Bestämmer vilka saker från craftinglistan för hela spelet som ska visas i craftingmenyn.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="cc"></param>
+        /// <param name="a"></param>
+        /// <param name="itemlist"></param>
+        /// <param name="outline"></param>
+        /// <param name="inside"></param>
         public void Transfer(ref List<Crafting> n, List<Craftcheck> cc, List<Crafting> a, List<Item> itemlist, ref Rectangle outline, ref Rectangle inside)
         {
             n.Clear();
@@ -63,6 +72,11 @@ namespace Game1
             inside.Width = outline.Width - 6;
 
         }
+        /// <summary>
+        /// Bestämmer hur stora rektanglarna runt ingredienserna för craftingrecipen ska vara
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="o"></param>
         public void Requirementshow(ref Rectangle p, ref Rectangle o)
         {
             p = new Rectangle(place.Hitb.X, place.Hitb.Y + 40, 40, 20);
@@ -75,11 +89,15 @@ namespace Game1
                 o = new Rectangle(5, place.Hitb.Y + 60, req.Count * 40, 40);
             }
         }
+        /// <summary>
+        /// Skapar alla crafting recipes.
+        /// </summary>
+        /// <param name="c"></param>
         public void Craftingcreation(List<Crafting> c)
         {
             List<Craftcheck> temp = new List<Craftcheck>();
             temp.Add(new Craftcheck(0, 1));
-            c.Add(new Crafting(temp, 1));
+            c.Add(new Crafting(temp, 2));
             temp.Clear();
             temp.Add(new Craftcheck(3, 1));
             temp.Add(new Craftcheck(2, 1));
@@ -101,6 +119,20 @@ namespace Game1
             temp.Clear();
             temp.Add(new Craftcheck(1, 3));
             c.Add(new Crafting(temp, 10));
+            temp.Clear();
+            temp.Add(new Craftcheck(11, 3));
+            temp.Add(new Craftcheck(12, 1));
+            c.Add(new Crafting(temp, 13));
+            temp.Clear();
+            temp.Add(new Craftcheck(13, 1));
+            temp.Add(new Craftcheck(2, 1));
+            temp.Add(new Craftcheck(5, 1));
+            c.Add(new Crafting(temp, 15));
+            temp.Clear();
+            temp.Add(new Craftcheck(13, 2));
+            temp.Add(new Craftcheck(2, 1));
+            temp.Add(new Craftcheck(5, 1));
+            c.Add(new Crafting(temp, 14));
             temp.Clear();
         }
     }

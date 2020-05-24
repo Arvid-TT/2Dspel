@@ -44,7 +44,10 @@ namespace Game1
         //1 = tree
         //2 = stone
         //3 = stick
-        //4 = Trävägg
+        //4 = wooden wall
+        //5 = stone wall
+        //6 = wooden path
+        //7 = stone path
 
         public Block(Rectangle r, int i, int p)
         {
@@ -133,10 +136,10 @@ namespace Game1
             set { tool = value; }
             get { return tool; }
         }
-        public void Draw(SpriteBatch spritebatch)
-        {
-
-        }
+        /// <summary>
+        /// Ändrar på x-kordinaten för ett block.
+        /// </summary>
+        /// <param name="x"></param>
         public void Poschangex(int x)
         {
             rek.X += x;
@@ -145,6 +148,10 @@ namespace Game1
                 addon.X += x;
             }
         }
+        /// <summary>
+        /// Ändrar på y-kordinaten för ett block.
+        /// </summary>
+        /// <param name="y"></param>
         public void Poschangey(int y)
         {
             rek.Y += y;
@@ -153,16 +160,19 @@ namespace Game1
                 addon.Y += y;
             }
         }
+        /// <summary>
+        /// Ändrar på x och y-kordinaten för ett blocks plats på kartan.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Mapposchange(int x, int y)
         {
             map.X += x;
             map.Y += y;
         }
-        public void Poschange(int x, int y)
-        {
-            rek.X = x;
-            rek.Y = y;
-        }
+        /// <summary>
+        /// Dubblar blockets höjd och bredd på kartan samt flyttar på det för att det ska passa in med andra.
+        /// </summary>
         public void Double()
         {
             map.Width *= 2;

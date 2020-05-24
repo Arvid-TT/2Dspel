@@ -27,6 +27,11 @@ namespace Game1
             set { speed = value; }
             get { return speed; }
         }
+        /// <summary>
+        /// Uppdaterar spökernas rörelse.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public bool Update(Player p)
         {
             if (p.Pos.X + 70 < pos.X)
@@ -54,6 +59,11 @@ namespace Game1
                 return false;
             }
         }
+        /// <summary>
+        /// Byter plats på spökena.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Poschange(int x, int y)
         {
             pos.X = x;

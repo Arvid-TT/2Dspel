@@ -72,12 +72,28 @@ namespace Game1
             set { changable = value; }
             get { return changable; }
         }
+        /// <summary>
+        /// Skapar huvudmenyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="sf"></param>
+        /// <param name="f"></param>
         public void Mainmenucreate(List<Menuchoice> m, SpriteFont sf, int f)
         {
             m.Add(new Menuchoice(200, "Create New World", sf, f, false, 30, true, false));
             m.Add(new Menuchoice(300, "Create Custom World", sf, f, false, 30, true, false));
-            m.Add(new Menuchoice(400, "Settings", sf, f, false, 30, true, false));
+            m.Add(new Menuchoice(400, "Quit Game", sf, f, false, 30, true, false));
         }
+        /// <summary>
+        /// Skapar världsmenyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="u"></param>
+        /// <param name="c"></param>
+        /// <param name="sf1"></param>
+        /// <param name="sf2"></param>
+        /// <param name="f"></param>
+        /// <param name="wg"></param>
         public void Worldmenucreate(List<Menuchoice> m, List<Menuchoice> u, List<Menuchoice> c, SpriteFont sf1, SpriteFont sf2, int f, WorldGen wg)
         {
             u.Add(new Menuchoice(70, "Number of Lakes", sf2, f/2, false, 10, false, false));
@@ -103,6 +119,12 @@ namespace Game1
             c.Add(new Menuchoice(400, "Generate World", sf2, 3 * f / 2, false, 20, true, false));
             c.Add(new Menuchoice(400, "Back", sf2, f / 2, false, 20, true, false));
         }
+        /// <summary>
+        /// Skapar in-gamemenyn.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="sf"></param>
+        /// <param name="f"></param>
         public void Ingamemenucreate(List<Menuchoice> m, SpriteFont sf, int f)
         {
             m.Add(new Menuchoice(160, "Resume", sf, f, true, 20, true, false));

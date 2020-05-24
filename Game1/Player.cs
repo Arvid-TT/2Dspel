@@ -27,6 +27,21 @@ namespace Game1
             set { speed = value; }
             get { return speed; }
         }
+        /// <summary>
+        /// Uppdaterar allt som har med rörelse att göra.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="kstate"></param>
+        /// <param name="mstate"></param>
+        /// <param name="xauto"></param>
+        /// <param name="yauto"></param>
+        /// <param name="xautoscd"></param>
+        /// <param name="yautoscd"></param>
+        /// <param name="xautohcd"></param>
+        /// <param name="yautoncd"></param>
+        /// <param name="xautovcd"></param>
+        /// <param name="yautoucd"></param>
+        /// <param name="ghosts"></param>
         public void Update(ref List<Block> l, KeyboardState kstate, MouseState mstate, ref int xauto, ref int yauto, ref int xautoscd, ref int yautoscd, ref int xautohcd, ref int yautoncd, ref int xautovcd, ref int yautoucd, List<Ghost> ghosts)
         {
             bool icy = true;
@@ -224,6 +239,14 @@ namespace Game1
 
 
         }
+        /// <summary>
+        /// Ser om spelaren kolliderar med något som inte går att flytta.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="ice"></param>
+        /// <returns></returns>
         private bool Kollisionskoll(List<Block> l, int x, int y, ref bool ice)
         {
             bool bb = false;
@@ -289,6 +312,11 @@ namespace Game1
             }
             return bb;
         }
+        /// <summary>
+        /// Sänker cooldownen med 1.
+        /// </summary>
+        /// <param name="cd"></param>
+        /// <returns></returns>
         private int Cooldown(int cd)
         {
             if (cd > 0)
