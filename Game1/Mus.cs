@@ -352,7 +352,7 @@ namespace Game1
         /// <param name="slump"></param>
         /// <param name="player"></param>
         /// <param name="trash"></param>
-        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player, Rectangle trash)
+        public void Update(List<Block> l, List<Worldedit> worldedit, KeyboardState kstate, MouseState mstate, MouseState oldmus, Slot[] inventory, Rectangle wetoggle, ref bool we, Rectangle weh, ref int wef, Rectangle inventoryhitb, Fonster f, WorldGen wg, List<Item> itemlist, List<Craftcheck> total, ref List<Crafting> craftable, List<Crafting> allcrafts, ref Rectangle outline, ref Rectangle inside, int inv, Random slump, Rectangle player, Rectangle trash, bool inve)
         {
             if (mstate.LeftButton == ButtonState.Pressed)
             {
@@ -456,7 +456,7 @@ namespace Game1
                     }
 
                 }
-                else if (hitb.Intersects(outline))
+                else if (hitb.Intersects(outline) && inve)
                 {
                     if (oldmus.LeftButton == ButtonState.Released)
                     {

@@ -351,7 +351,7 @@ namespace Game1
                 }
                 activeslot = misc.Inventoryselect(activeslot, kstate, oldstate);
 
-                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand, play.Pos, trash);
+                mus.Update(l, worldedit, kstate, mstate, oldmus, inventory, wetoggle, ref we, weh, ref wef, inventoryhitb, f, wg, itemlist, total, ref craftable, allcrafts, ref craftingoutline, ref craftinginside, activeslot, rand, play.Pos, trash, inv);
                 play.Update(ref l, kstate, mstate, ref xauto, ref yauto, ref xautoscd, ref yautoscd, ref xautohcd, ref yautoncd, ref xautovcd, ref yautoucd, ghosts);
                 if (kstate.IsKeyDown(Keys.Back) && oldstate.IsKeyDown(Keys.Back) == false)
                 {
