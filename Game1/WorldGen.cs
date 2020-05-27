@@ -300,7 +300,7 @@ namespace Game1
                     b.Id = 14;
                 }
             }
-            //Strandgenerering//
+            //Vattenfördjupning//
             fillout.Add(1);
             fillout.Add(3);
             fillout.Add(4);
@@ -312,6 +312,7 @@ namespace Game1
             l = Surroundfill(l, fillout, 5, 4, false, 4);
             fillout.Clear();
             fillout.Add(3);
+            //Strandgenerering//
             l = Surroundfill(l, fillout, 2, 0, true, 1);
             
             l1.Clear();
@@ -414,6 +415,7 @@ namespace Game1
                 ind.Add(i);
             }
             l = Biomegen(l, l1, l2, ind, skogsstorlek, slump, 4, false, 3, 0);
+            //Addongenerering
             foreach (Block b in l)
             {
                 if (b.Id == 0 && slump.Next(10) == 0)
